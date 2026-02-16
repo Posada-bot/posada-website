@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Posada — Whale Watch</title>
+<style>
+:root {
+  --bg: #080b12;
+  --panel-border: rgba(255, 140, 50, 0.22);
+  --panel-glow: rgba(255, 122, 26, 0.06);
+  --orange: #ff8c32;
+  --orange-bright: #ffaa55;
+  --green: #2ecc71;
+  --green-dim: rgba(46, 204, 113, 0.14);
+  --red: #e74c3c;
+  --red-dim: rgba(231, 76, 60, 0.14);
+  --blue: #3498db;
+  --yellow: #f1c40f;
+  --yellow-dim: rgba(241, 196, 15, 0.14);
+  --text: #e8eaed;
+  --text-muted: #8b949e;
+  --text-dim: #555d66;
+  --border: rgba(255, 255, 255, 0.06);
+  --card-bg: rgba(17, 24, 32, 0.80);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --transition: 0.18s ease;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; }
+body {
+  min-height: 100vh; font-family: var(--font);
+  background: var(--bg); color: var(--text); line-height: 1.5;
+}
+body::before {
+  content: ''; position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 900px; height: 500px;
+  background: radial-gradient(ellipse, rgba(255,122,26,0.06), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.site {
+  position: relative; z-index: 1;
+  max-width: 960px; margin: 0 auto; padding: 24px 16px 60px;
+}
+.header { margin-bottom: 32px; text-align: center; }
+.header img {
+  width: 100%; max-width: 960px; height: auto; display: block;
+  border-radius: var(--radius);
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 0 40px var(--panel-glow), 0 16px 48px rgba(0,0,0,0.35);
+}
+.nav { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.nav a { color: var(--orange); text-decoration: none; font-size: 0.85rem; font-weight: 600; }
+.nav a:hover { color: var(--orange-bright); }
+.nav .sep { color: var(--text-dim); }
+.nav .current { color: var(--text); }
+.page-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; letter-spacing: 1px; }
+.page-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 32px; }
+.loading { text-align: center; padding: 60px 0; color: var(--text-muted); font-size: 0.9rem; }
+.loading .spinner {
+  display: inline-block; width: 28px; height: 28px;
+  border: 3px solid var(--border); border-top-color: var(--blue);
+  border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Summary stats */
+.whale-stats {
+  display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;
+}
+.whale-stat {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px 20px;
+  font-size: 0.82rem;
+}
+.whale-stat strong { color: var(--text); font-family: var(--mono); }
+
+/* Feed */
+.feed { margin-bottom: 32px; }
+.whale-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 6px;
+  font-size: 0.82rem;
+  transition: all var(--transition);
+}
+.whale-row:hover { border-color: var(--panel-border); }
+.whale-row.tier-yellow { border-left: 3px solid var(--yellow); }
+.whale-row.tier-orange { border-left: 3px solid var(--orange); }
+.whale-row.tier-red { border-left: 3px solid var(--red); }
+
+.whale-time { color: var(--text-dim); font-family: var(--mono); font-size: 0.7rem; width: 50px; flex-shrink: 0; }
+.whale-token { font-weight: 700; width: 70px; flex-shrink: 0; }
+.whale-amount { font-family: var(--mono); font-weight: 700; width: 100px; flex-shrink: 0; text-align: right; }
+.whale-amount.tier-yellow { color: var(--yellow); }
+.whale-amount.tier-orange { color: var(--orange); }
+.whale-amount.tier-red { color: var(--red); }
+.whale-dir {
+  display: inline-block; padding: 2px 10px; border-radius: 6px;
+  font-size: 0.7rem; font-weight: 700; font-family: var(--mono);
+  text-transform: uppercase; width: 56px; text-align: center; flex-shrink: 0;
+}
+.whale-dir.buy { background: var(--green-dim); color: var(--green); }
+.whale-dir.sell { background: var(--red-dim); color: var(--red); }
+.whale-dex { color: var(--text-dim); font-size: 0.7rem; width: 80px; flex-shrink: 0; }
+.whale-tx { margin-left: auto; }
+.whale-tx a {
+  color: var(--blue); text-decoration: none; font-size: 0.7rem; font-family: var(--mono);
+}
+.whale-tx a:hover { text-decoration: underline; }
+
+.legend {
+  display: flex; gap: 20px; margin-bottom: 20px; font-size: 0.75rem; color: var(--text-muted);
+  flex-wrap: wrap;
+}
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+.refresh-note { text-align: center; color: var(--text-dim); font-size: 0.7rem; margin-top: 24px; }
+.footer { text-align: center; margin-top: 48px; color: var(--text-dim); font-size: 0.75rem; }
+
+@media (max-width: 700px) {
+  .whale-dex, .whale-time { display: none; }
+  .whale-token { width: 60px; }
+  .whale-amount { width: 80px; }
+}
+</style>
+</head>
+<body>
+
+<div class="site">
+  <div class="header"><a href="/"><img src="assets/header-posadaweb.png" alt="Posada.io"></a></div>
+  <div class="nav">
+    <a href="/">Home</a><span class="sep">/</span>
+    <span class="current">Whale Watch</span>
+  </div>
+
+  <h2 class="page-title">Whale Watch</h2>
+  <p class="page-sub">Large trades on Cardano DEXs — tracking swaps over 5,000 ADA</p>
+
+  <div id="loading" class="loading"><div class="spinner"></div><br>Scanning for whales...</div>
+
+  <div id="content" style="display:none">
+    <div class="whale-stats" id="stats"></div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div> 5K+ ADA</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div> 25K+ ADA</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> 100K+ ADA</div>
+    </div>
+
+    <div class="feed" id="feed"></div>
+    <div class="refresh-note" id="refreshNote"></div>
+  </div>
+
+  <div class="footer">&copy; 2026 Posada &mdash; Built on Cardano</div>
+</div>
+
+<script>
+function timeAgo(ts) {
+  const diff = Math.floor(Date.now() / 1000 - ts);
+  if (diff < 60) return 'now';
+  if (diff < 3600) return Math.floor(diff / 60) + 'm';
+  if (diff < 86400) return Math.floor(diff / 3600) + 'h';
+  return Math.floor(diff / 86400) + 'd';
+}
+
+function fmtAda(n) {
+  if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
+  return Number(n).toLocaleString();
+}
+
+function tier(ada) {
+  if (ada >= 100000) return 'red';
+  if (ada >= 25000) return 'orange';
+  return 'yellow';
+}
+
+async function render() {
+  try {
+    const r = await fetch('/api/whales.php');
+    const data = await r.json();
+    if (data.error && !data.trades) throw new Error(data.error);
+
+    const trades = data.trades || [];
+
+    // Summary stats
+    const totalAda = trades.reduce((s, t) => s + (t.ada_amount || 0), 0);
+    const buys = trades.filter(t => t.direction === 'BUY').length;
+    const sells = trades.filter(t => t.direction === 'SELL').length;
+
+    document.getElementById('stats').innerHTML = `
+      <div class="whale-stat">Whale trades: <strong>${trades.length}</strong></div>
+      <div class="whale-stat">Total volume: <strong>${fmtAda(totalAda)} \u20B3</strong></div>
+      <div class="whale-stat">Buys: <strong style="color:var(--green)">${buys}</strong> / Sells: <strong style="color:var(--red)">${sells}</strong></div>
+      <div class="whale-stat">Block: <strong>#${data.block || '\u2014'}</strong></div>
+    `;
+
+    // Feed
+    if (trades.length === 0) {
+      document.getElementById('feed').innerHTML =
+        '<div style="text-align:center;color:var(--text-dim);padding:40px;font-size:0.85rem;">No whale trades detected in the last ~17 minutes. Check back soon.</div>';
+    } else {
+      document.getElementById('feed').innerHTML = trades.map(t => {
+        const ti = tier(t.ada_amount);
+        const dirCls = t.direction === 'SELL' ? 'sell' : 'buy';
+        const txShort = t.tx_hash ? t.tx_hash.substring(0, 8) + '...' : '';
+        const txLink = t.tx_hash ? `https://cardanoscan.io/transaction/${t.tx_hash}` : '';
+        return `<div class="whale-row tier-${ti}">
+          <div class="whale-time">${timeAgo(t.time)}</div>
+          <div class="whale-token">${t.token || '???'}</div>
+          <div class="whale-amount tier-${ti}">${fmtAda(t.ada_amount)} \u20B3</div>
+          <div class="whale-dir ${dirCls}">${t.direction}</div>
+          <div class="whale-dex">${t.dex || ''}</div>
+          <div class="whale-tx">${txLink ? `<a href="${txLink}" target="_blank">${txShort}</a>` : ''}</div>
+        </div>`;
+      }).join('');
+    }
+
+    if (data.updated_at) {
+      const d = new Date(data.updated_at * 1000);
+      document.getElementById('refreshNote').textContent =
+        'Last updated: ' + d.toLocaleTimeString() + ' \u2022 Auto-refreshes every 2 min';
+    }
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('content').style.display = '';
+  } catch (e) {
+    document.getElementById('loading').innerHTML =
+      '<span style="color:var(--red)">Failed to load whale data.</span>';
+    console.error(e);
+  }
+}
+
+render();
+setInterval(render, 120000);
+</script>
+</body>
+</html>

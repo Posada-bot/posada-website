@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Posada — Token Analysis</title>
+<style>
+:root {
+  --bg: #080b12;
+  --panel-border: rgba(255, 140, 50, 0.22);
+  --panel-glow: rgba(255, 122, 26, 0.06);
+  --orange: #ff8c32;
+  --orange-bright: #ffaa55;
+  --orange-dim: rgba(255, 140, 50, 0.14);
+  --green: #2ecc71;
+  --green-dim: rgba(46, 204, 113, 0.14);
+  --red: #e74c3c;
+  --red-dim: rgba(231, 76, 60, 0.14);
+  --yellow: #f1c40f;
+  --yellow-dim: rgba(241, 196, 15, 0.14);
+  --blue: #3498db;
+  --blue-dim: rgba(52, 152, 219, 0.14);
+  --text: #e8eaed;
+  --text-muted: #8b949e;
+  --text-dim: #555d66;
+  --border: rgba(255, 255, 255, 0.06);
+  --card-bg: rgba(17, 24, 32, 0.80);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --transition: 0.18s ease;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; }
+body {
+  min-height: 100vh; font-family: var(--font);
+  background: var(--bg); color: var(--text); line-height: 1.5;
+}
+body::before {
+  content: ''; position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 900px; height: 500px;
+  background: radial-gradient(ellipse, rgba(255,122,26,0.06), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.site {
+  position: relative; z-index: 1;
+  max-width: 960px; margin: 0 auto; padding: 24px 16px 60px;
+}
+
+/* Header */
+.header { margin-bottom: 32px; text-align: center; }
+.header img {
+  width: 100%; max-width: 960px; height: auto; display: block;
+  border-radius: var(--radius);
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 0 40px var(--panel-glow), 0 16px 48px rgba(0,0,0,0.35);
+}
+
+/* Nav */
+.nav { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.nav a {
+  color: var(--orange); text-decoration: none; font-size: 0.85rem;
+  font-weight: 600; letter-spacing: 0.5px;
+}
+.nav a:hover { color: var(--orange-bright); }
+.nav .sep { color: var(--text-dim); }
+.nav .current { color: var(--text); }
+
+/* Token header */
+.token-hero {
+  background: var(--card-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  margin-bottom: 20px;
+}
+.token-hero-top {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 12px; flex-wrap: wrap;
+}
+.token-ticker {
+  font-size: 2rem; font-weight: 800; letter-spacing: 2px;
+}
+.token-badge {
+  padding: 4px 14px; border-radius: 12px;
+  font-size: 0.7rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.token-badge.up { background: var(--green-dim); color: var(--green); }
+.token-badge.down { background: var(--red-dim); color: var(--red); }
+.token-badge.neutral { background: var(--yellow-dim); color: var(--yellow); }
+.token-description {
+  color: var(--text-muted); font-size: 0.85rem;
+  line-height: 1.6; max-width: 700px;
+}
+
+/* Stats grid */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 12px; margin-bottom: 20px;
+}
+.stat-card {
+  background: var(--card-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+}
+.stat-label {
+  font-size: 0.68rem; color: var(--text-dim);
+  text-transform: uppercase; letter-spacing: 0.8px;
+  margin-bottom: 4px;
+}
+.stat-value {
+  font-size: 1.1rem; font-weight: 700;
+  font-family: var(--mono);
+}
+.stat-value.green { color: var(--green); }
+.stat-value.red { color: var(--red); }
+
+/* Strategy section */
+.section-title {
+  font-size: 1.1rem; font-weight: 700;
+  margin-bottom: 14px; letter-spacing: 0.5px;
+}
+
+.strategy-rec {
+  background: var(--card-bg);
+  border: 2px solid var(--orange);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.strategy-rec::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at top left, rgba(255,140,50,0.08), transparent 60%);
+  pointer-events: none;
+}
+.strategy-rec-label {
+  font-size: 0.7rem; color: var(--orange);
+  text-transform: uppercase; letter-spacing: 1px;
+  font-weight: 700; margin-bottom: 4px;
+  position: relative;
+}
+.strategy-rec-name {
+  font-size: 1.5rem; font-weight: 800;
+  letter-spacing: 1px; margin-bottom: 8px;
+  position: relative;
+}
+.strategy-rec-reason {
+  color: var(--text-muted); font-size: 0.85rem;
+  line-height: 1.6; position: relative;
+}
+
+/* All strategies */
+.strat-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; margin-bottom: 20px;
+}
+.strat-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 18px;
+  transition: all var(--transition);
+}
+.strat-card.recommended {
+  border-color: var(--orange);
+}
+.strat-card-name {
+  font-weight: 700; font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+.strat-card-desc {
+  font-size: 0.72rem; color: var(--text-muted);
+  margin-bottom: 10px; line-height: 1.5;
+}
+.strat-score-bar {
+  height: 6px; background: var(--border);
+  border-radius: 3px; overflow: hidden;
+}
+.strat-score-fill {
+  height: 100%; border-radius: 3px;
+  transition: width 0.4s ease;
+}
+.strat-score-fill.high { background: var(--green); }
+.strat-score-fill.medium { background: var(--yellow); }
+.strat-score-fill.low { background: var(--red); }
+.strat-score-label {
+  font-size: 0.65rem; color: var(--text-dim);
+  margin-top: 4px; font-family: var(--mono);
+}
+
+/* Market conditions */
+.conditions {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px; margin-bottom: 20px;
+}
+.cond-card {
+  background: var(--card-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+  padding: 16px; text-align: center;
+}
+.cond-label {
+  font-size: 0.68rem; color: var(--text-dim);
+  text-transform: uppercase; letter-spacing: 0.8px;
+  margin-bottom: 6px;
+}
+.cond-value {
+  font-size: 0.9rem; font-weight: 700;
+}
+.cond-value.green { color: var(--green); }
+.cond-value.red { color: var(--red); }
+.cond-value.yellow { color: var(--yellow); }
+.cond-value.blue { color: var(--blue); }
+
+/* Loading */
+.loading {
+  text-align: center; padding: 60px 0;
+  color: var(--text-muted); font-size: 0.9rem;
+}
+.loading .spinner {
+  display: inline-block; width: 28px; height: 28px;
+  border: 3px solid var(--border); border-top-color: var(--orange);
+  border-radius: 50%; animation: spin 0.8s linear infinite;
+  margin-bottom: 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.footer {
+  text-align: center; margin-top: 48px;
+  color: var(--text-dim); font-size: 0.75rem;
+}
+
+@media (max-width: 700px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .strat-grid { grid-template-columns: 1fr; }
+  .conditions { grid-template-columns: 1fr; }
+  .token-ticker { font-size: 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="site">
+  <div class="header">
+    <a href="/"><img src="assets/header-posadaweb.png" alt="Posada.io"></a>
+  </div>
+
+  <div class="nav">
+    <a href="/">Home</a>
+    <span class="sep">/</span>
+    <a href="tokens.html">Tokens</a>
+    <span class="sep">/</span>
+    <span class="current" id="navTicker">...</span>
+  </div>
+
+  <div id="loading" class="loading">
+    <div class="spinner"></div><br>
+    Analysing token...
+  </div>
+
+  <div id="content" style="display:none">
+    <!-- Token hero -->
+    <div class="token-hero">
+      <div class="token-hero-top">
+        <span class="token-ticker" id="heroTicker"></span>
+        <span class="token-badge" id="heroBadge"></span>
+      </div>
+      <div class="token-description" id="heroDesc"></div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Price (ADA)</div>
+        <div class="stat-value" id="statPrice">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">24h Change</div>
+        <div class="stat-value" id="statChange">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">24h Volume</div>
+        <div class="stat-value" id="statVolume">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Liquidity</div>
+        <div class="stat-value" id="statLiquidity">—</div>
+      </div>
+    </div>
+
+    <!-- Market conditions -->
+    <h3 class="section-title">Market Conditions</h3>
+    <div class="conditions">
+      <div class="cond-card">
+        <div class="cond-label">Trend</div>
+        <div class="cond-value" id="condTrend">—</div>
+      </div>
+      <div class="cond-card">
+        <div class="cond-label">Volatility</div>
+        <div class="cond-value" id="condVol">—</div>
+      </div>
+      <div class="cond-card">
+        <div class="cond-label">Momentum</div>
+        <div class="cond-value" id="condMom">—</div>
+      </div>
+    </div>
+
+    <!-- Recommended strategy -->
+    <h3 class="section-title">Recommended Strategy</h3>
+    <div class="strategy-rec">
+      <div class="strategy-rec-label">Best fit right now</div>
+      <div class="strategy-rec-name" id="recName">—</div>
+      <div class="strategy-rec-reason" id="recReason">—</div>
+    </div>
+
+    <!-- All strategies scored -->
+    <h3 class="section-title">Strategy Scores</h3>
+    <div class="strat-grid" id="stratGrid"></div>
+  </div>
+
+  <div class="footer">&copy; 2026 Posada — Built on Cardano</div>
+</div>
+
+<script>
+const DESCRIPTIONS = {
+  ADA: "Cardano (ADA) is a proof-of-stake layer-1 blockchain platform designed for security, scalability and sustainability. Founded by Charles Hoskinson, it uses a peer-reviewed research-first approach and the Ouroboros consensus protocol.",
+  SNEK: "SNEK is the largest community memecoin on Cardano. Born from the community with no VC funding, it has grown into one of the most traded tokens on the network with a strong social following.",
+  MIN: "Minswap (MIN) is the governance token of Minswap DEX, the largest decentralised exchange on Cardano by TVL. It powers liquidity provision, yield farming, and protocol governance.",
+  IAG: "Iagon (IAG) is building a decentralised storage and computing marketplace on Cardano, allowing users to monetise unused storage and processing power through a shared economy model.",
+  NIGHT: "NIGHT is the utility token of the Night protocol, focused on concentrated liquidity solutions on Cardano, enabling more capital-efficient trading and liquidity provision.",
+  STRIKE: "Strike Finance (STRIKE) is a lending and borrowing protocol on Cardano, enabling users to supply assets for yield and borrow against their holdings with algorithmic interest rates.",
+  SUNDAE: "SundaeSwap (SUNDAE) is one of the earliest DEXes on Cardano. Its governance token powers protocol decisions and fee sharing for liquidity providers.",
+  WMTX: "World Mobile Token (WMTX) aims to connect the unconnected through a decentralised mobile network, starting in Africa. The token powers network participation and staking rewards.",
+  INDY: "Indigo Protocol (INDY) enables creation of synthetic assets (iAssets) on Cardano, letting users gain exposure to real-world assets like BTC and USD without leaving the ecosystem.",
+  FLDT: "Fluid Tokens (FLDT) provides NFT-backed lending and liquidity solutions on Cardano, allowing NFT holders to unlock value from their digital assets without selling.",
+  MITHR: "Mithril (MITHR) implements stake-based threshold multi-signatures on Cardano, enabling lightweight and efficient chain verification for faster sync times and cross-chain bridges.",
+  RISE: "RISE is a community-driven token on Cardano focused on ecosystem growth and DeFi participation, with governance features for community decision-making.",
+  HOSKY: "HOSKY is the original Cardano memecoin — self-described as a 'rug pull' that became a beloved community token. Zero utility, maximum memes, and surprisingly persistent market presence.",
+  NTX: "NuNet (NTX) is building a decentralised computing framework that connects computing resources globally, partnered with SingularityNET for AI workload distribution.",
+  IBTC: "iBTC is Indigo Protocol's synthetic Bitcoin on Cardano, allowing users to gain BTC price exposure natively on the Cardano blockchain through the Indigo CDP mechanism.",
+  SURF: "Surf Finance (SURF) is a yield aggregator on Cardano that optimises DeFi returns by auto-compounding and rebalancing strategies across multiple protocols.",
+  RSERG: "RealSerg (RSERG) is a Cardano community token with a focus on real-world utility and community engagement within the Cardano ecosystem.",
+  LQ: "Liqwid (LQ) is the leading lending and borrowing protocol on Cardano, offering supply-and-borrow markets with competitive rates and deep liquidity pools.",
+  STUFF: "STUFF is a utility token in the Cardano ecosystem, providing access to various DeFi services and community features.",
+  WMT: "World Mobile (WMT) token powers a blockchain-based telecom network, enabling affordable connectivity in underserved regions through decentralised infrastructure.",
+  NVL: "Nuvola (NVL) provides decentralised cloud computing on Cardano, offering distributed storage and computing resources through a token-incentivised network.",
+  PALM: "PALM is the ecosystem token for Palm NFT Studio, supporting NFT creation, trading, and community engagement on Cardano.",
+  SPLASH: "Splash Protocol (SPLASH) is a Cardano DEX focused on transparent and efficient trading with community governance and liquidity mining rewards.",
+  BTN: "Butane (BTN) is a DeFi utility token on Cardano, serving as fuel for various decentralised financial operations and protocol incentives.",
+  SURGE: "Surge (SURGE) is a DeFi yield protocol on Cardano, offering dynamic yield strategies and liquidity incentives for participants.",
+  HUNT: "HUNT is a gaming and rewards token on Cardano, powering play-to-earn mechanics and community engagement in blockchain gaming.",
+  CSWAP: "CardSwap (CSWAP) is an automated market maker on Cardano, providing token swaps, liquidity pools, and yield farming opportunities.",
+  VYFI: "VyFinance (VYFI) combines AI-driven strategies with DeFi on Cardano, offering neural net-optimised yield farming and auto-compounding vaults.",
+  WRT: "WingRiders (WRT) is a Cardano DEX governance token, powering one of the network's most efficient AMMs with concentrated liquidity features.",
+  FET: "Fetch.ai (FET) is an AI and autonomous agent platform, bridged to Cardano. It enables machine-to-machine value transfer and autonomous economic activity.",
+  AGIX: "SingularityNET (AGIX) is a decentralised AI marketplace, bridged to Cardano. It enables anyone to create, share, and monetise AI services at scale.",
+};
+
+/* ======= Strategy Engine (simplified) ======= */
+const STRATEGIES = {
+  lwmr: {
+    name: "LWMR — Low Volatility Wave Momentum",
+    desc: "Catches gentle price waves in calm markets. Buys dips in uptrends when volatility is low and momentum is building. Best for steady grinders.",
+    score: (m) => {
+      let s = 50;
+      // Low vol = good
+      if (m.vol === "Low") s += 25;
+      else if (m.vol === "Medium") s += 10;
+      else s -= 15;
+      // Needs positive but not explosive momentum
+      if (m.momAbs > 0 && m.momAbs < 5) s += 20;
+      else if (m.momAbs >= 5 && m.momAbs < 10) s += 5;
+      else s -= 10;
+      // Uptrend preferred
+      if (m.trend === "Bullish") s += 10;
+      else if (m.trend === "Bearish") s -= 10;
+      // Good liquidity matters
+      if (m.liqOk) s += 5;
+      return Math.max(0, Math.min(100, s));
+    },
+  },
+  bwr: {
+    name: "BWR — Breakout Wave Rider",
+    desc: "Rides powerful breakout moves when price surges through resistance. Thrives on high momentum and volume spikes. Best for explosive runners.",
+    score: (m) => {
+      let s = 30;
+      // High momentum = great
+      if (m.momAbs > 10) s += 30;
+      else if (m.momAbs > 5) s += 20;
+      else if (m.momAbs > 2) s += 5;
+      else s -= 10;
+      // Volume spike helps
+      if (m.volSpike) s += 15;
+      // Medium/high vol is fine
+      if (m.vol === "High") s += 10;
+      else if (m.vol === "Medium") s += 5;
+      // Strong trend direction
+      if (m.trend === "Bullish" && m.change > 5) s += 15;
+      else if (m.trend === "Bearish" && m.change < -5) s += 10;
+      return Math.max(0, Math.min(100, s));
+    },
+  },
+  vbr: {
+    name: "VBR — Volatility Breakout Reversal",
+    desc: "Catches mean-reversion snaps after volatile overextensions. Buys oversold bounces and sells overbought dumps. Best in choppy, high-volatility markets.",
+    score: (m) => {
+      let s = 30;
+      // High vol = great
+      if (m.vol === "High") s += 30;
+      else if (m.vol === "Medium") s += 15;
+      else s -= 15;
+      // Extreme moves suggest reversal opportunity
+      if (m.momAbs > 8) s += 15;
+      else if (m.momAbs > 4) s += 5;
+      // Recent sharp drop = buy reversal opportunity
+      if (m.change < -5) s += 15;
+      else if (m.change > 10) s += 10; // overbought reversal
+      // Choppy/neutral trend is ideal
+      if (m.trend === "Neutral") s += 10;
+      return Math.max(0, Math.min(100, s));
+    },
+  },
+  lrm: {
+    name: "LRM — Linear Regression Momentum",
+    desc: "Follows the statistical trend using regression analysis. Buys when price is above the regression line and momentum confirms. Best for clearly trending markets.",
+    score: (m) => {
+      let s = 40;
+      // Clear trend direction
+      if (m.trend === "Bullish") s += 20;
+      else if (m.trend === "Bearish") s += 10;
+      else s -= 10; // neutral = bad for trend following
+      // Moderate momentum
+      if (m.momAbs > 2 && m.momAbs < 15) s += 15;
+      else if (m.momAbs >= 15) s += 5; // too extreme
+      // Low-medium vol preferred
+      if (m.vol === "Low") s += 15;
+      else if (m.vol === "Medium") s += 10;
+      else s -= 5;
+      // Liquidity helps
+      if (m.liqOk) s += 5;
+      return Math.max(0, Math.min(100, s));
+    },
+  },
+  rra: {
+    name: "RRA — Relative Rotation Analysis",
+    desc: "Compares token strength relative to the market. Rotates into tokens gaining relative strength and exits those losing it. Best for portfolio rotation across multiple tokens.",
+    score: (m) => {
+      let s = 40;
+      // Outperforming the average = great
+      if (m.relStrength > 0) s += 20;
+      else s -= 5;
+      // Moderate vol is fine
+      if (m.vol === "Medium") s += 10;
+      else if (m.vol === "Low") s += 5;
+      // Works in any trend but prefers some direction
+      if (m.trend !== "Neutral") s += 10;
+      // Better with liquidity
+      if (m.liqOk) s += 10;
+      // Moderate momentum
+      if (m.momAbs > 1 && m.momAbs < 10) s += 10;
+      return Math.max(0, Math.min(100, s));
+    },
+  },
+};
+
+function analyseMarket(token, avgChange) {
+  const ch = token.change_24h || 0;
+  const absChange = Math.abs(ch);
+
+  let vol;
+  if (absChange > 10) vol = "High";
+  else if (absChange > 3) vol = "Medium";
+  else vol = "Low";
+
+  let trend;
+  if (ch > 2) trend = "Bullish";
+  else if (ch < -2) trend = "Bearish";
+  else trend = "Neutral";
+
+  let momentum;
+  if (ch > 5) momentum = "Strong Up";
+  else if (ch > 1) momentum = "Up";
+  else if (ch < -5) momentum = "Strong Down";
+  else if (ch < -1) momentum = "Down";
+  else momentum = "Flat";
+
+  return {
+    change: ch,
+    momAbs: absChange,
+    vol,
+    trend,
+    momentum,
+    volSpike: (token.volume || 0) > 100000,
+    liqOk: (token.volume || 0) > 50000,
+    relStrength: ch - (avgChange || 0),
+  };
+}
+
+function fmt(n) {
+  if (n === null || n === undefined) return "—";
+  if (n >= 1e6) return (n / 1e6).toFixed(1) + "M";
+  if (n >= 1e3) return (n / 1e3).toFixed(1) + "K";
+  return Number(n).toFixed(2);
+}
+function fmtPrice(n) {
+  if (n === null || n === undefined) return "—";
+  if (n >= 1000) return Number(n).toFixed(2);
+  if (n >= 1) return Number(n).toFixed(4);
+  if (n >= 0.001) return Number(n).toFixed(6);
+  if (n >= 0.000001) return Number(n).toFixed(8);
+  return Number(n).toFixed(10);
+}
+
+async function fetchTokens() {
+  const r = await fetch("/api/tokens.php");
+  const data = await r.json();
+  return data.tokens || [];
+}
+
+async function render() {
+  const ticker = new URLSearchParams(location.search).get("t");
+  if (!ticker) { location.href = "tokens.html"; return; }
+
+  document.getElementById("navTicker").textContent = ticker;
+  document.title = `Posada — ${ticker} Analysis`;
+
+  try {
+    const tokens = await fetchTokens();
+    const token = tokens.find(t => t.ticker === ticker.toUpperCase());
+
+    if (!token) {
+      document.getElementById("loading").innerHTML =
+        `<span style="color:var(--red)">Token "${ticker}" not found in top 31.</span>`;
+      return;
+    }
+
+    // Average change for relative strength (skip ADA)
+    const nonAda = tokens.filter(t => t.ticker !== "ADA");
+    const avgChange = nonAda.reduce((s, t) => s + (t.change_24h || 0), 0) / (nonAda.length || 1);
+    const mkt = analyseMarket(token, avgChange);
+
+    // Hero
+    document.getElementById("heroTicker").textContent = token.ticker;
+    const ch = token.change_24h || 0;
+    const hasChange = token.change_24h !== null && token.change_24h !== undefined;
+    const badge = document.getElementById("heroBadge");
+    badge.textContent = hasChange ? (ch > 0 ? `+${ch.toFixed(2)}%` : `${ch.toFixed(2)}%`) : "building...";
+    badge.className = "token-badge " + (hasChange ? (ch > 2 ? "up" : ch < -2 ? "down" : "neutral") : "neutral");
+    document.getElementById("heroDesc").textContent = DESCRIPTIONS[token.ticker] || token.description || token.name;
+
+    // Stats
+    const isAda = token.ticker === "ADA";
+    const priceStr = isAda ? (token.price_usd ? "$" + Number(token.price_usd).toFixed(4) : "—") : fmtPrice(token.price_ada) + " ₳";
+    document.getElementById("statPrice").textContent = priceStr;
+    const chEl = document.getElementById("statChange");
+    chEl.textContent = hasChange ? ((ch > 0 ? "+" : "") + ch.toFixed(2) + "%") : "building...";
+    chEl.className = "stat-value " + (hasChange ? (ch > 0 ? "green" : ch < 0 ? "red" : "") : "");
+    document.getElementById("statVolume").textContent = token.volume ? fmt(token.volume) + " ₳" : "—";
+    document.getElementById("statLiquidity").textContent = "—";
+
+    // Conditions
+    const trendEl = document.getElementById("condTrend");
+    trendEl.textContent = mkt.trend;
+    trendEl.className = "cond-value " + (mkt.trend === "Bullish" ? "green" : mkt.trend === "Bearish" ? "red" : "yellow");
+
+    const volEl = document.getElementById("condVol");
+    volEl.textContent = mkt.vol;
+    volEl.className = "cond-value " + (mkt.vol === "Low" ? "green" : mkt.vol === "High" ? "red" : "yellow");
+
+    const momEl = document.getElementById("condMom");
+    momEl.textContent = mkt.momentum;
+    momEl.className = "cond-value " + (
+      mkt.momentum.includes("Up") ? "green" :
+      mkt.momentum.includes("Down") ? "red" : "blue"
+    );
+
+    // Score strategies
+    const scores = Object.entries(STRATEGIES).map(([key, strat]) => ({
+      key, ...strat, value: strat.score(mkt),
+    })).sort((a, b) => b.value - a.value);
+
+    // Best strategy
+    const best = scores[0];
+    document.getElementById("recName").textContent = best.name;
+
+    let reason = `Based on current conditions: ${mkt.vol.toLowerCase()} volatility, ${mkt.trend.toLowerCase()} trend, and ${mkt.momentum.toLowerCase()} momentum. `;
+    if (best.key === "lwmr") reason += "The market is calm with building momentum — ideal for catching wave dips in a controlled uptrend.";
+    else if (best.key === "bwr") reason += "Strong directional movement with volume — perfect for riding breakout momentum.";
+    else if (best.key === "vbr") reason += "High volatility suggests overextension — reversal strategies can catch the snapback.";
+    else if (best.key === "lrm") reason += "Clear trend direction with moderate pace — regression-based trend following is most reliable here.";
+    else if (best.key === "rra") reason += `This token is ${mkt.relStrength > 0 ? "outperforming" : "underperforming"} the market average — rotation analysis identifies the best relative value.`;
+    document.getElementById("recReason").textContent = reason;
+
+    // Strategy grid
+    const grid = document.getElementById("stratGrid");
+    grid.innerHTML = scores.map(s => {
+      const level = s.value >= 70 ? "high" : s.value >= 40 ? "medium" : "low";
+      const rec = s.key === best.key ? " recommended" : "";
+      return `<div class="strat-card${rec}">
+        <div class="strat-card-name">${s.name}</div>
+        <div class="strat-card-desc">${s.desc}</div>
+        <div class="strat-score-bar"><div class="strat-score-fill ${level}" style="width:${s.value}%"></div></div>
+        <div class="strat-score-label">Score: ${s.value}/100</div>
+      </div>`;
+    }).join("");
+
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("content").style.display = "";
+  } catch (e) {
+    document.getElementById("loading").innerHTML =
+      '<span style="color:var(--red)">Failed to load data. Try refreshing.</span>';
+    console.error(e);
+  }
+}
+
+render();
+</script>
+</body>
+</html>

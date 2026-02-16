@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Posada — Autonomous Cardano Trading</title>
+<style>
+:root {
+  --bg: #080b12;
+  --panel: #111820;
+  --panel-border: rgba(255, 140, 50, 0.22);
+  --panel-glow: rgba(255, 122, 26, 0.06);
+  --orange: #ff8c32;
+  --orange-bright: #ffaa55;
+  --orange-dim: rgba(255, 140, 50, 0.14);
+  --blue: #3498db;
+  --blue-bright: #5dade2;
+  --blue-dim: rgba(52, 152, 219, 0.14);
+  --text: #e8eaed;
+  --text-muted: #8b949e;
+  --text-dim: #555d66;
+  --border: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(255, 255, 255, 0.12);
+  --card-bg: rgba(17, 24, 32, 0.80);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --transition: 0.18s ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; }
+
+body {
+  min-height: 100vh;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+body::before {
+  content: '';
+  position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 900px; height: 500px;
+  background: radial-gradient(ellipse, rgba(255,122,26,0.06), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+.site {
+  position: relative; z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px 60px;
+}
+
+/* ── Header ── */
+.header {
+  margin-bottom: 32px;
+  text-align: center;
+}
+.header img {
+  width: 100%;
+  max-width: 960px;
+  height: auto;
+  display: block;
+  border-radius: var(--radius);
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 0 40px var(--panel-glow), 0 16px 48px rgba(0,0,0,0.35);
+}
+
+/* ── Button Grid ── */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.btn-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--orange);
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: var(--text);
+  transition: all var(--transition);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.btn-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, rgba(255,140,50,0.05), transparent 70%);
+  pointer-events: none;
+}
+.btn-card:hover {
+  border-color: var(--orange-bright);
+  box-shadow: 0 0 24px rgba(255,140,50,0.15), 0 8px 32px rgba(0,0,0,0.3);
+  transform: translateY(-2px);
+}
+.btn-card:active {
+  transform: translateY(0);
+}
+
+.btn-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-align: center;
+  position: relative;
+}
+.btn-card-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
+  position: relative;
+}
+
+/* Primary button (POSADA BOT, TOKENS) — brighter */
+.btn-card.primary {
+  border-width: 2px;
+  background: linear-gradient(135deg, rgba(255,140,50,0.12), var(--card-bg));
+}
+.btn-card.primary .btn-card-title {
+  color: var(--orange);
+  font-size: 1.3rem;
+}
+
+/* Feature button — blue */
+.btn-card.feature {
+  border-color: var(--blue);
+}
+.btn-card.feature::before {
+  background: radial-gradient(ellipse at center, rgba(52,152,219,0.05), transparent 70%);
+}
+.btn-card.feature:hover {
+  border-color: var(--blue-bright);
+  box-shadow: 0 0 24px rgba(52,152,219,0.15), 0 8px 32px rgba(0,0,0,0.3);
+}
+.btn-card.feature .btn-card-title {
+  color: var(--blue);
+}
+
+/* Coming soon — dimmed */
+.btn-card.soon {
+  border-color: var(--border);
+  cursor: default;
+  opacity: 0.5;
+}
+.btn-card.soon:hover {
+  border-color: var(--border);
+  box-shadow: none;
+  transform: none;
+}
+.btn-card.soon .btn-card-title {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+/* ── Footer ── */
+.footer {
+  text-align: center;
+  margin-top: 48px;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .grid { grid-template-columns: 1fr; }
+  .header-title { font-size: 1.6rem; letter-spacing: 2px; }
+  .header { padding: 32px 16px; }
+  .btn-card { padding: 24px 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="site">
+
+  <!-- Header -->
+  <div class="header">
+    <img src="assets/header-posadaweb.png" alt="Posada.io">
+  </div>
+
+  <!-- Button Grid -->
+  <div class="grid">
+
+    <!-- Row 1: Primary -->
+    <a href="buy.html" class="btn-card primary">
+      <span class="btn-card-title">Posada Bot</span>
+      <span class="btn-card-desc">Purchase license &amp; download</span>
+    </a>
+
+    <a href="tokens.html" class="btn-card primary">
+      <span class="btn-card-title">Tokens</span>
+      <span class="btn-card-desc">Live prices &amp; strategy analysis</span>
+    </a>
+
+    <!-- Row 2 -->
+    <a href="leaderboard.html" class="btn-card">
+      <span class="btn-card-title">Leaderboard</span>
+      <span class="btn-card-desc">Live trades &amp; top traders</span>
+    </a>
+
+    <a href="performance.html" class="btn-card feature">
+      <span class="btn-card-title">Strategy Performance</span>
+      <span class="btn-card-desc">Win rates &amp; P&amp;L by strategy</span>
+    </a>
+
+    <!-- Row 3 -->
+    <a href="movers.html" class="btn-card feature">
+      <span class="btn-card-title">Top Movers</span>
+      <span class="btn-card-desc">Biggest gainers &amp; losers</span>
+    </a>
+
+    <a href="pulse.html" class="btn-card feature">
+      <span class="btn-card-title">Market Pulse</span>
+      <span class="btn-card-desc">DEX volume, sentiment &amp; trends</span>
+    </a>
+
+    <!-- Row 4 -->
+    <a href="whales.html" class="btn-card feature">
+      <span class="btn-card-title">Whale Watch</span>
+      <span class="btn-card-desc">Large trades on Cardano DEXs</span>
+    </a>
+
+    <a href="backtest.html" class="btn-card feature">
+      <span class="btn-card-title">Backtester</span>
+      <span class="btn-card-desc">Test strategies on historical data</span>
+    </a>
+
+    <!-- Row 5 -->
+    <a href="simulator.html" class="btn-card feature">
+      <span class="btn-card-title">Portfolio Simulator</span>
+      <span class="btn-card-desc">Simulate Posada with your ADA</span>
+    </a>
+
+    <a href="strategies.html" class="btn-card">
+      <span class="btn-card-title">Strategies Explained</span>
+      <span class="btn-card-desc">How each trading strategy works</span>
+    </a>
+
+    <!-- Row 6 -->
+    <a href="whitepaper.html" class="btn-card">
+      <span class="btn-card-title">Whitepaper</span>
+      <span class="btn-card-desc">Strategy logic &amp; architecture</span>
+    </a>
+
+    <a href="docs.html" class="btn-card">
+      <span class="btn-card-title">Documentation</span>
+      <span class="btn-card-desc">Full API &amp; configuration reference</span>
+    </a>
+
+    <!-- Row 7 -->
+    <a href="readme.pdf" target="_blank" class="btn-card">
+      <span class="btn-card-title">Readme</span>
+      <span class="btn-card-desc">Getting started &amp; setup guide</span>
+    </a>
+
+    <div class="btn-card soon">
+      <span class="btn-card-title">Coming Soon</span>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    &copy; 2026 Posada &mdash; Built on Cardano
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Posada — Strategy Guide</title>
+<style>
+:root {
+  --bg: #080b12;
+  --panel-border: rgba(255, 140, 50, 0.22);
+  --panel-glow: rgba(255, 122, 26, 0.06);
+  --orange: #ff8c32;
+  --orange-bright: #ffaa55;
+  --orange-dim: rgba(255, 140, 50, 0.14);
+  --green: #2ecc71;
+  --green-dim: rgba(46, 204, 113, 0.14);
+  --red: #e74c3c;
+  --red-dim: rgba(231, 76, 60, 0.14);
+  --yellow: #f1c40f;
+  --yellow-dim: rgba(241, 196, 15, 0.14);
+  --blue: #3498db;
+  --blue-dim: rgba(52, 152, 219, 0.14);
+  --text: #e8eaed;
+  --text-muted: #8b949e;
+  --text-dim: #555d66;
+  --border: rgba(255, 255, 255, 0.06);
+  --card-bg: rgba(17, 24, 32, 0.80);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --transition: 0.18s ease;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; }
+body {
+  min-height: 100vh; font-family: var(--font);
+  background: var(--bg); color: var(--text); line-height: 1.6;
+}
+body::before {
+  content: ''; position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 900px; height: 500px;
+  background: radial-gradient(ellipse, rgba(255,122,26,0.06), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.site {
+  position: relative; z-index: 1;
+  max-width: 960px; margin: 0 auto; padding: 24px 16px 60px;
+}
+.header { margin-bottom: 32px; text-align: center; }
+.header img {
+  width: 100%; max-width: 960px; height: auto; display: block;
+  border-radius: var(--radius);
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 0 40px var(--panel-glow), 0 16px 48px rgba(0,0,0,0.35);
+}
+.nav { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.nav a { color: var(--orange); text-decoration: none; font-size: 0.85rem; font-weight: 600; }
+.nav a:hover { color: var(--orange-bright); }
+.nav .sep { color: var(--text-dim); }
+.nav .current { color: var(--text); }
+
+.page-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; letter-spacing: 1px; }
+.page-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 32px; max-width: 680px; }
+
+/* Strategy cards */
+.strat-section { margin-bottom: 32px; }
+
+.strat-header {
+  background: var(--card-bg);
+  border: 2px solid var(--orange);
+  border-radius: var(--radius) var(--radius) 0 0;
+  padding: 20px 24px;
+  position: relative; overflow: hidden;
+}
+.strat-header::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at top left, rgba(255,140,50,0.08), transparent 60%);
+  pointer-events: none;
+}
+.strat-abbr {
+  font-size: 0.7rem; color: var(--orange); text-transform: uppercase;
+  letter-spacing: 1.5px; font-weight: 700; margin-bottom: 2px;
+  position: relative;
+}
+.strat-name {
+  font-size: 1.2rem; font-weight: 800; letter-spacing: 0.5px;
+  position: relative;
+}
+.strat-oneliner {
+  font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;
+  position: relative;
+}
+
+.strat-body {
+  background: var(--card-bg);
+  border: 1px solid var(--panel-border);
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 24px;
+}
+
+.strat-body h4 {
+  font-size: 0.8rem; font-weight: 700; color: var(--orange);
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-top: 18px; margin-bottom: 8px;
+}
+.strat-body h4:first-child { margin-top: 0; }
+
+.strat-body p {
+  font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px;
+}
+
+.strat-body ul {
+  list-style: none; padding: 0; margin-bottom: 8px;
+}
+.strat-body li {
+  font-size: 0.82rem; color: var(--text-muted);
+  padding: 4px 0 4px 18px; position: relative;
+}
+.strat-body li::before {
+  content: ''; position: absolute; left: 0; top: 11px;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--orange);
+}
+
+/* Signal tags */
+.signal { display: inline-block; padding: 2px 10px; border-radius: 8px; font-size: 0.72rem; font-weight: 700; font-family: var(--mono); letter-spacing: 0.5px; }
+.signal.buy { background: var(--green-dim); color: var(--green); }
+.signal.sell { background: var(--red-dim); color: var(--red); }
+.signal.add { background: var(--blue-dim); color: var(--blue); }
+.signal.half { background: var(--yellow-dim); color: var(--yellow); }
+
+/* Best-for tags */
+.best-for {
+  display: inline-block; padding: 4px 14px; border-radius: 10px;
+  font-size: 0.72rem; font-weight: 600;
+  background: var(--orange-dim); color: var(--orange);
+  margin-top: 4px;
+}
+
+/* Quick comparison table */
+.compare-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 32px; }
+.compare-table th {
+  text-align: left; padding: 10px 14px; font-size: 0.7rem;
+  color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px;
+  border-bottom: 1px solid var(--panel-border);
+}
+.compare-table td {
+  padding: 12px 14px; font-size: 0.82rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.compare-table td:first-child { font-weight: 700; color: var(--text); }
+.compare-table tr:last-child td { border-bottom: none; }
+
+.footer { text-align: center; margin-top: 48px; color: var(--text-dim); font-size: 0.75rem; }
+
+@media (max-width: 700px) {
+  .strat-header { padding: 16px 16px; }
+  .strat-body { padding: 16px; }
+  .compare-table { font-size: 0.75rem; }
+  .compare-table th, .compare-table td { padding: 8px 8px; }
+}
+</style>
+</head>
+<body>
+
+<div class="site">
+  <div class="header"><a href="/"><img src="assets/header-posadaweb.png" alt="Posada.io"></a></div>
+
+  <div class="nav">
+    <a href="/">Home</a>
+    <span class="sep">/</span>
+    <a href="tokens.html">Tokens</a>
+    <span class="sep">/</span>
+    <span class="current">Strategies</span>
+  </div>
+
+  <h2 class="page-title">Trading Strategies Explained</h2>
+  <p class="page-sub">Posada runs five autonomous strategies simultaneously. Each one watches price history and generates signals — BUY, SELL, ADD, or SELL_HALF. The bot picks the best strategy for each token based on current market conditions.</p>
+
+  <!-- Quick comparison -->
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>Strategy</th>
+        <th>Market Type</th>
+        <th>Risk Level</th>
+        <th>Hold Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>LWMR</td><td>Calm, ranging</td><td>Low</td><td>Hours to days</td></tr>
+      <tr><td>BWR</td><td>Breakout / trending</td><td>Medium</td><td>Hours</td></tr>
+      <tr><td>VBR</td><td>Volatile, choppy</td><td>Medium-High</td><td>Hours to days</td></tr>
+      <tr><td>LRM</td><td>Trending, momentum</td><td>Medium</td><td>Minutes to hours</td></tr>
+      <tr><td>RRA</td><td>Any (relative)</td><td>Low-Medium</td><td>Hours to days</td></tr>
+    </tbody>
+  </table>
+
+  <!-- LWMR -->
+  <div class="strat-section">
+    <div class="strat-header">
+      <div class="strat-abbr">LWMR</div>
+      <div class="strat-name">Liquidity Weighted Mean Reversion</div>
+      <div class="strat-oneliner">Buy the dip, sell the recovery.</div>
+    </div>
+    <div class="strat-body">
+      <h4>How it works</h4>
+      <p>LWMR calculates a 20-period moving average and standard deviation of recent prices. When the price drops significantly below the mean (at least 1 standard deviation or 2%, whichever is greater), it triggers a buy — the idea being that prices tend to revert back to their average.</p>
+
+      <h4>Entry signal</h4>
+      <ul>
+        <li>Price falls below the mean by more than the dynamic threshold</li>
+        <li>Threshold adapts to volatility — wider bands in choppy markets, tighter in calm ones</li>
+      </ul>
+
+      <h4>Exit signals</h4>
+      <ul>
+        <li><span class="signal sell">SELL</span> Price reverts back to the mean — profit taken</li>
+        <li><span class="signal sell">SELL</span> Take-profit target hit (default 8%)</li>
+        <li><span class="signal sell">SELL</span> Stop-loss triggered (default -10%)</li>
+      </ul>
+
+      <h4>Position management</h4>
+      <ul>
+        <li><span class="signal add">ADD</span> If price drops 1.5x deeper than entry threshold, the bot adds to the position (up to 2 adds)</li>
+        <li>Cooldown between adds prevents overcommitting</li>
+      </ul>
+
+      <h4>Best for</h4>
+      <p><span class="best-for">Calm, low-volatility markets</span> Works best on tokens that trade in a predictable range. Steady grinders like MIN, INDY, or stablecoin-adjacent pairs.</p>
+    </div>
+  </div>
+
+  <!-- BWR -->
+  <div class="strat-section">
+    <div class="strat-header">
+      <div class="strat-abbr">BWR</div>
+      <div class="strat-name">Breakout With Retest</div>
+      <div class="strat-oneliner">Catch the breakout, ride the trend.</div>
+    </div>
+    <div class="strat-body">
+      <h4>How it works</h4>
+      <p>BWR looks at the last 30 price candles to identify resistance levels. When price breaks above resistance and then pulls back slightly (the "retest"), it buys — confirming the breakout is real, not a fakeout. This is a classic technical analysis pattern used by professional traders.</p>
+
+      <h4>Entry signal</h4>
+      <ul>
+        <li>Recent high breaks above the resistance level from the last 25 candles (by at least 0.5%)</li>
+        <li>Current price has pulled back from the high (retest) but stays above resistance</li>
+        <li>All three conditions must be true simultaneously</li>
+      </ul>
+
+      <h4>Exit signals</h4>
+      <ul>
+        <li><span class="signal sell">SELL</span> Price falls 3% below the breakout level — breakout failed</li>
+        <li><span class="signal sell">SELL</span> Take-profit or stop-loss hit</li>
+      </ul>
+
+      <h4>Position management</h4>
+      <ul>
+        <li><span class="signal add">ADD</span> If price climbs 2% above entry, the bot adds once — momentum confirmed</li>
+        <li>Max 1 add per breakout trade</li>
+      </ul>
+
+      <h4>Best for</h4>
+      <p><span class="best-for">Trending markets with strong momentum</span> Works on tokens making new highs — NIGHT during rally phases, SNEK during hype cycles, or any token breaking out of a consolidation range.</p>
+    </div>
+  </div>
+
+  <!-- VBR -->
+  <div class="strat-section">
+    <div class="strat-header">
+      <div class="strat-abbr">VBR</div>
+      <div class="strat-name">Volatility Band Reversion</div>
+      <div class="strat-oneliner">Trade the extremes using Bollinger Bands.</div>
+    </div>
+    <div class="strat-body">
+      <h4>How it works</h4>
+      <p>VBR uses Bollinger Bands — a channel drawn 2 standard deviations above and below a 20-period moving average. When price drops below the lower band, it's statistically oversold. The bot buys and waits for price to snap back toward the middle or upper band.</p>
+
+      <h4>Entry signal</h4>
+      <ul>
+        <li>Price drops below the lower Bollinger Band</li>
+        <li>This means the token has moved more than 2 standard deviations from its recent average — an extreme move that often reverses</li>
+      </ul>
+
+      <h4>Exit signals</h4>
+      <ul>
+        <li><span class="signal half">SELL_HALF</span> Price reaches the middle band — lock in partial profit</li>
+        <li><span class="signal sell">SELL</span> Price reaches the upper band — full exit at the other extreme</li>
+        <li><span class="signal sell">SELL</span> Take-profit or stop-loss hit</li>
+      </ul>
+
+      <h4>Position management</h4>
+      <ul>
+        <li><span class="signal half">SELL_HALF</span> is unique to VBR — it sells 50% at the midline, letting the rest ride to the upper band</li>
+        <li><span class="signal add">ADD</span> If price drops below the lower band again after entry, the bot adds up to 3 times</li>
+        <li>This aggressive adding works because extreme band violations have high mean-reversion probability</li>
+      </ul>
+
+      <h4>Best for</h4>
+      <p><span class="best-for">Volatile, choppy markets</span> Thrives when tokens are swinging wildly — HOSKY during meme cycles, or any token with large daily swings. The wider the bands, the bigger the opportunity.</p>
+    </div>
+  </div>
+
+  <!-- LRM -->
+  <div class="strat-section">
+    <div class="strat-header">
+      <div class="strat-abbr">LRM</div>
+      <div class="strat-name">Liquidity Rotation Momentum</div>
+      <div class="strat-oneliner">Follow the momentum, exit when it fades.</div>
+    </div>
+    <div class="strat-body">
+      <h4>How it works</h4>
+      <p>LRM is a pure momentum strategy. It measures how much a token's price has moved over the last 3 and 5 candles. When both short-term and medium-term momentum are positive and strong enough, it buys — riding the wave of buying pressure. When momentum reverses, it exits quickly.</p>
+
+      <h4>Entry signal</h4>
+      <ul>
+        <li>5-period momentum above +1% AND 3-period momentum above +0.5%</li>
+        <li>Both timeframes must agree — this filters out noise and catches genuine moves</li>
+      </ul>
+
+      <h4>Exit signals</h4>
+      <ul>
+        <li><span class="signal sell">SELL</span> 5-period momentum drops below -1% — the trend has reversed</li>
+        <li><span class="signal sell">SELL</span> Take-profit or stop-loss hit</li>
+      </ul>
+
+      <h4>Position management</h4>
+      <ul>
+        <li><span class="signal add">ADD</span> If momentum exceeds +2%, the bot adds to the position (up to 2 adds)</li>
+        <li>This is the most aggressive strategy for riding strong moves</li>
+        <li>Fast entry and exit — trades can last minutes to hours</li>
+      </ul>
+
+      <h4>Best for</h4>
+      <p><span class="best-for">Clearly trending markets</span> The go-to strategy when a token is on a sustained run. Works on tokens with strong catalysts — project announcements, exchange listings, or market-wide rallies. Most active of all five strategies.</p>
+    </div>
+  </div>
+
+  <!-- RRA -->
+  <div class="strat-section">
+    <div class="strat-header">
+      <div class="strat-abbr">RRA</div>
+      <div class="strat-name">Relative Rotation Analysis</div>
+      <div class="strat-oneliner">Rotate into tokens outperforming the market.</div>
+    </div>
+    <div class="strat-body">
+      <h4>How it works</h4>
+      <p>RRA doesn't just look at whether a token is going up — it asks whether it's going up <em>faster than the rest of the market</em>. It calculates a rotation score by weighting short-term (3-period) and long-term (10-period) momentum. Tokens with high relative strength get bought; those losing strength get sold.</p>
+
+      <h4>Entry signal</h4>
+      <ul>
+        <li>Rotation score exceeds the threshold (default 1.5)</li>
+        <li>Score = 50% weight on 3-period momentum + 30% weight on 10-period momentum</li>
+        <li>Short-term momentum must also be positive (no fading entries)</li>
+      </ul>
+
+      <h4>Exit signals</h4>
+      <ul>
+        <li><span class="signal sell">SELL</span> Rotation score drops below -0.75 — relative strength has faded</li>
+        <li><span class="signal sell">SELL</span> 5-period momentum drops below -2% — outright reversal</li>
+        <li><span class="signal sell">SELL</span> Take-profit or stop-loss hit</li>
+      </ul>
+
+      <h4>Position management</h4>
+      <ul>
+        <li>No adds — RRA relies on picking the right token at the right time rather than averaging in</li>
+        <li>Designed to work across the full token watchlist, comparing relative performance</li>
+      </ul>
+
+      <h4>Best for</h4>
+      <p><span class="best-for">Portfolio rotation across multiple tokens</span> Excels when different tokens take turns leading the market. Rather than picking one winner, RRA systematically rotates into whichever token has the strongest relative momentum.</p>
+    </div>
+  </div>
+
+  <!-- How the bot chooses -->
+  <div class="strat-section">
+    <div class="strat-header">
+      <div class="strat-abbr">Auto Selection</div>
+      <div class="strat-name">How Posada Picks a Strategy</div>
+      <div class="strat-oneliner">All five run simultaneously — the best signal wins.</div>
+    </div>
+    <div class="strat-body">
+      <h4>The process</h4>
+      <p>Every poll cycle (default 60 seconds), Posada evaluates all enabled strategies against each watched token. The strategies are checked in priority order: LWMR, BWR, VBR, LRM, RRA. The first strategy to produce a BUY signal for a given token wins.</p>
+
+      <h4>Safety checks</h4>
+      <ul>
+        <li>Maximum percentage per trade (default 25% of wallet)</li>
+        <li>Maximum trades per hour (default 10) and per day (default 50)</li>
+        <li>Daily drawdown protection — buys pause if the wallet drops more than 15% in a day</li>
+        <li>Price divergence check — rejects trades if price moved more than 8% between signal and execution</li>
+        <li>Minimum pool liquidity check — skips tokens with thin orderbooks</li>
+        <li>Cooldown between trades on the same token (default 10 minutes)</li>
+      </ul>
+
+      <h4>Once in a position</h4>
+      <p>Each position remembers which strategy opened it. Only that strategy manages the exit — take-profit, stop-loss, ADD, and SELL_HALF signals all come from the same strategy that entered. This prevents conflicting signals from different strategies fighting over the same position.</p>
+    </div>
+  </div>
+
+  <div class="footer">&copy; 2026 Posada — Built on Cardano</div>
+</div>
+
+</body>
+</html>

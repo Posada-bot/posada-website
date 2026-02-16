@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Posada — Strategy Performance</title>
+<style>
+:root {
+  --bg: #080b12;
+  --panel-border: rgba(255, 140, 50, 0.22);
+  --panel-glow: rgba(255, 122, 26, 0.06);
+  --orange: #ff8c32;
+  --orange-bright: #ffaa55;
+  --green: #2ecc71;
+  --green-dim: rgba(46, 204, 113, 0.14);
+  --red: #e74c3c;
+  --red-dim: rgba(231, 76, 60, 0.14);
+  --blue: #3498db;
+  --blue-dim: rgba(52, 152, 219, 0.14);
+  --yellow: #f1c40f;
+  --text: #e8eaed;
+  --text-muted: #8b949e;
+  --text-dim: #555d66;
+  --border: rgba(255, 255, 255, 0.06);
+  --card-bg: rgba(17, 24, 32, 0.80);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --transition: 0.18s ease;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; }
+body {
+  min-height: 100vh; font-family: var(--font);
+  background: var(--bg); color: var(--text); line-height: 1.5;
+}
+body::before {
+  content: ''; position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 900px; height: 500px;
+  background: radial-gradient(ellipse, rgba(255,122,26,0.06), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.site {
+  position: relative; z-index: 1;
+  max-width: 960px; margin: 0 auto; padding: 24px 16px 60px;
+}
+.header { margin-bottom: 32px; text-align: center; }
+.header img {
+  width: 100%; max-width: 960px; height: auto; display: block;
+  border-radius: var(--radius);
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 0 40px var(--panel-glow), 0 16px 48px rgba(0,0,0,0.35);
+}
+.nav { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.nav a { color: var(--orange); text-decoration: none; font-size: 0.85rem; font-weight: 600; }
+.nav a:hover { color: var(--orange-bright); }
+.nav .sep { color: var(--text-dim); }
+.nav .current { color: var(--text); }
+.page-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; letter-spacing: 1px; }
+.page-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 32px; }
+.loading { text-align: center; padding: 60px 0; color: var(--text-muted); font-size: 0.9rem; }
+.loading .spinner {
+  display: inline-block; width: 28px; height: 28px;
+  border: 3px solid var(--border); border-top-color: var(--blue);
+  border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Strategy cards */
+.strat-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+.strat-card {
+  background: var(--card-bg); border: 1px solid var(--panel-border);
+  border-radius: var(--radius); padding: 24px; position: relative; overflow: hidden;
+}
+.strat-card.best { border-color: var(--orange); border-width: 2px; }
+.strat-card.best::after {
+  content: 'BEST'; position: absolute; top: 12px; right: 12px;
+  font-size: 0.6rem; font-weight: 800; color: var(--orange);
+  background: var(--orange-dim); padding: 2px 8px; border-radius: 6px;
+  font-family: var(--mono); letter-spacing: 1px;
+}
+.strat-card-name {
+  font-size: 1.1rem; font-weight: 800; letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.strat-card-full { font-size: 0.72rem; color: var(--text-dim); margin-bottom: 16px; }
+
+.strat-stat-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0; font-size: 0.82rem;
+}
+.strat-stat-label { color: var(--text-muted); }
+.strat-stat-value { font-family: var(--mono); font-weight: 600; }
+.strat-stat-value.pos { color: var(--green); }
+.strat-stat-value.neg { color: var(--red); }
+
+/* Win rate bar */
+.wr-bar-wrap {
+  width: 100%; height: 8px; background: var(--red-dim);
+  border-radius: 4px; overflow: hidden; margin-top: 4px; margin-bottom: 12px;
+}
+.wr-bar-fill {
+  height: 100%; border-radius: 4px;
+  background: linear-gradient(90deg, var(--green), #27ae60);
+  transition: width 0.5s ease;
+}
+
+/* Summary */
+.summary {
+  background: var(--card-bg); border: 1px solid var(--panel-border);
+  border-radius: var(--radius); padding: 24px; text-align: center;
+  margin-bottom: 24px;
+}
+.summary-title { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; }
+.summary-value { font-size: 1.4rem; font-weight: 800; color: var(--orange); }
+
+.no-data {
+  text-align: center; color: var(--text-dim); padding: 60px 20px;
+  font-size: 0.9rem;
+}
+
+.refresh-note { text-align: center; color: var(--text-dim); font-size: 0.7rem; margin-top: 24px; }
+.footer { text-align: center; margin-top: 48px; color: var(--text-dim); font-size: 0.75rem; }
+
+@media (max-width: 700px) {
+  .strat-cards { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="site">
+  <div class="header"><a href="/"><img src="assets/header-posadaweb.png" alt="Posada.io"></a></div>
+  <div class="nav">
+    <a href="/">Home</a><span class="sep">/</span>
+    <a href="leaderboard.html">Leaderboard</a><span class="sep">/</span>
+    <span class="current">Strategy Performance</span>
+  </div>
+
+  <h2 class="page-title">Strategy Performance</h2>
+  <p class="page-sub">Real performance data from opted-in Posada bots — broken down by strategy</p>
+
+  <div id="loading" class="loading"><div class="spinner"></div><br>Loading strategy data...</div>
+
+  <div id="content" style="display:none">
+    <div class="summary" id="summary"></div>
+    <div class="strat-cards" id="cards"></div>
+    <div class="refresh-note" id="refreshNote"></div>
+  </div>
+
+  <div id="noData" class="no-data" style="display:none">
+    No strategy data yet. Trades from opted-in bots will appear here once they start trading.
+    <br><br>
+    <a href="strategies.html" style="color:var(--orange)">Learn how the strategies work &rarr;</a>
+  </div>
+
+  <div class="footer">&copy; 2026 Posada &mdash; Built on Cardano</div>
+</div>
+
+<script>
+const STRAT_NAMES = {
+  'LWMR': 'Liquidity Weighted Mean Reversion',
+  'BWR': 'Breakout With Retest',
+  'VBR': 'Volatility Band Reversion',
+  'LRM': 'Liquidity Rotation Momentum',
+  'RRA': 'Relative Rotation Analysis',
+  'CPR': 'Capitulation Pivot Recovery',
+};
+
+function fmtPnl(n) {
+  if (n === null || n === undefined) return '\u2014';
+  const sign = n > 0 ? '+' : '';
+  return sign + Number(n).toFixed(2) + ' \u20B3';
+}
+
+async function render() {
+  try {
+    const r = await fetch('/api/leaderboard.php?view=strategies');
+    const data = await r.json();
+    const strategies = data.strategies || [];
+
+    if (strategies.length === 0) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('noData').style.display = '';
+      return;
+    }
+
+    // Find best strategy
+    const best = strategies[0]; // already sorted by total_pnl desc
+
+    // Summary
+    document.getElementById('summary').innerHTML = `
+      <div class="summary-title">Best Performing Strategy</div>
+      <div class="summary-value">${best.name} &mdash; ${fmtPnl(best.total_pnl)}</div>
+    `;
+
+    // Cards
+    // Show all 5 strategies, even if some haven't traded
+    const allStrats = ['LWMR', 'BWR', 'VBR', 'LRM', 'RRA', 'CPR'];
+    const stratMap = {};
+    strategies.forEach(s => { stratMap[s.name] = s; });
+
+    document.getElementById('cards').innerHTML = allStrats.map(name => {
+      const s = stratMap[name];
+      const isBest = s && s.name === best.name;
+      if (!s) {
+        return `<div class="strat-card">
+          <div class="strat-card-name">${name}</div>
+          <div class="strat-card-full">${STRAT_NAMES[name] || ''}</div>
+          <div style="color:var(--text-dim);font-size:0.82rem;text-align:center;padding:20px 0">No trades yet</div>
+        </div>`;
+      }
+      const pnlCls = s.total_pnl >= 0 ? 'pos' : 'neg';
+      const avgCls = s.avg_pnl >= 0 ? 'pos' : 'neg';
+      return `<div class="strat-card${isBest ? ' best' : ''}">
+        <div class="strat-card-name">${s.name}</div>
+        <div class="strat-card-full">${STRAT_NAMES[s.name] || ''}</div>
+        <div class="strat-stat-row">
+          <span class="strat-stat-label">Win Rate</span>
+          <span class="strat-stat-value">${s.win_rate}%</span>
+        </div>
+        <div class="wr-bar-wrap"><div class="wr-bar-fill" style="width:${s.win_rate}%"></div></div>
+        <div class="strat-stat-row">
+          <span class="strat-stat-label">Total Trades</span>
+          <span class="strat-stat-value">${s.trades}</span>
+        </div>
+        <div class="strat-stat-row">
+          <span class="strat-stat-label">Wins / Losses</span>
+          <span class="strat-stat-value"><span style="color:var(--green)">${s.wins}</span> / <span style="color:var(--red)">${s.losses}</span></span>
+        </div>
+        <div class="strat-stat-row">
+          <span class="strat-stat-label">Total P&L</span>
+          <span class="strat-stat-value ${pnlCls}">${fmtPnl(s.total_pnl)}</span>
+        </div>
+        <div class="strat-stat-row">
+          <span class="strat-stat-label">Avg P&L / Trade</span>
+          <span class="strat-stat-value ${avgCls}">${fmtPnl(s.avg_pnl)}</span>
+        </div>
+        <div class="strat-stat-row">
+          <span class="strat-stat-label">Top Token</span>
+          <span class="strat-stat-value">${s.top_token || '\u2014'}</span>
+        </div>
+      </div>`;
+    }).join('');
+
+    if (data.updated_at) {
+      const d = new Date(data.updated_at * 1000);
+      document.getElementById('refreshNote').textContent =
+        'Last updated: ' + d.toLocaleTimeString() + ' \u2022 Auto-refreshes every 60s';
+    }
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('content').style.display = '';
+  } catch (e) {
+    document.getElementById('loading').innerHTML =
+      '<span style="color:var(--red)">Failed to load strategy data.</span>';
+    console.error(e);
+  }
+}
+
+render();
+setInterval(render, 60000);
+</script>
+</body>
+</html>

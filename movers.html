@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Posada — Top Movers</title>
+<style>
+:root {
+  --bg: #080b12;
+  --panel-border: rgba(255, 140, 50, 0.22);
+  --panel-glow: rgba(255, 122, 26, 0.06);
+  --orange: #ff8c32;
+  --orange-bright: #ffaa55;
+  --green: #2ecc71;
+  --green-dim: rgba(46, 204, 113, 0.14);
+  --red: #e74c3c;
+  --red-dim: rgba(231, 76, 60, 0.14);
+  --blue: #3498db;
+  --text: #e8eaed;
+  --text-muted: #8b949e;
+  --text-dim: #555d66;
+  --border: rgba(255, 255, 255, 0.06);
+  --card-bg: rgba(17, 24, 32, 0.80);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --transition: 0.18s ease;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; }
+body {
+  min-height: 100vh; font-family: var(--font);
+  background: var(--bg); color: var(--text); line-height: 1.5;
+}
+body::before {
+  content: ''; position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 900px; height: 500px;
+  background: radial-gradient(ellipse, rgba(255,122,26,0.06), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.site {
+  position: relative; z-index: 1;
+  max-width: 960px; margin: 0 auto; padding: 24px 16px 60px;
+}
+.header { margin-bottom: 32px; text-align: center; }
+.header img {
+  width: 100%; max-width: 960px; height: auto; display: block;
+  border-radius: var(--radius);
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 0 40px var(--panel-glow), 0 16px 48px rgba(0,0,0,0.35);
+}
+.nav { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.nav a { color: var(--orange); text-decoration: none; font-size: 0.85rem; font-weight: 600; }
+.nav a:hover { color: var(--orange-bright); }
+.nav .sep { color: var(--text-dim); }
+.nav .current { color: var(--text); }
+.page-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; letter-spacing: 1px; }
+.page-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 32px; }
+.loading { text-align: center; padding: 60px 0; color: var(--text-muted); font-size: 0.9rem; }
+.loading .spinner {
+  display: inline-block; width: 28px; height: 28px;
+  border: 3px solid var(--border); border-top-color: var(--blue);
+  border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.columns { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.section-title {
+  font-size: 1rem; font-weight: 700; margin-bottom: 14px;
+  letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;
+}
+.section-title .dot { width: 10px; height: 10px; border-radius: 50%; }
+.section-title .dot.green { background: var(--green); }
+.section-title .dot.red { background: var(--red); }
+
+.mover-table { width: 100%; border-collapse: separate; border-spacing: 0 6px; }
+.mover-table th {
+  text-align: left; padding: 6px 12px; font-size: 0.65rem; font-weight: 600;
+  color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px;
+}
+.mover-table th.right { text-align: right; }
+.mover-row td {
+  padding: 10px 12px; background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  font-size: 0.82rem;
+}
+.mover-row td:first-child {
+  border-left: 1px solid var(--border);
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+.mover-row td:last-child {
+  border-right: 1px solid var(--border);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+.mover-row:hover td { border-color: var(--panel-border); background: rgba(255,140,50,0.04); }
+.mover-rank { color: var(--text-dim); font-family: var(--mono); font-size: 0.75rem; width: 24px; }
+.mover-ticker { font-weight: 700; }
+.mover-price { font-family: var(--mono); font-size: 0.78rem; color: var(--text-muted); }
+.chg { text-align: right; font-family: var(--mono); font-size: 0.78rem; font-weight: 600; white-space: nowrap; }
+.chg.up { color: var(--green); }
+.chg.down { color: var(--red); }
+.chg.flat { color: var(--text-dim); }
+
+.refresh-note {
+  text-align: center; color: var(--text-dim); font-size: 0.7rem;
+  margin-top: 24px;
+}
+
+.footer { text-align: center; margin-top: 48px; color: var(--text-dim); font-size: 0.75rem; }
+
+@media (max-width: 700px) {
+  .columns { grid-template-columns: 1fr; }
+  .mover-table .hide-mobile { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="site">
+  <div class="header"><a href="/"><img src="assets/header-posadaweb.png" alt="Posada.io"></a></div>
+  <div class="nav">
+    <a href="/">Home</a><span class="sep">/</span>
+    <span class="current">Top Movers</span>
+  </div>
+
+  <h2 class="page-title">Top Movers</h2>
+  <p class="page-sub">Biggest gainers and losers across Cardano DEXs — updated every 5 minutes</p>
+
+  <div id="loading" class="loading"><div class="spinner"></div><br>Loading movers data...</div>
+
+  <div id="content" style="display:none">
+    <div class="columns">
+      <div>
+        <h3 class="section-title"><span class="dot green"></span> Top Gainers</h3>
+        <table class="mover-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Token</th>
+              <th class="right">1h</th>
+              <th class="right">4h</th>
+              <th class="right">24h</th>
+              <th class="right hide-mobile">7d</th>
+            </tr>
+          </thead>
+          <tbody id="gainers"></tbody>
+        </table>
+      </div>
+      <div>
+        <h3 class="section-title"><span class="dot red"></span> Top Losers</h3>
+        <table class="mover-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Token</th>
+              <th class="right">1h</th>
+              <th class="right">4h</th>
+              <th class="right">24h</th>
+              <th class="right hide-mobile">7d</th>
+            </tr>
+          </thead>
+          <tbody id="losers"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="refresh-note" id="refreshNote"></div>
+  </div>
+
+  <div class="footer">&copy; 2026 Posada &mdash; Built on Cardano</div>
+</div>
+
+<script>
+function fmtChg(v) {
+  if (v === null || v === undefined) return { text: '\u2014', cls: 'flat' };
+  const n = Number(v);
+  const sign = n > 0 ? '+' : '';
+  const cls = n > 0 ? 'up' : n < 0 ? 'down' : 'flat';
+  return { text: sign + n.toFixed(2) + '%', cls };
+}
+
+function fmtPrice(n) {
+  if (n === null || n === undefined) return '\u2014';
+  if (n >= 1) return Number(n).toFixed(4);
+  if (n >= 0.001) return Number(n).toFixed(6);
+  return Number(n).toFixed(8);
+}
+
+function buildRow(m, rank) {
+  const c1h = fmtChg(m.chg_1h);
+  const c4h = fmtChg(m.chg_4h);
+  const c24h = fmtChg(m.chg_24h);
+  const c7d = fmtChg(m.chg_7d);
+  return `<tr class="mover-row" style="cursor:pointer" onclick="location.href='token.html?t=${m.ticker}'">
+    <td class="mover-rank">${rank}</td>
+    <td>
+      <div class="mover-ticker">${m.ticker}</div>
+      <div class="mover-price">${fmtPrice(m.price_ada)} \u20B3</div>
+    </td>
+    <td class="chg ${c1h.cls}">${c1h.text}</td>
+    <td class="chg ${c4h.cls}">${c4h.text}</td>
+    <td class="chg ${c24h.cls}">${c24h.text}</td>
+    <td class="chg ${c7d.cls} hide-mobile">${c7d.text}</td>
+  </tr>`;
+}
+
+async function render() {
+  try {
+    const r = await fetch('/api/movers.php');
+    const data = await r.json();
+    if (data.error) throw new Error(data.error);
+
+    const gainers = data.gainers || [];
+    const losers = data.losers || [];
+
+    document.getElementById('gainers').innerHTML =
+      gainers.length ? gainers.map((m, i) => buildRow(m, i + 1)).join('') :
+      '<tr><td colspan="6" style="text-align:center;color:var(--text-dim);padding:20px">No gainers right now</td></tr>';
+
+    document.getElementById('losers').innerHTML =
+      losers.length ? losers.map((m, i) => buildRow(m, i + 1)).join('') :
+      '<tr><td colspan="6" style="text-align:center;color:var(--text-dim);padding:20px">No losers right now</td></tr>';
+
+    const ts = data.updated_at;
+    if (ts) {
+      const d = new Date(ts * 1000);
+      document.getElementById('refreshNote').textContent =
+        'Last updated: ' + d.toLocaleTimeString() + ' \u2022 Auto-refreshes every 5 min';
+    }
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('content').style.display = '';
+  } catch (e) {
+    document.getElementById('loading').innerHTML =
+      '<span style="color:var(--red)">Failed to load movers data.</span>';
+    console.error(e);
+  }
+}
+
+render();
+setInterval(render, 300000);
+</script>
+</body>
+</html>

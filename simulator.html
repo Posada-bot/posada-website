@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Posada — Portfolio Simulator</title>
+<style>
+:root {
+  --bg: #080b12;
+  --panel-border: rgba(255, 140, 50, 0.22);
+  --panel-glow: rgba(255, 122, 26, 0.06);
+  --orange: #ff8c32;
+  --orange-bright: #ffaa55;
+  --green: #2ecc71;
+  --green-dim: rgba(46, 204, 113, 0.14);
+  --red: #e74c3c;
+  --red-dim: rgba(231, 76, 60, 0.14);
+  --blue: #3498db;
+  --blue-dim: rgba(52, 152, 219, 0.14);
+  --text: #e8eaed;
+  --text-muted: #8b949e;
+  --text-dim: #555d66;
+  --border: rgba(255, 255, 255, 0.06);
+  --card-bg: rgba(17, 24, 32, 0.80);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --transition: 0.18s ease;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; }
+body {
+  min-height: 100vh; font-family: var(--font);
+  background: var(--bg); color: var(--text); line-height: 1.5;
+}
+body::before {
+  content: ''; position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 900px; height: 500px;
+  background: radial-gradient(ellipse, rgba(255,122,26,0.06), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.site {
+  position: relative; z-index: 1;
+  max-width: 960px; margin: 0 auto; padding: 24px 16px 60px;
+}
+.header { margin-bottom: 32px; text-align: center; }
+.header img {
+  width: 100%; max-width: 960px; height: auto; display: block;
+  border-radius: var(--radius);
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 0 40px var(--panel-glow), 0 16px 48px rgba(0,0,0,0.35);
+}
+.nav { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.nav a { color: var(--orange); text-decoration: none; font-size: 0.85rem; font-weight: 600; }
+.nav a:hover { color: var(--orange-bright); }
+.nav .sep { color: var(--text-dim); }
+.nav .current { color: var(--text); }
+.page-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; letter-spacing: 1px; }
+.page-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 32px; }
+
+/* Controls */
+.controls {
+  display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; align-items: flex-end;
+}
+.control-group { display: flex; flex-direction: column; gap: 4px; }
+.control-group label {
+  font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;
+  letter-spacing: 1px; font-weight: 600;
+}
+.control-group select, .control-group input {
+  background: var(--card-bg); color: var(--text); border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm); padding: 10px 14px; font-size: 0.85rem;
+  font-family: var(--font); outline: none;
+}
+.control-group select:focus, .control-group input:focus { border-color: var(--blue); }
+.control-group input[type="number"] { width: 140px; font-family: var(--mono); }
+.btn-run {
+  background: linear-gradient(135deg, var(--blue), #2980b9);
+  color: #fff; border: none; border-radius: var(--radius-sm);
+  padding: 10px 24px; font-size: 0.85rem; font-weight: 700;
+  cursor: pointer; transition: all var(--transition);
+  letter-spacing: 0.5px;
+}
+.btn-run:hover { box-shadow: 0 0 16px rgba(52,152,219,0.3); transform: translateY(-1px); }
+.btn-run:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* Hero result */
+.hero-result {
+  background: var(--card-bg); border: 2px solid var(--panel-border);
+  border-radius: var(--radius); padding: 32px; text-align: center; margin-bottom: 24px;
+}
+.hero-label { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; }
+.hero-value { font-size: 2rem; font-weight: 900; font-family: var(--mono); }
+.hero-value.pos { color: var(--green); }
+.hero-value.neg { color: var(--red); }
+.hero-sub { font-size: 0.82rem; color: var(--text-dim); margin-top: 8px; }
+
+/* Summary cards */
+.summary-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+.sum-card {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 16px; text-align: center;
+}
+.sum-label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.sum-value { font-size: 1rem; font-weight: 700; font-family: var(--mono); }
+.sum-value.pos { color: var(--green); }
+.sum-value.neg { color: var(--red); }
+
+/* Strategy breakdown */
+.section-title { font-size: 1rem; font-weight: 700; margin-bottom: 14px; letter-spacing: 0.5px; }
+.strat-breakdown { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
+.strat-mini {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px; text-align: center;
+}
+.strat-mini-name { font-weight: 700; font-size: 0.85rem; margin-bottom: 6px; }
+.strat-mini-pnl { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+.strat-mini-trades { font-size: 0.7rem; color: var(--text-dim); margin-top: 4px; }
+
+/* Trade table */
+.trade-table { width: 100%; border-collapse: separate; border-spacing: 0 4px; }
+.trade-table th {
+  text-align: left; padding: 6px 12px; font-size: 0.65rem; font-weight: 600;
+  color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px;
+}
+.trade-table th.right { text-align: right; }
+.trade-table td {
+  padding: 8px 12px; background: var(--card-bg);
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  font-size: 0.78rem;
+}
+.trade-table td:first-child { border-left: 1px solid var(--border); border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+.trade-table td:last-child { border-right: 1px solid var(--border); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+.trade-table .pos { color: var(--green); }
+.trade-table .neg { color: var(--red); }
+
+.results { }
+.loading { text-align: center; padding: 40px 0; color: var(--text-muted); font-size: 0.9rem; display: none; }
+.loading .spinner {
+  display: inline-block; width: 28px; height: 28px;
+  border: 3px solid var(--border); border-top-color: var(--blue);
+  border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.footer { text-align: center; margin-top: 48px; color: var(--text-dim); font-size: 0.75rem; }
+
+@media (max-width: 700px) {
+  .summary-cards { grid-template-columns: 1fr 1fr; }
+  .strat-breakdown { grid-template-columns: repeat(2, 1fr); }
+  .controls { flex-direction: column; }
+  .trade-table .hide-mobile { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="site">
+  <div class="header"><a href="/"><img src="assets/header-posadaweb.png" alt="Posada.io"></a></div>
+  <div class="nav">
+    <a href="/">Home</a><span class="sep">/</span>
+    <span class="current">Portfolio Simulator</span>
+  </div>
+
+  <h2 class="page-title">Portfolio Simulator</h2>
+  <p class="page-sub">See what would have happened if you ran Posada with your ADA — simulates all 5 strategies across the top tokens</p>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>Starting ADA</label>
+      <input type="number" id="startAda" value="10000" min="100" step="100">
+    </div>
+    <div class="control-group">
+      <label>Period</label>
+      <select id="periodSelect">
+        <option value="168">7 days</option>
+        <option value="336">14 days</option>
+        <option value="720" selected>30 days</option>
+      </select>
+    </div>
+    <button class="btn-run" id="runBtn" onclick="runSimulation()">Simulate</button>
+  </div>
+
+  <div id="loading" class="loading"><div class="spinner"></div><br>Fetching data for all tokens and running simulation...</div>
+
+  <div class="results" id="results" style="display:none">
+    <div class="hero-result" id="heroResult"></div>
+    <div class="summary-cards" id="summaryCards"></div>
+
+    <h3 class="section-title">Strategy Breakdown</h3>
+    <div class="strat-breakdown" id="stratBreakdown"></div>
+
+    <h3 class="section-title">All Trades (sorted by P&L)</h3>
+    <table class="trade-table">
+      <thead>
+        <tr>
+          <th>Token</th>
+          <th>Strategy</th>
+          <th class="right hide-mobile">Entry Price</th>
+          <th class="right hide-mobile">Exit Price</th>
+          <th class="right">P&L %</th>
+        </tr>
+      </thead>
+      <tbody id="tradeBody"></tbody>
+    </table>
+  </div>
+
+  <div class="footer">&copy; 2026 Posada &mdash; Built on Cardano</div>
+</div>
+
+<script>
+// ── Strategy engine (same as backtest.html) ──
+function sma(p,w){if(p.length<w)return null;const s=p.slice(-w);return s.reduce((a,b)=>a+b,0)/w}
+function stdev(p,w){if(p.length<w)return null;const s=p.slice(-w),m=s.reduce((a,b)=>a+b,0)/s.length;return Math.sqrt(s.reduce((a,x)=>a+(x-m)**2,0)/s.length)}
+function pctChg(o,c){return o?((c-o)/o)*100:0}
+function mom(p,n){return p.length<n+1?null:pctChg(p[p.length-n-1],p[p.length-1])}
+
+function sigLWMR(p,pos){if(p.length<20)return[null];const c=p[p.length-1],m=sma(p,20),s=stdev(p,20);if(!m)return[null];const t=Math.max(s?(s/m)*100:2,2),d=pctChg(m,c);if(!pos){if(d<-t)return['BUY','dip'];return[null]}const g=pctChg(pos.e,c);if(g>=8)return['SELL','TP'];if(g<=-10)return['SELL','SL'];if(c>=m)return['SELL','mean'];return[null]}
+function sigBWR(p,pos){if(p.length<30)return[null];const c=p[p.length-1],o=p.slice(-30,-5),r=Math.max(...o),rh=Math.max(...p.slice(-5));if(!pos){if(rh>r*1.005&&c<=rh*0.99&&c>r*0.995)return['BUY','breakout'];return[null]}const g=pctChg(pos.e,c);if(g>=8)return['SELL','TP'];if(g<=-10)return['SELL','SL'];if(c<(pos.bl||r)*0.97)return['SELL','rejected'];return[null]}
+function sigVBR(p,pos){if(p.length<20)return[null];const c=p[p.length-1],m=sma(p,20),s=stdev(p,20);if(!m||!s)return[null];const lo=m-2*s,up=m+2*s;if(!pos){if(c<lo)return['BUY','lower band'];return[null]}const g=pctChg(pos.e,c);if(g>=8)return['SELL','TP'];if(g<=-10)return['SELL','SL'];if(c>=up)return['SELL','upper'];const ex=m+(up-m)*0.5;if(c>=ex)return['SELL','mid-upper'];return[null]}
+function sigLRM(p,pos){if(p.length<10)return[null];const c=p[p.length-1],m5=mom(p,5),m3=mom(p,3);if(m5===null)return[null];if(!pos){if(m5>1&&m3>0.5)return['BUY','momentum'];return[null]}const g=pctChg(pos.e,c);if(g>=8)return['SELL','TP'];if(g<=-10)return['SELL','SL'];if(m5<-1)return['SELL','reversal'];return[null]}
+function sigRRA(p,pos){if(p.length<15)return[null];const c=p[p.length-1],m5=mom(p,5),m3=mom(p,3),m10=mom(p,Math.min(10,p.length-1));if(m5===null)return[null];const sc=0.5*(m3||0)+0.3*(m10||0);if(!pos){if(sc>1.5&&(m3||0)>0)return['BUY','rotation'];return[null]}const g=pctChg(pos.e,c);if(g>=8)return['SELL','TP'];if(g<=-10)return['SELL','SL'];if(sc<-0.75)return['SELL','faded'];if(m5<-2)return['SELL','reversal'];return[null]}
+
+function rsiC(p,n){if(p.length<n+1)return null;let g=0,l=0;for(let i=p.length-n;i<p.length;i++){const d=p[i]-p[i-1];if(d>0)g+=d;else l+=Math.abs(d)}const ag=g/n,al=l/n;if(al===0)return 100;return 100-100/(1+ag/al)}
+function sigCPR(p,pos){if(p.length<50)return[null];const c=p[p.length-1],m20=sma(p,20),s20=stdev(p,20);if(!m20||!s20)return[null];const lo=m20-2.5*s20,rv=rsiC(p,14),m3=mom(p,3),m5=mom(p,5),hi=Math.max(...p.slice(-20)),drop=pctChg(hi,c);if(!pos){if(c<lo&&rv!==null&&rv<30&&m3!==null&&m3>0&&drop<-4)return['BUY','capitulation'];return[null]}const g=pctChg(pos.e,c);if(g>=10)return['SELL','TP'];if(g<=-8)return['SELL','SL'];if(m5!==null&&m5<-3)return['SELL','bounce failed'];if(rv!==null&&rv>65)return['SELL','overbought'];return[null]}
+
+const STRATS={lwmr:sigLWMR,bwr:sigBWR,vbr:sigVBR,lrm:sigLRM,rra:sigRRA,cpr:sigCPR};
+
+function simulateToken(candles, stratKey) {
+  const fn = STRATS[stratKey];
+  if (!fn) return [];
+  // Match exact bot params: buy slippage 1%, sell slippage 2%, 15min cooldown (1 candle on 1h data)
+  const BUY_SLIP=1.0, SELL_SLIP=2.0, COOL=1, MAX_DAY=50, MAX_HOUR=10;
+  const trades = [];
+  let pos = null;
+  let lastSell = -999;
+  const dayCount = {}, hourCount = {};
+  for (let i=1;i<candles.length;i++){
+    const cp=candles.slice(0,i+1).map(c=>c.close);
+    const c=candles[i];
+    const [sig,reason]=fn(cp,pos);
+    if(sig==='BUY'&&!pos){
+      if(i-lastSell<COOL) continue;
+      const day=new Date(c.time*1000).toDateString();
+      if((dayCount[day]||0)>=MAX_DAY) continue;
+      const hour=new Date(c.time*1000).toISOString().slice(0,13);
+      if((hourCount[hour]||0)>=MAX_HOUR) continue;
+      const ep=c.close*(1+BUY_SLIP/100);
+      pos={e:ep,t:c.time,bl:c.close};
+      trades.push({a:'BUY',time:c.time,price:ep});
+      dayCount[day]=(dayCount[day]||0)+1;
+      hourCount[hour]=(hourCount[hour]||0)+1;
+    } else if(sig==='SELL'&&pos){
+      const xp=c.close*(1-SELL_SLIP/100);
+      const pnl=pctChg(pos.e,xp);
+      trades.push({a:'SELL',time:c.time,price:xp,entry:pos.e,pnl,reason});
+      lastSell=i;
+      pos=null;
+    }
+  }
+  if(pos&&candles.length>0){const l=candles[candles.length-1];const xp=l.close*(1-SELL_SLIP/100);trades.push({a:'SELL',time:l.time,price:xp,entry:pos.e,pnl:pctChg(pos.e,xp),reason:'end'})}
+  return trades.filter(t=>t.a==='SELL');
+}
+
+async function runSimulation() {
+  const startAda = parseFloat(document.getElementById('startAda').value) || 10000;
+  const periods = document.getElementById('periodSelect').value;
+
+  document.getElementById('runBtn').disabled = true;
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('loading').style.display = '';
+
+  try {
+    // Get token list
+    const tr = await fetch('/api/tokens.php');
+    const td = await tr.json();
+    const tokens = (td.tokens || []).filter(t => t.ticker !== 'ADA').slice(0, 10);
+
+    if (tokens.length === 0) throw new Error('No tokens available');
+
+    // Fetch OHLCV for each token
+    const ohlcvPromises = tokens.map(t =>
+      fetch(`/api/backtest.php?ticker=${t.ticker}&interval=1h&periods=${periods}`)
+        .then(r => r.json())
+        .catch(() => null)
+    );
+    const ohlcvResults = await Promise.all(ohlcvPromises);
+
+    // Run all strategies on all tokens
+    const allTrades = [];
+    const stratNames = ['lwmr', 'bwr', 'vbr', 'lrm', 'rra', 'cpr'];
+    const stratPnl = {};
+    const stratCount = {};
+    stratNames.forEach(s => { stratPnl[s] = 0; stratCount[s] = 0; });
+
+    for (let ti = 0; ti < tokens.length; ti++) {
+      const data = ohlcvResults[ti];
+      if (!data || !data.candles || data.candles.length < 30) continue;
+      const ticker = tokens[ti].ticker;
+
+      for (const strat of stratNames) {
+        const trades = simulateToken(data.candles, strat);
+        trades.forEach(t => {
+          allTrades.push({ ...t, ticker, strat: strat.toUpperCase() });
+          stratPnl[strat] += t.pnl;
+          stratCount[strat]++;
+        });
+      }
+    }
+
+    // Calculate portfolio result
+    // Each trade uses 25% of portfolio, P&L is percentage on that portion
+    let portfolio = startAda;
+    const tradeSize = 0.25;
+    let bestTrade = null;
+    let worstTrade = null;
+
+    // Sort trades by time for sequential execution
+    allTrades.sort((a, b) => a.time - b.time);
+    allTrades.forEach(t => {
+      const invested = portfolio * tradeSize;
+      const gain = invested * (t.pnl / 100);
+      portfolio += gain;
+      t.adaGain = gain;
+      if (!bestTrade || t.pnl > bestTrade.pnl) bestTrade = t;
+      if (!worstTrade || t.pnl < worstTrade.pnl) worstTrade = t;
+    });
+
+    const totalReturn = pctChg(startAda, portfolio);
+    const totalTrades = allTrades.length;
+
+    // Render hero
+    const pnlCls = totalReturn >= 0 ? 'pos' : 'neg';
+    document.getElementById('heroResult').innerHTML = `
+      <div class="hero-label">Simulated Portfolio Value</div>
+      <div class="hero-value ${pnlCls}">${portfolio.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')} \u20B3</div>
+      <div class="hero-sub">Starting with ${startAda.toLocaleString()} \u20B3 &mdash; ${totalReturn >= 0 ? '+' : ''}${totalReturn.toFixed(2)}% return</div>
+    `;
+
+    // Summary cards
+    const wins = allTrades.filter(t => t.pnl > 0).length;
+    const winRate = totalTrades > 0 ? ((wins / totalTrades) * 100).toFixed(1) : '0';
+    document.getElementById('summaryCards').innerHTML = `
+      <div class="sum-card">
+        <div class="sum-label">Total Trades</div>
+        <div class="sum-value">${totalTrades}</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-label">Win Rate</div>
+        <div class="sum-value">${winRate}%</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-label">Best Trade</div>
+        <div class="sum-value pos">${bestTrade ? '+' + bestTrade.pnl.toFixed(2) + '% ' + bestTrade.ticker : '\u2014'}</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-label">Worst Trade</div>
+        <div class="sum-value neg">${worstTrade ? worstTrade.pnl.toFixed(2) + '% ' + worstTrade.ticker : '\u2014'}</div>
+      </div>
+    `;
+
+    // Strategy breakdown
+    document.getElementById('stratBreakdown').innerHTML = stratNames.map(s => {
+      const pnl = stratPnl[s];
+      const count = stratCount[s];
+      const cls = pnl >= 0 ? 'pos' : 'neg';
+      return `<div class="strat-mini">
+        <div class="strat-mini-name">${s.toUpperCase()}</div>
+        <div class="strat-mini-pnl ${cls}">${pnl >= 0 ? '+' : ''}${pnl.toFixed(2)}%</div>
+        <div class="strat-mini-trades">${count} trades</div>
+      </div>`;
+    }).join('');
+
+    // Trade table (sorted by P&L desc, show top 50)
+    const sorted = [...allTrades].sort((a, b) => b.pnl - a.pnl).slice(0, 50);
+    document.getElementById('tradeBody').innerHTML = sorted.length
+      ? sorted.map(t => {
+          const cls = t.pnl >= 0 ? 'pos' : 'neg';
+          const fmtP = n => n >= 1 ? n.toFixed(4) : n >= 0.001 ? n.toFixed(6) : n.toFixed(8);
+          return `<tr>
+            <td style="font-weight:700">${t.ticker}</td>
+            <td style="color:var(--text-muted);font-family:var(--mono);font-size:0.75rem">${t.strat}</td>
+            <td class="right hide-mobile" style="font-family:var(--mono)">${fmtP(t.entry)}</td>
+            <td class="right hide-mobile" style="font-family:var(--mono)">${fmtP(t.price)}</td>
+            <td class="right ${cls}" style="font-family:var(--mono);font-weight:600">${t.pnl >= 0 ? '+' : ''}${t.pnl.toFixed(2)}%</td>
+          </tr>`;
+        }).join('')
+      : '<tr><td colspan="5" style="text-align:center;color:var(--text-dim);padding:20px">No trades generated</td></tr>';
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('results').style.display = '';
+  } catch (e) {
+    document.getElementById('loading').innerHTML =
+      `<span style="color:var(--red)">Simulation failed: ${e.message}</span>`;
+    console.error(e);
+  }
+
+  document.getElementById('runBtn').disabled = false;
+}
+</script>
+</body>
+</html>

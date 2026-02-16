@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Posada — Token Overview</title>
+<style>
+:root {
+  --bg: #080b12;
+  --panel-border: rgba(255, 140, 50, 0.22);
+  --panel-glow: rgba(255, 122, 26, 0.06);
+  --orange: #ff8c32;
+  --orange-bright: #ffaa55;
+  --orange-dim: rgba(255, 140, 50, 0.14);
+  --green: #2ecc71;
+  --red: #e74c3c;
+  --text: #e8eaed;
+  --text-muted: #8b949e;
+  --text-dim: #555d66;
+  --border: rgba(255, 255, 255, 0.06);
+  --card-bg: rgba(17, 24, 32, 0.80);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --transition: 0.18s ease;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; }
+body {
+  min-height: 100vh; font-family: var(--font);
+  background: var(--bg); color: var(--text); line-height: 1.5;
+}
+body::before {
+  content: ''; position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 900px; height: 500px;
+  background: radial-gradient(ellipse, rgba(255,122,26,0.06), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.site {
+  position: relative; z-index: 1;
+  max-width: 960px; margin: 0 auto; padding: 24px 16px 60px;
+}
+.header { margin-bottom: 32px; text-align: center; }
+.header img {
+  width: 100%; max-width: 960px; height: auto; display: block;
+  border-radius: var(--radius);
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 0 40px var(--panel-glow), 0 16px 48px rgba(0,0,0,0.35);
+}
+.nav { display: flex; gap: 12px; margin-bottom: 24px; }
+.nav a { color: var(--orange); text-decoration: none; font-size: 0.85rem; font-weight: 600; }
+.nav a:hover { color: var(--orange-bright); }
+.nav .sep { color: var(--text-dim); }
+.page-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; letter-spacing: 1px; }
+.page-sub { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 24px; }
+.loading {
+  text-align: center; padding: 60px 0; color: var(--text-muted); font-size: 0.9rem;
+}
+.loading .spinner {
+  display: inline-block; width: 28px; height: 28px;
+  border: 3px solid var(--border); border-top-color: var(--orange);
+  border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.token-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+.token-table th {
+  text-align: left; padding: 8px 16px; font-size: 0.7rem; font-weight: 600;
+  color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px;
+}
+.token-table th.right { text-align: right; }
+.token-row { cursor: pointer; transition: all var(--transition); }
+.token-row td {
+  padding: 14px 16px; background: var(--card-bg);
+  border-top: 1px solid var(--panel-border);
+  border-bottom: 1px solid var(--panel-border);
+}
+.token-row td:first-child {
+  border-left: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+.token-row td:last-child {
+  border-right: 1px solid var(--panel-border);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+.token-row:hover td { border-color: var(--orange); background: rgba(255,140,50,0.06); }
+.token-rank { color: var(--text-dim); font-size: 0.75rem; font-family: var(--mono); width: 30px; }
+.token-name { font-weight: 700; font-size: 0.95rem; }
+.token-desc {
+  font-size: 0.7rem; color: var(--text-muted); max-width: 260px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.token-price { text-align: right; font-family: var(--mono); font-size: 0.9rem; font-weight: 600; }
+.token-change { text-align: right; font-family: var(--mono); font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
+.token-change.up { color: var(--green); }
+.token-change.down { color: var(--red); }
+.token-change .arrow { font-size: 0.7rem; margin-right: 2px; }
+.token-volume { text-align: right; font-family: var(--mono); font-size: 0.8rem; color: var(--text-muted); }
+.footer { text-align: center; margin-top: 48px; color: var(--text-dim); font-size: 0.75rem; }
+@media (max-width: 700px) {
+  .token-table th.hide-mobile, .token-row td.hide-mobile { display: none; }
+  .token-name { font-size: 0.85rem; }
+  .token-row td { padding: 10px 10px; }
+}
+</style>
+</head>
+<body>
+<div class="site">
+  <div class="header"><a href="/"><img src="assets/header-posadaweb.png" alt="Posada.io"></a></div>
+  <div class="nav">
+    <a href="/">Home</a><span class="sep">/</span><span>Tokens</span>
+  </div>
+  <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:6px;">
+    <h2 class="page-title" style="margin-bottom:0">Top Cardano Tokens</h2>
+    <a href="strategies.html" style="display:inline-block; padding:8px 20px; background:linear-gradient(135deg, rgba(255,140,50,0.12), var(--card-bg)); border:2px solid var(--orange); border-radius:10px; color:var(--orange); font-size:0.85rem; font-weight:700; text-decoration:none; letter-spacing:0.5px; transition:all 0.18s ease;">Strategies Explained</a>
+  </div>
+  <p class="page-sub">Live prices from Minswap — click any token for strategy analysis</p>
+  <div id="loading" class="loading"><div class="spinner"></div><br>Loading token data...</div>
+  <table class="token-table" id="tokenTable" style="display:none">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Token</th>
+        <th class="right">Price (ADA)</th>
+        <th class="right">24h</th>
+        <th class="right hide-mobile">Volume</th>
+      </tr>
+    </thead>
+    <tbody id="tokenBody"></tbody>
+  </table>
+  <div class="footer">&copy; 2026 Posada — Built on Cardano</div>
+</div>
+<script>
+function fmtPrice(n) {
+  if (n === null || n === undefined) return "\u2014";
+  if (n >= 1000) return Number(n).toFixed(2);
+  if (n >= 1) return Number(n).toFixed(4);
+  if (n >= 0.001) return Number(n).toFixed(6);
+  if (n >= 0.000001) return Number(n).toFixed(8);
+  return Number(n).toFixed(10);
+}
+function fmtVol(n) {
+  if (!n) return "\u2014";
+  if (n >= 1e6) return (n/1e6).toFixed(1) + "M";
+  if (n >= 1e3) return (n/1e3).toFixed(1) + "K";
+  return Number(n).toFixed(0);
+}
+
+async function render() {
+  try {
+    const r = await fetch("/api/tokens.php");
+    const data = await r.json();
+    const tokens = data.tokens || [];
+    const tbody = document.getElementById("tokenBody");
+
+    tbody.innerHTML = tokens.map(t => {
+      const ch = t.change_24h;
+      const hasChange = ch !== null && ch !== undefined;
+      const cls = hasChange ? (ch > 0 ? "up" : ch < 0 ? "down" : "") : "";
+      const arrow = hasChange ? (ch > 0 ? "&#9650;" : ch < 0 ? "&#9660;" : "&#8212;") : "";
+      const chStr = hasChange ? (ch > 0 ? "+" : "") + ch.toFixed(2) + "%" : "building...";
+      const isAda = t.ticker === "ADA";
+      const price = isAda ? (t.price_usd ? "$" + Number(t.price_usd).toFixed(4) : "\u2014") : fmtPrice(t.price_ada);
+
+      return `<tr class="token-row" onclick="location.href='token.html?t=${t.ticker}'">
+        <td class="token-rank">${t.rank}</td>
+        <td>
+          <div class="token-name">${t.ticker}</div>
+          <div class="token-desc">${t.description || t.name}</div>
+        </td>
+        <td class="token-price">${price}</td>
+        <td class="token-change ${cls}">
+          ${arrow ? '<span class="arrow">' + arrow + '</span> ' : ''}${isAda ? "\u2014" : chStr}
+        </td>
+        <td class="token-volume hide-mobile">${t.volume ? fmtVol(t.volume) + " \u20B3" : "\u2014"}</td>
+      </tr>`;
+    }).join("");
+
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("tokenTable").style.display = "";
+  } catch (e) {
+    document.getElementById("loading").innerHTML =
+      '<span style="color:var(--red)">Failed to load token data. Try refreshing.</span>';
+    console.error(e);
+  }
+}
+render();
+</script>
+</body>
+</html>

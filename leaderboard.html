@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Posada — Live Leaderboard</title>
+<style>
+:root {
+  --bg: #080b12;
+  --panel-border: rgba(255, 140, 50, 0.22);
+  --panel-glow: rgba(255, 122, 26, 0.06);
+  --orange: #ff8c32;
+  --orange-bright: #ffaa55;
+  --orange-dim: rgba(255, 140, 50, 0.14);
+  --green: #2ecc71;
+  --green-dim: rgba(46, 204, 113, 0.14);
+  --red: #e74c3c;
+  --red-dim: rgba(231, 76, 60, 0.14);
+  --yellow: #f1c40f;
+  --gold: #ffd700;
+  --silver: #c0c0c0;
+  --bronze: #cd7f32;
+  --text: #e8eaed;
+  --text-muted: #8b949e;
+  --text-dim: #555d66;
+  --border: rgba(255, 255, 255, 0.06);
+  --card-bg: rgba(17, 24, 32, 0.80);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --transition: 0.18s ease;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; }
+body {
+  min-height: 100vh; font-family: var(--font);
+  background: var(--bg); color: var(--text); line-height: 1.5;
+}
+body::before {
+  content: ''; position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 900px; height: 500px;
+  background: radial-gradient(ellipse, rgba(255,122,26,0.06), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.site {
+  position: relative; z-index: 1;
+  max-width: 960px; margin: 0 auto; padding: 24px 16px 60px;
+}
+.header { margin-bottom: 32px; text-align: center; }
+.header img {
+  width: 100%; max-width: 960px; height: auto; display: block;
+  border-radius: var(--radius);
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 0 40px var(--panel-glow), 0 16px 48px rgba(0,0,0,0.35);
+}
+.nav { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.nav a { color: var(--orange); text-decoration: none; font-size: 0.85rem; font-weight: 600; }
+.nav a:hover { color: var(--orange-bright); }
+.nav .sep { color: var(--text-dim); }
+.nav .current { color: var(--text); }
+.page-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; letter-spacing: 1px; }
+.page-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 32px; }
+.loading { text-align: center; padding: 60px 0; color: var(--text-muted); font-size: 0.9rem; }
+.loading .spinner {
+  display: inline-block; width: 28px; height: 28px;
+  border: 3px solid var(--border); border-top-color: var(--orange);
+  border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Podium ── */
+.podium-wrap { margin-bottom: 40px; }
+.podium {
+  display: flex; align-items: flex-end; justify-content: center;
+  gap: 12px; padding-top: 40px; position: relative;
+}
+.podium-slot {
+  display: flex; flex-direction: column; align-items: center;
+  position: relative;
+}
+.podium-slot.first { order: 2; }
+.podium-slot.second { order: 1; }
+.podium-slot.third { order: 3; }
+
+/* Avatar */
+.avatar {
+  width: 64px; height: 64px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem; font-weight: 800; color: #fff;
+  position: relative; margin-bottom: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+.avatar.gold { background: linear-gradient(135deg, #ffd700, #f0a500); border: 3px solid #ffd700; }
+.avatar.silver { background: linear-gradient(135deg, #c0c0c0, #808080); border: 3px solid #c0c0c0; }
+.avatar.bronze { background: linear-gradient(135deg, #cd7f32, #8b5a2b); border: 3px solid #cd7f32; }
+
+/* Crown / decorations */
+.crown {
+  position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+  font-size: 1.4rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+.sparkle {
+  position: absolute; font-size: 0.7rem; animation: twinkle 1.5s ease-in-out infinite;
+}
+.sparkle.s1 { top: -8px; right: -6px; animation-delay: 0s; }
+.sparkle.s2 { top: 4px; left: -10px; animation-delay: 0.5s; }
+.sparkle.s3 { bottom: 0; right: -8px; animation-delay: 1s; }
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.podium-name {
+  font-size: 0.85rem; font-weight: 700; text-align: center;
+  margin-bottom: 2px; white-space: nowrap;
+}
+.podium-pnl {
+  font-family: var(--mono); font-size: 0.8rem; font-weight: 600;
+  margin-bottom: 8px;
+}
+.podium-pnl.pos { color: var(--green); }
+.podium-pnl.neg { color: var(--red); }
+.podium-stats {
+  font-size: 0.65rem; color: var(--text-dim); text-align: center;
+  margin-bottom: 8px;
+}
+
+/* Pedestals */
+.pedestal {
+  width: 120px; border-radius: 8px 8px 0 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem; font-weight: 900; color: rgba(255,255,255,0.15);
+  position: relative; overflow: hidden;
+}
+.pedestal::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.05), transparent);
+  pointer-events: none;
+}
+.pedestal.p1 {
+  height: 120px;
+  background: linear-gradient(180deg, rgba(255,215,0,0.2), rgba(255,215,0,0.05));
+  border: 1px solid rgba(255,215,0,0.3);
+  border-bottom: none;
+}
+.pedestal.p2 {
+  height: 90px;
+  background: linear-gradient(180deg, rgba(192,192,192,0.15), rgba(192,192,192,0.04));
+  border: 1px solid rgba(192,192,192,0.2);
+  border-bottom: none;
+}
+.pedestal.p3 {
+  height: 65px;
+  background: linear-gradient(180deg, rgba(205,127,50,0.15), rgba(205,127,50,0.04));
+  border: 1px solid rgba(205,127,50,0.2);
+  border-bottom: none;
+}
+.podium-floor {
+  width: 100%; height: 4px;
+  background: linear-gradient(90deg, transparent, var(--panel-border), transparent);
+}
+
+/* Empty podium message */
+.podium-empty {
+  text-align: center; padding: 20px;
+  color: var(--text-dim); font-size: 0.8rem; font-style: italic;
+}
+
+/* ── Runners up ── */
+.section-title {
+  font-size: 1rem; font-weight: 700; margin-bottom: 14px;
+  letter-spacing: 0.5px;
+}
+.runner-list { margin-bottom: 32px; }
+.runner-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  transition: all var(--transition);
+}
+.runner-row:hover { border-color: var(--orange); }
+.runner-rank {
+  font-size: 1.1rem; font-weight: 800; color: var(--text-dim);
+  font-family: var(--mono); width: 28px; text-align: center;
+}
+.runner-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem; font-weight: 800; color: #fff;
+  background: linear-gradient(135deg, var(--orange), #cc6600);
+  flex-shrink: 0;
+}
+.runner-info { flex: 1; min-width: 0; }
+.runner-name { font-weight: 700; font-size: 0.9rem; }
+.runner-meta { font-size: 0.7rem; color: var(--text-dim); }
+.runner-pnl {
+  font-family: var(--mono); font-size: 0.9rem; font-weight: 700;
+  text-align: right; white-space: nowrap;
+}
+.runner-pnl.pos { color: var(--green); }
+.runner-pnl.neg { color: var(--red); }
+
+/* ── Live trade feed ── */
+.feed { margin-bottom: 32px; }
+.feed-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 6px;
+  font-size: 0.82rem;
+}
+.feed-time { color: var(--text-dim); font-family: var(--mono); font-size: 0.7rem; width: 50px; flex-shrink: 0; }
+.feed-user { font-weight: 600; width: 100px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.feed-event {
+  display: inline-block; padding: 2px 8px; border-radius: 6px;
+  font-size: 0.68rem; font-weight: 700; font-family: var(--mono);
+  text-transform: uppercase; width: 70px; text-align: center; flex-shrink: 0;
+}
+.feed-event.buy { background: var(--green-dim); color: var(--green); }
+.feed-event.sell, .feed-event.sell_half { background: var(--red-dim); color: var(--red); }
+.feed-event.add { background: rgba(52,152,219,0.14); color: #3498db; }
+.feed-symbol { font-weight: 700; width: 60px; flex-shrink: 0; }
+.feed-strat { color: var(--text-dim); font-family: var(--mono); font-size: 0.7rem; width: 40px; flex-shrink: 0; }
+.feed-pnl { font-family: var(--mono); font-weight: 600; margin-left: auto; }
+.feed-pnl.pos { color: var(--green); }
+.feed-pnl.neg { color: var(--red); }
+
+/* Confetti animation for podium */
+@keyframes confetti-fall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(60px) rotate(360deg); opacity: 0; }
+}
+.confetti-container {
+  position: absolute; top: 0; left: 0; right: 0; height: 100%;
+  overflow: hidden; pointer-events: none;
+}
+.confetti {
+  position: absolute; width: 6px; height: 6px; border-radius: 1px;
+  animation: confetti-fall 3s ease-in-out infinite;
+}
+
+.footer { text-align: center; margin-top: 48px; color: var(--text-dim); font-size: 0.75rem; }
+
+@media (max-width: 700px) {
+  .podium { gap: 6px; }
+  .pedestal { width: 90px; }
+  .avatar { width: 48px; height: 48px; font-size: 1.2rem; }
+  .feed-strat, .feed-time { display: none; }
+  .feed-user { width: 70px; }
+}
+</style>
+</head>
+<body>
+
+<div class="site">
+  <div class="header"><a href="/"><img src="assets/header-posadaweb.png" alt="Posada.io"></a></div>
+  <div class="nav">
+    <a href="/">Home</a><span class="sep">/</span>
+    <a href="tokens.html">Tokens</a><span class="sep">/</span>
+    <span class="current">Leaderboard</span>
+  </div>
+
+  <h2 class="page-title">Live Leaderboard</h2>
+  <p class="page-sub">Real trades from Posada bots — opt in from your dashboard to join the board</p>
+
+  <div id="loading" class="loading"><div class="spinner"></div><br>Loading leaderboard...</div>
+
+  <div id="content" style="display:none">
+    <!-- Podium -->
+    <div class="podium-wrap">
+      <div class="podium" id="podium"></div>
+      <div class="podium-floor"></div>
+    </div>
+
+    <!-- Runners up -->
+    <div id="runnersSection" style="display:none">
+      <h3 class="section-title">Runners Up</h3>
+      <div class="runner-list" id="runners"></div>
+    </div>
+
+    <!-- Live feed -->
+    <h3 class="section-title">Recent Trades</h3>
+    <div class="feed" id="feed"></div>
+  </div>
+
+  <div class="footer">&copy; 2026 Posada — Built on Cardano</div>
+</div>
+
+<script>
+function initial(name) {
+  return (name || '?')[0].toUpperCase();
+}
+
+function hashColor(name) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h);
+  const hue = Math.abs(h) % 360;
+  return `hsl(${hue}, 60%, 45%)`;
+}
+
+function fmtPnl(n) {
+  if (n === null || n === undefined) return '';
+  const sign = n > 0 ? '+' : '';
+  return sign + Number(n).toFixed(2) + ' \u20B3';
+}
+
+function timeAgo(ts) {
+  const diff = Math.floor(Date.now() / 1000 - ts);
+  if (diff < 60) return 'now';
+  if (diff < 3600) return Math.floor(diff / 60) + 'm';
+  if (diff < 86400) return Math.floor(diff / 3600) + 'h';
+  return Math.floor(diff / 86400) + 'd';
+}
+
+function makeConfetti(count) {
+  const colors = ['#ffd700', '#ff8c32', '#2ecc71', '#3498db', '#e74c3c', '#ffaa55'];
+  let html = '<div class="confetti-container">';
+  for (let i = 0; i < count; i++) {
+    const left = Math.random() * 100;
+    const delay = Math.random() * 3;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const size = 4 + Math.random() * 4;
+    html += `<div class="confetti" style="left:${left}%;animation-delay:${delay}s;background:${color};width:${size}px;height:${size}px;"></div>`;
+  }
+  return html + '</div>';
+}
+
+function buildPodiumSlot(user, place) {
+  const medals = { 1: 'gold', 2: 'silver', 3: 'bronze' };
+  const crowns = { 1: '\uD83D\uDC51', 2: '\uD83E\uDD48', 3: '\uD83E\uDD49' };
+  const heights = { 1: 'p1', 2: 'p2', 3: 'p3' };
+  const placeNames = { 1: 'first', 2: 'second', 3: 'third' };
+  const sparkles = place === 1 ? `
+    <span class="sparkle s1">\u2728</span>
+    <span class="sparkle s2">\u2728</span>
+    <span class="sparkle s3">\u2728</span>` : place === 2 ? `
+    <span class="sparkle s1">\u2728</span>` : '';
+
+  const pnlCls = user.total_pnl >= 0 ? 'pos' : 'neg';
+
+  return `<div class="podium-slot ${placeNames[place]}">
+    <div class="avatar ${medals[place]}">
+      <span class="crown">${crowns[place]}</span>
+      ${sparkles}
+      ${initial(user.username)}
+    </div>
+    <div class="podium-name">${user.username}</div>
+    <div class="podium-pnl ${pnlCls}">${fmtPnl(user.total_pnl)}</div>
+    <div class="podium-stats">${user.trades} trades \u2022 ${user.win_rate}% WR \u2022 ${user.fav_strategy || '...'}</div>
+    <div class="pedestal ${heights[place]}">${place}${place === 1 ? makeConfetti(15) : place === 2 ? makeConfetti(6) : ''}</div>
+  </div>`;
+}
+
+function buildEmptySlot(place) {
+  const placeNames = { 1: 'first', 2: 'second', 3: 'third' };
+  const heights = { 1: 'p1', 2: 'p2', 3: 'p3' };
+  const medals = { 1: 'gold', 2: 'silver', 3: 'bronze' };
+  return `<div class="podium-slot ${placeNames[place]}">
+    <div class="avatar ${medals[place]}" style="opacity:0.3">?</div>
+    <div class="podium-name" style="color:var(--text-dim)">Waiting...</div>
+    <div class="podium-pnl" style="color:var(--text-dim)">\u2014</div>
+    <div class="podium-stats">Opt in to compete</div>
+    <div class="pedestal ${heights[place]}">${place}</div>
+  </div>`;
+}
+
+async function render() {
+  try {
+    const r = await fetch('/api/leaderboard.php');
+    const data = await r.json();
+    const board = data.leaderboard || [];
+    const recent = data.recent || [];
+
+    // Podium
+    const podium = document.getElementById('podium');
+    let podiumHtml = '';
+    for (let i = 1; i <= 3; i++) {
+      if (board[i - 1]) {
+        podiumHtml += buildPodiumSlot(board[i - 1], i);
+      } else {
+        podiumHtml += buildEmptySlot(i);
+      }
+    }
+    podium.innerHTML = podiumHtml;
+
+    // Runners up (positions 4-8)
+    const runners = board.slice(3, 8);
+    if (runners.length > 0) {
+      document.getElementById('runnersSection').style.display = '';
+      const el = document.getElementById('runners');
+      el.innerHTML = runners.map((u, i) => {
+        const rank = i + 4;
+        const pnlCls = u.total_pnl >= 0 ? 'pos' : 'neg';
+        return `<div class="runner-row">
+          <div class="runner-rank">${rank}</div>
+          <div class="runner-avatar" style="background:linear-gradient(135deg, ${hashColor(u.username)}, ${hashColor(u.username + 'x')})">${initial(u.username)}</div>
+          <div class="runner-info">
+            <div class="runner-name">${u.username}</div>
+            <div class="runner-meta">${u.trades} trades \u2022 ${u.win_rate}% WR \u2022 ${u.fav_strategy || '...'}</div>
+          </div>
+          <div class="runner-pnl ${pnlCls}">${fmtPnl(u.total_pnl)}</div>
+        </div>`;
+      }).join('');
+    }
+
+    // Live feed
+    const feed = document.getElementById('feed');
+    if (recent.length === 0) {
+      feed.innerHTML = '<div style="text-align:center;color:var(--text-dim);padding:20px;font-size:0.85rem;">No trades yet — waiting for action...</div>';
+    } else {
+      feed.innerHTML = recent.map(t => {
+        const evCls = t.event.replace('_', '-');
+        const evLabel = t.event === 'sell_half' ? 'SELL\u00BD' : t.event.toUpperCase();
+        const pnl = t.pnl !== null && t.pnl !== undefined;
+        const pnlCls = pnl ? (t.pnl >= 0 ? 'pos' : 'neg') : '';
+        return `<div class="feed-row">
+          <div class="feed-time">${timeAgo(t.ts)}</div>
+          <div class="feed-user">${t.username}</div>
+          <div class="feed-event ${t.event}">${evLabel}</div>
+          <div class="feed-symbol">${t.symbol}</div>
+          <div class="feed-strat">${t.strategy}</div>
+          <div class="feed-pnl ${pnlCls}">${pnl ? fmtPnl(t.pnl) : ''}</div>
+        </div>`;
+      }).join('');
+    }
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('content').style.display = '';
+  } catch (e) {
+    document.getElementById('loading').innerHTML =
+      '<span style="color:var(--red)">Failed to load leaderboard.</span>';
+    console.error(e);
+  }
+}
+
+render();
+// Auto-refresh every 60 seconds
+setInterval(render, 60000);
+</script>
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Posada — Market Pulse</title>
+<style>
+:root {
+  --bg: #080b12;
+  --panel-border: rgba(255, 140, 50, 0.22);
+  --panel-glow: rgba(255, 122, 26, 0.06);
+  --orange: #ff8c32;
+  --orange-bright: #ffaa55;
+  --green: #2ecc71;
+  --green-dim: rgba(46, 204, 113, 0.14);
+  --red: #e74c3c;
+  --red-dim: rgba(231, 76, 60, 0.14);
+  --blue: #3498db;
+  --blue-dim: rgba(52, 152, 219, 0.14);
+  --yellow: #f1c40f;
+  --text: #e8eaed;
+  --text-muted: #8b949e;
+  --text-dim: #555d66;
+  --border: rgba(255, 255, 255, 0.06);
+  --card-bg: rgba(17, 24, 32, 0.80);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --transition: 0.18s ease;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; }
+body {
+  min-height: 100vh; font-family: var(--font);
+  background: var(--bg); color: var(--text); line-height: 1.5;
+}
+body::before {
+  content: ''; position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 900px; height: 500px;
+  background: radial-gradient(ellipse, rgba(255,122,26,0.06), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.site {
+  position: relative; z-index: 1;
+  max-width: 960px; margin: 0 auto; padding: 24px 16px 60px;
+}
+.header { margin-bottom: 32px; text-align: center; }
+.header img {
+  width: 100%; max-width: 960px; height: auto; display: block;
+  border-radius: var(--radius);
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 0 40px var(--panel-glow), 0 16px 48px rgba(0,0,0,0.35);
+}
+.nav { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.nav a { color: var(--orange); text-decoration: none; font-size: 0.85rem; font-weight: 600; }
+.nav a:hover { color: var(--orange-bright); }
+.nav .sep { color: var(--text-dim); }
+.nav .current { color: var(--text); }
+.page-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; letter-spacing: 1px; }
+.page-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 32px; }
+.loading { text-align: center; padding: 60px 0; color: var(--text-muted); font-size: 0.9rem; }
+.loading .spinner {
+  display: inline-block; width: 28px; height: 28px;
+  border: 3px solid var(--border); border-top-color: var(--blue);
+  border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Hero stats */
+.hero-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  margin-bottom: 32px;
+}
+.stat-card {
+  background: var(--card-bg); border: 1px solid var(--panel-border);
+  border-radius: var(--radius); padding: 24px 20px; text-align: center;
+}
+.stat-label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.stat-value { font-size: 1.6rem; font-weight: 800; font-family: var(--mono); }
+
+/* Sentiment gauge */
+.gauge-wrap { margin-bottom: 32px; text-align: center; }
+.gauge-label { font-size: 0.85rem; font-weight: 700; margin-bottom: 12px; }
+.gauge-bar {
+  width: 100%; height: 24px; border-radius: 12px;
+  background: linear-gradient(90deg, var(--red), var(--yellow), var(--green));
+  position: relative; overflow: hidden;
+}
+.gauge-marker {
+  position: absolute; top: -4px; width: 4px; height: 32px;
+  background: #fff; border-radius: 2px;
+  box-shadow: 0 0 8px rgba(255,255,255,0.5);
+  transition: left 0.5s ease;
+}
+.gauge-labels { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-dim); margin-top: 6px; }
+.sentiment-text { font-size: 1.1rem; font-weight: 700; margin-top: 8px; }
+
+/* Volume cards */
+.section-title { font-size: 1rem; font-weight: 700; margin-bottom: 14px; letter-spacing: 0.5px; }
+.vol-cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 32px; }
+.vol-card {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 16px 12px; text-align: center;
+  cursor: pointer; transition: all var(--transition);
+}
+.vol-card:hover { border-color: var(--panel-border); }
+.vol-ticker { font-weight: 700; font-size: 0.9rem; margin-bottom: 4px; }
+.vol-amount { font-family: var(--mono); font-size: 0.78rem; color: var(--text-muted); }
+
+/* Trending */
+.trending-list { margin-bottom: 32px; }
+.trending-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 16px; background: var(--card-bg);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  margin-bottom: 8px; cursor: pointer; transition: all var(--transition);
+}
+.trending-row:hover { border-color: var(--panel-border); }
+.trending-rank { font-family: var(--mono); font-size: 0.85rem; color: var(--text-dim); width: 24px; }
+.trending-ticker { font-weight: 700; flex: 1; }
+.trending-chg { font-family: var(--mono); font-size: 0.85rem; font-weight: 600; }
+.trending-chg.up { color: var(--green); }
+.trending-chg.down { color: var(--red); }
+
+.refresh-note { text-align: center; color: var(--text-dim); font-size: 0.7rem; margin-top: 24px; }
+.footer { text-align: center; margin-top: 48px; color: var(--text-dim); font-size: 0.75rem; }
+
+@media (max-width: 700px) {
+  .hero-stats { grid-template-columns: 1fr; }
+  .vol-cards { grid-template-columns: repeat(2, 1fr); }
+  .stat-value { font-size: 1.2rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="site">
+  <div class="header"><a href="/"><img src="assets/header-posadaweb.png" alt="Posada.io"></a></div>
+  <div class="nav">
+    <a href="/">Home</a><span class="sep">/</span>
+    <span class="current">Market Pulse</span>
+  </div>
+
+  <h2 class="page-title">Market Pulse</h2>
+  <p class="page-sub">Cardano DEX overview — volume, sentiment, and trending tokens</p>
+
+  <div id="loading" class="loading"><div class="spinner"></div><br>Loading market data...</div>
+
+  <div id="content" style="display:none">
+    <!-- Hero stats -->
+    <div class="hero-stats">
+      <div class="stat-card">
+        <div class="stat-label">Total DEX Volume (24h)</div>
+        <div class="stat-value" id="dexVolume">&mdash;</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active Addresses</div>
+        <div class="stat-value" id="activeAddr">&mdash;</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">ADA Price</div>
+        <div class="stat-value" id="adaPrice">&mdash;</div>
+      </div>
+    </div>
+
+    <!-- Sentiment gauge -->
+    <div class="gauge-wrap">
+      <div class="gauge-label">Market Sentiment</div>
+      <div class="gauge-bar"><div class="gauge-marker" id="gaugeMarker"></div></div>
+      <div class="gauge-labels"><span>Bearish</span><span>Neutral</span><span>Bullish</span></div>
+      <div class="sentiment-text" id="sentimentText"></div>
+    </div>
+
+    <!-- Top 5 by volume -->
+    <h3 class="section-title">Top 5 by Volume</h3>
+    <div class="vol-cards" id="volCards"></div>
+
+    <!-- Trending (biggest 24h movers) -->
+    <h3 class="section-title">Trending Tokens</h3>
+    <div class="trending-list" id="trending"></div>
+
+    <div class="refresh-note" id="refreshNote"></div>
+  </div>
+
+  <div class="footer">&copy; 2026 Posada &mdash; Built on Cardano</div>
+</div>
+
+<script>
+function fmtVol(n) {
+  if (!n) return '\u2014';
+  if (n >= 1e9) return '$' + (n/1e9).toFixed(1) + 'B';
+  if (n >= 1e6) return '$' + (n/1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return '$' + (n/1e3).toFixed(1) + 'K';
+  return '$' + Number(n).toFixed(0);
+}
+
+function fmtAdaVol(n) {
+  if (!n) return '\u2014';
+  if (n >= 1e6) return (n/1e6).toFixed(1) + 'M \u20B3';
+  if (n >= 1e3) return (n/1e3).toFixed(1) + 'K \u20B3';
+  return Number(n).toFixed(0) + ' \u20B3';
+}
+
+function fmtNum(n) {
+  if (!n) return '\u2014';
+  if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return (n/1e3).toFixed(1) + 'K';
+  return Number(n).toLocaleString();
+}
+
+async function render() {
+  try {
+    const r = await fetch('/api/movers.php');
+    const data = await r.json();
+    if (data.error) throw new Error(data.error);
+
+    const market = data.market || {};
+    const gainers = data.gainers || [];
+    const losers = data.losers || [];
+    const all = data.all || [];
+    const topVol = data.top_volume || [];
+
+    // Hero stats
+    document.getElementById('dexVolume').textContent = fmtVol(market.dex_volume);
+    document.getElementById('activeAddr').textContent = fmtNum(market.active_addresses);
+    document.getElementById('adaPrice').textContent = market.ada_price ? '$' + Number(market.ada_price).toFixed(4) : '\u2014';
+
+    // Sentiment gauge (ratio of gainers to total)
+    const total = gainers.length + losers.length;
+    const ratio = total > 0 ? gainers.length / total : 0.5;
+    const pct = Math.round(ratio * 100);
+    document.getElementById('gaugeMarker').style.left = pct + '%';
+
+    let sentLabel = 'Neutral';
+    let sentColor = 'var(--yellow)';
+    if (ratio >= 0.7) { sentLabel = 'Bullish'; sentColor = 'var(--green)'; }
+    else if (ratio >= 0.55) { sentLabel = 'Slightly Bullish'; sentColor = 'var(--green)'; }
+    else if (ratio <= 0.3) { sentLabel = 'Bearish'; sentColor = 'var(--red)'; }
+    else if (ratio <= 0.45) { sentLabel = 'Slightly Bearish'; sentColor = 'var(--red)'; }
+    const sentEl = document.getElementById('sentimentText');
+    sentEl.textContent = sentLabel + ' (' + gainers.length + ' up / ' + losers.length + ' down)';
+    sentEl.style.color = sentColor;
+
+    // Top 5 volume
+    const volEl = document.getElementById('volCards');
+    if (topVol.length) {
+      volEl.innerHTML = topVol.map(v =>
+        `<div class="vol-card" onclick="location.href='token.html?t=${v.ticker}'">
+          <div class="vol-ticker">${v.ticker}</div>
+          <div class="vol-amount">${fmtAdaVol(v.volume)}</div>
+        </div>`
+      ).join('');
+    } else {
+      volEl.innerHTML = '<div style="color:var(--text-dim);font-size:0.85rem;grid-column:1/-1;text-align:center">Volume data loading...</div>';
+    }
+
+    // Trending: sort all by absolute 24h change (biggest moves)
+    const sorted = all
+      .filter(m => m.chg_24h !== null && m.chg_24h !== undefined)
+      .sort((a, b) => Math.abs(b.chg_24h) - Math.abs(a.chg_24h))
+      .slice(0, 10);
+
+    document.getElementById('trending').innerHTML = sorted.length
+      ? sorted.map((m, i) => {
+          const cls = m.chg_24h > 0 ? 'up' : m.chg_24h < 0 ? 'down' : '';
+          const sign = m.chg_24h > 0 ? '+' : '';
+          return `<div class="trending-row" onclick="location.href='token.html?t=${m.ticker}'">
+            <div class="trending-rank">${i + 1}</div>
+            <div class="trending-ticker">${m.ticker}</div>
+            <div class="trending-chg ${cls}">${sign}${m.chg_24h.toFixed(2)}%</div>
+          </div>`;
+        }).join('')
+      : '<div style="text-align:center;color:var(--text-dim);padding:20px">No trending data yet</div>';
+
+    // Timestamp
+    if (data.updated_at) {
+      const d = new Date(data.updated_at * 1000);
+      document.getElementById('refreshNote').textContent =
+        'Last updated: ' + d.toLocaleTimeString() + ' \u2022 Auto-refreshes every 5 min';
+    }
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('content').style.display = '';
+  } catch (e) {
+    document.getElementById('loading').innerHTML =
+      '<span style="color:var(--red)">Failed to load market data.</span>';
+    console.error(e);
+  }
+}
+
+render();
+setInterval(render, 300000);
+</script>
+</body>
+</html>
