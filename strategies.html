@@ -178,7 +178,7 @@ body::before {
   </div>
 
   <h2 class="page-title">Trading Strategies Explained</h2>
-  <p class="page-sub">Posada runs five autonomous strategies simultaneously. Each one watches price history and generates signals — BUY, SELL, ADD, or SELL_HALF. The bot picks the best strategy for each token based on current market conditions.</p>
+  <p class="page-sub">Posada runs six autonomous strategies simultaneously. Each one watches price history and generates signals — BUY, SELL, ADD, or SELL_HALF. The bot picks the best strategy for each token based on current market conditions. Exit signals are evaluated every cycle regardless of which strategies are toggled on or off — positions are always managed.</p>
 
   <!-- Quick comparison -->
   <table class="compare-table">
@@ -196,6 +196,7 @@ body::before {
       <tr><td>VBR</td><td>Volatile, choppy</td><td>Medium-High</td><td>Hours to days</td></tr>
       <tr><td>LRM</td><td>Trending, momentum</td><td>Medium</td><td>Minutes to hours</td></tr>
       <tr><td>RRA</td><td>Any (relative)</td><td>Low-Medium</td><td>Hours to days</td></tr>
+      <tr><td>CPR</td><td>Bear / falling</td><td>Medium</td><td>Hours to days</td></tr>
     </tbody>
   </table>
 
@@ -376,16 +377,55 @@ body::before {
     </div>
   </div>
 
+  <!-- CPR -->
+  <div class="strat-section">
+    <div class="strat-header">
+      <div class="strat-abbr">CPR</div>
+      <div class="strat-name">Capitulation Pivot Recovery</div>
+      <div class="strat-oneliner">Catch extreme oversold bounces in bear markets.</div>
+    </div>
+    <div class="strat-body">
+      <h4>How it works</h4>
+      <p>CPR is designed specifically for falling and bear markets, where the other strategies tend to lose money. Cardano DEXs have roughly 3% round-trip friction (1% buy slippage + 2% sell slippage), so CPR only enters at extreme oversold levels where the expected bounce is large enough to clear that cost. It requires four independent confirmations before buying — this makes it trade rarely, but with higher conviction.</p>
+
+      <h4>Entry signal — ALL four must align</h4>
+      <ul>
+        <li>Price below the 2.5-sigma Bollinger Band (extreme statistical oversold — well beyond the normal 2-sigma)</li>
+        <li>RSI(14) below 30 (deeply oversold — panic selling detected)</li>
+        <li>3-period momentum is positive (the bounce has started — avoids catching falling knives)</li>
+        <li>Price has dropped more than 4% from the 20-period high (confirms a real dip, not just noise)</li>
+      </ul>
+
+      <h4>Exit signals</h4>
+      <ul>
+        <li><span class="signal sell">SELL</span> Take-profit at 10% — clears the 3% friction with ~7% net profit</li>
+        <li><span class="signal sell">SELL</span> Stop-loss at 8% — limits damage to ~11% net loss after friction</li>
+        <li><span class="signal sell">SELL</span> 5-period momentum drops below -3% — the bounce has failed</li>
+        <li><span class="signal sell">SELL</span> RSI exceeds 65 — overbought, the bounce is exhausted</li>
+      </ul>
+
+      <h4>Position management</h4>
+      <ul>
+        <li>No adds — CPR never averages down into capitulation events. One entry, one exit.</li>
+        <li>The strategy trades infrequently by design. It may go days without a signal, waiting for genuine capitulation events.</li>
+        <li>Needs roughly 61% win rate to break even given the asymmetric TP/SL after friction costs.</li>
+      </ul>
+
+      <h4>Best for</h4>
+      <p><span class="best-for">Bear and falling markets</span> The only strategy designed to profit when most tokens are trending down. Targets sharp, panicked sell-offs that often produce a relief bounce. Most effective on tokens with enough volume to produce genuine capitulation events — SNEK, NIGHT, WMTX during broad market corrections.</p>
+    </div>
+  </div>
+
   <!-- How the bot chooses -->
   <div class="strat-section">
     <div class="strat-header">
       <div class="strat-abbr">Auto Selection</div>
       <div class="strat-name">How Posada Picks a Strategy</div>
-      <div class="strat-oneliner">All five run simultaneously — the best signal wins.</div>
+      <div class="strat-oneliner">All six run simultaneously — the best signal wins.</div>
     </div>
     <div class="strat-body">
       <h4>The process</h4>
-      <p>Every poll cycle (default 60 seconds), Posada evaluates all enabled strategies against each watched token. The strategies are checked in priority order: LWMR, BWR, VBR, LRM, RRA. The first strategy to produce a BUY signal for a given token wins.</p>
+      <p>Every poll cycle (default 60 seconds), Posada evaluates all enabled strategies against each watched token. The strategies are checked in priority order: LWMR, BWR, VBR, LRM, RRA, CPR. The first strategy to produce a BUY signal for a given token wins.</p>
 
       <h4>Safety checks</h4>
       <ul>
@@ -399,6 +439,30 @@ body::before {
 
       <h4>Once in a position</h4>
       <p>Each position remembers which strategy opened it. Only that strategy manages the exit — take-profit, stop-loss, ADD, and SELL_HALF signals all come from the same strategy that entered. This prevents conflicting signals from different strategies fighting over the same position.</p>
+    </div>
+  </div>
+
+  <!-- Always-on exits -->
+  <div class="strat-section">
+    <div class="strat-header">
+      <div class="strat-abbr">Always-On</div>
+      <div class="strat-name">Exit Signals Never Stop</div>
+      <div class="strat-oneliner">Positions are always managed — no matter what.</div>
+    </div>
+    <div class="strat-body">
+      <h4>The guarantee</h4>
+      <p>Posada evaluates exit signals on every open position, every cycle, unconditionally. This is a core safety principle: <strong>a bot that can buy but can't sell is useless.</strong></p>
+
+      <h4>What this means</h4>
+      <ul>
+        <li>If you disable a strategy, positions opened by that strategy are still actively managed — the bot continues to evaluate take-profit, stop-loss, and all other exit conditions using the original strategy's logic</li>
+        <li>If all your funds are invested and the USDM balance is zero, sell signals still fire normally</li>
+        <li>If you switch from one strategy to another, old positions from the previous strategy are not orphaned — they keep being evaluated until they exit</li>
+        <li>Each position uses the parameters you configured for its strategy — an LWMR position uses your LWMR take-profit and stop-loss settings, a CPR position uses your CPR settings</li>
+      </ul>
+
+      <h4>How it works technically</h4>
+      <p>The exit engine runs as a separate evaluation pass before the entry/strategy routing. It scans all open positions, looks up which strategy opened each one, loads your configured parameters for that strategy, and calls that strategy's signal function. If the signal says SELL or SELL_HALF, the trade executes immediately. This happens regardless of which strategies are currently enabled in the dashboard.</p>
     </div>
   </div>
 
