@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lovelace — Fraud Alerts</title>
+<style>
+:root {
+  --bg: #0a0a0a; --accent: #f472b6; --green: #22c55e;
+  --orange: #f97316; --red: #ef4444; --text: #e0e0e0; --muted: #888;
+  --dim: #555; --card-bg: #1a1a2e; --border: #333; --font: system-ui, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+.dashboard { display: none; max-width: 1400px; margin: 0 auto; padding: 24px; }
+.nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.nav a { color: var(--dim); text-decoration: none; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; }
+.nav a:hover { color: var(--accent); }
+h1 { color: var(--red); font-size: 1.5rem; margin-bottom: 4px; }
+.sub { color: var(--muted); margin-bottom: 16px; font-size: 0.85rem; }
+
+.filters { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+.filters select { padding: 6px 10px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.8rem; }
+.filters label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+th { text-align: left; padding: 8px 8px; color: var(--accent); border-bottom: 1px solid var(--border); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; white-space: nowrap; user-select: none; }
+th:hover { color: var(--text); }
+th .arrow { font-size: 0.6rem; margin-left: 3px; }
+td { padding: 7px 8px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: top; }
+tr:hover { background: rgba(255,255,255,0.02); }
+.mono { font-family: 'Courier New', monospace; font-size: 0.75rem; color: var(--muted); }
+
+.status { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.status-active { background: rgba(239,68,68,0.12); color: var(--red); }
+.status-dismissed { background: rgba(136,136,136,0.12); color: var(--muted); }
+.status-banned { background: rgba(239,68,68,0.2); color: var(--red); }
+.status-blocked { background: rgba(249,115,22,0.15); color: var(--orange); }
+
+.type-badge { font-size: 0.7rem; font-weight: 600; white-space: nowrap; }
+.type-same_ip { color: var(--orange); }
+.type-similar_email { color: var(--accent); }
+.type-face_match { color: var(--red); }
+.type-rapid_signup { color: #eab308; }
+.type-banned_email { color: var(--red); }
+
+.btn-sm { font-size: 0.7rem; padding: 3px 8px; border-radius: 5px; cursor: pointer; border: 1px solid var(--border); background: none; margin-right: 3px; }
+.btn-dismiss { color: var(--muted); }
+.btn-dismiss:hover { color: var(--text); border-color: var(--muted); }
+.btn-ban { color: var(--red); border-color: rgba(239,68,68,0.4); }
+.btn-ban:hover { background: rgba(239,68,68,0.1); }
+.btn-block { color: var(--orange); border-color: rgba(249,115,22,0.4); }
+.btn-block:hover { background: rgba(249,115,22,0.1); }
+
+.empty { color: var(--dim); text-align: center; padding: 40px; }
+.count { font-size: 0.8rem; color: var(--dim); margin-bottom: 8px; }
+.sim { font-weight: 700; }
+.sim-high { color: var(--red); }
+.sim-med { color: var(--orange); }
+</style>
+</head><body>
+
+<div class="dashboard" id="dashboard" style="display:block">
+  <div class="nav">
+    <a href="/lovelace/usage/">&larr; Usage Dashboard</a>
+    <a href="#" onclick="loadAll()">Refresh</a>
+  </div>
+  <h1>Fraud Alerts</h1>
+  <div class="sub" id="updatedAt">Loading...</div>
+
+  <div class="filters">
+    <div>
+      <label>Type</label><br>
+      <select id="filterType" onchange="renderTable()">
+        <option value="">All</option>
+        <option value="same_ip">Same IP</option>
+        <option value="similar_email">Similar Email</option>
+        <option value="face_match">Face Match</option>
+        <option value="rapid_signup">Rapid Signup</option>
+        <option value="banned_email">Banned Email</option>
+      </select>
+    </div>
+    <div>
+      <label>Status</label><br>
+      <select id="filterStatus" onchange="renderTable()">
+        <option value="">All</option>
+        <option value="active">Active</option>
+        <option value="dismissed">Dismissed</option>
+        <option value="banned">Banned</option>
+        <option value="blocked">Blocked</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="count" id="alertCount"></div>
+
+  <table>
+    <thead>
+      <tr>
+        <th onclick="sortBy('date')">Date <span class="arrow" id="sort-date"></span></th>
+        <th onclick="sortBy('type')">Type <span class="arrow" id="sort-type"></span></th>
+        <th>User A</th>
+        <th>User B</th>
+        <th>Evidence</th>
+        <th onclick="sortBy('similarity')">Similarity <span class="arrow" id="sort-similarity"></span></th>
+        <th>IPs</th>
+        <th onclick="sortBy('status')">Status <span class="arrow" id="sort-status"></span></th>
+        <th>Resolved</th>
+      </tr>
+    </thead>
+    <tbody id="alertBody"><tr><td colspan="9" class="empty">Loading...</td></tr></tbody>
+  </table>
+</div>
+
+<script>
+const API = 'https://api.posada.io/admin/api';
+const KEY_STORE = 'lovelaceUsageKey_v2';
+const apiKey = sessionStorage.getItem(KEY_STORE) || '';
+
+// One login for the whole /lovelace/usage/ area: if no key in this session,
+// bounce to the parent dashboard which has the password prompt.
+if (!apiKey) {
+  window.location.href = '/lovelace/usage/';
+}
+
+let allAlerts = [];
+let sortField = 'date';
+let sortDir = -1;
+
+const TYPE_LABELS = {
+  same_ip: 'Same IP', similar_email: 'Similar Email', face_match: 'Face Match',
+  rapid_signup: 'Rapid Signup', banned_email: 'Banned Email',
+};
+
+function authedFetch(path) {
+  return fetch(API + path, { headers: { 'Authorization': 'Bearer ' + apiKey } })
+    .then(r => {
+      if (r.status === 401) {
+        sessionStorage.removeItem(KEY_STORE);
+        window.location.href = '/lovelace/usage/';
+        throw new Error('unauthorized');
+      }
+      return r.json();
+    });
+}
+
+if (apiKey) {
+  loadAll();
+  setInterval(loadAll, 10 * 60 * 1000);
+}
+
+function loadAll() {
+  Promise.all([
+    authedFetch('/fraud-alerts?status=active'),
+    authedFetch('/fraud-alerts?status=dismissed'),
+  ]).then(([a, s]) => {
+    allAlerts = [...(a.success ? a.data : []), ...(s.success ? s.data : [])];
+    document.getElementById('updatedAt').textContent = 'Updated: ' + new Date().toLocaleString();
+    renderTable();
+  }).catch(() => {});
+}
+
+function sortBy(field) {
+  if (sortField === field) sortDir *= -1;
+  else { sortField = field; sortDir = field === 'date' ? -1 : 1; }
+  document.querySelectorAll('th .arrow').forEach(e => e.textContent = '');
+  const el = document.getElementById('sort-' + field);
+  if (el) el.textContent = sortDir > 0 ? '\u25B2' : '\u25BC';
+  renderTable();
+}
+
+function getEvidence(a) {
+  const d = a.details;
+  switch (a.alert_type) {
+    case 'same_ip': return 'Same IP ' + d.ip + ' (' + d.count + ' accounts)';
+    case 'similar_email': return 'Email pattern: ' + d.base_name + '*';
+    case 'face_match': return 'Face similarity ' + (d.similarity * 100).toFixed(1) + '%';
+    case 'rapid_signup': return 'Rapid signup from ' + d.ip;
+    case 'banned_email': return 'Banned email active';
+    default: return JSON.stringify(d);
+  }
+}
+
+function getUserA(a) {
+  const d = a.details;
+  if (d.user_a) return d.user_a;
+  if (d.accounts && d.accounts[0]) return d.accounts[0];
+  if (d.email) return d.email;
+  return '-';
+}
+
+function getUserB(a) {
+  const d = a.details;
+  if (d.user_b) return d.user_b;
+  if (d.accounts && d.accounts[1]) return d.accounts[1];
+  return '-';
+}
+
+function getSimilarity(a) {
+  return a.details.similarity || null;
+}
+
+function getIPs(a) {
+  const d = a.details;
+  if (d.ip) return d.ip;
+  return '-';
+}
+
+function renderTable() {
+  const typeFilter = document.getElementById('filterType').value;
+  const statusFilter = document.getElementById('filterStatus').value;
+
+  let filtered = allAlerts.filter(a => {
+    if (typeFilter && a.alert_type !== typeFilter) return false;
+    if (statusFilter && a.status !== statusFilter) return false;
+    return true;
+  });
+
+  filtered.sort((a, b) => {
+    let va, vb;
+    switch (sortField) {
+      case 'date': va = a.created_at; vb = b.created_at; break;
+      case 'type': va = a.alert_type; vb = b.alert_type; break;
+      case 'similarity': va = getSimilarity(a) || 0; vb = getSimilarity(b) || 0; break;
+      case 'status': va = a.status; vb = b.status; break;
+      default: va = a.created_at; vb = b.created_at;
+    }
+    if (va < vb) return -sortDir;
+    if (va > vb) return sortDir;
+    return 0;
+  });
+
+  document.getElementById('alertCount').textContent = filtered.length + ' alert' + (filtered.length !== 1 ? 's' : '') +
+    ' (' + allAlerts.filter(a => a.status === 'active').length + ' active)';
+
+  const tbody = document.getElementById('alertBody');
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" class="empty">No alerts match filters</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(a => {
+    const date = new Date(a.created_at).toLocaleString(undefined, {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    const sim = getSimilarity(a);
+    let simHtml = '-';
+    if (sim !== null) {
+      const pct = (sim * 100).toFixed(1) + '%';
+      const cls = sim >= 0.7 ? 'sim-high' : sim >= 0.4 ? 'sim-med' : '';
+      simHtml = '<span class="sim ' + cls + '">' + pct + '</span>';
+    }
+
+    const statusCls = 'status-' + a.status;
+    const statusLabel = a.status === 'active' ? 'ACTIVE' : a.status.toUpperCase();
+
+    let actions = '';
+    if (a.status !== 'active') {
+      const resolvedDate = a.dismissed_at ? new Date(a.dismissed_at).toLocaleDateString(undefined, {month:'short',day:'numeric'}) : '';
+      actions = '<span style="font-size:0.7rem;color:var(--dim)">' + resolvedDate + '</span>';
+    }
+
+    return '<tr>'
+      + '<td class="mono">' + date + '</td>'
+      + '<td><span class="type-badge type-' + a.alert_type + '">' + (TYPE_LABELS[a.alert_type] || a.alert_type) + '</span></td>'
+      + '<td>' + getUserA(a) + '</td>'
+      + '<td>' + getUserB(a) + '</td>'
+      + '<td>' + getEvidence(a) + '</td>'
+      + '<td>' + simHtml + '</td>'
+      + '<td class="mono">' + getIPs(a) + '</td>'
+      + '<td><span class="status ' + statusCls + '">' + statusLabel + '</span></td>'
+      + '<td>' + actions + '</td>'
+      + '</tr>';
+  }).join('');
+}
+
+</script>
+</body></html>

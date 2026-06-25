@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lovelace — Tester Stats</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+:root {
+  --bg: #080b12;
+  --accent: #f472b6;
+  --accent-bright: #f9a8d4;
+  --accent-dim: rgba(244, 114, 182, 0.12);
+  --accent-glow: rgba(244, 114, 182, 0.06);
+  --text: #e8eaed;
+  --text-muted: #8b949e;
+  --text-dim: #555d66;
+  --border: rgba(255, 255, 255, 0.06);
+  --card-bg: rgba(17, 24, 32, 0.80);
+  --radius: 16px;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --transition: 0.22s ease;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; }
+body {
+  min-height: 100vh;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+body::before {
+  content: '';
+  position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 1000px; height: 600px;
+  background: radial-gradient(ellipse, var(--accent-glow), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.site {
+  position: relative; z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+}
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+.nav-back {
+  font-size: 0.8rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text-dim);
+  transition: color var(--transition);
+}
+.nav-back:hover { color: var(--accent); }
+.nav-brand {
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.hero {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.hero-title {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.hero-sub {
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+.card {
+  background: linear-gradient(135deg, var(--accent-dim), var(--card-bg));
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 32px 24px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, var(--accent-glow), transparent 70%);
+  pointer-events: none;
+}
+.card h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-align: center;
+  margin-bottom: 24px;
+  position: relative;
+}
+.counters {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  position: relative;
+}
+.counter { text-align: center; }
+.counter-icon { font-size: 2rem; margin-bottom: 8px; }
+.counter-number {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1;
+}
+.counter-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.total-count {
+  text-align: center;
+  margin-top: 20px;
+  position: relative;
+}
+.total-number { font-size: 1.4rem; font-weight: 700; color: var(--text); }
+.total-label { font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+
+/* Country accordion */
+.country-list { position: relative; }
+.country-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.country-row:hover { background: rgba(244,114,182,0.04); }
+.country-row .arrow {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  transition: transform var(--transition);
+  width: 12px;
+  display: inline-block;
+}
+.country-row.open .arrow { transform: rotate(90deg); }
+.country-row .flag { font-size: 1.4rem; }
+.country-row .name {
+  flex: 1;
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+.country-row .count {
+  font-weight: 800;
+  color: var(--accent);
+  font-size: 1.1rem;
+}
+.country-row .bar {
+  display: inline-block;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--accent);
+  margin-left: 10px;
+  vertical-align: middle;
+}
+.city-list {
+  display: none;
+  background: rgba(0,0,0,0.2);
+  border-bottom: 1px solid var(--border);
+}
+.city-list.open { display: block; }
+.city-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px 8px 44px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+}
+.city-row:last-child { border-bottom: none; }
+.city-row .city-count {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* Map */
+#map {
+  width: 100%;
+  height: 350px;
+  border-radius: 12px;
+  position: relative;
+  z-index: 1;
+  margin-top: 16px;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 0.75rem;
+}
+.footer a { color: var(--text-muted); text-decoration: none; }
+.footer a:hover { color: var(--text); }
+
+@media (max-width: 600px) {
+  .counters { gap: 24px; }
+  .counter-number { font-size: 2rem; }
+  #map { height: 250px; }
+  .hero-title { font-size: 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="site">
+  <div class="nav">
+    <a href="/lovelace/" class="nav-back">&larr; Lovelace</a>
+    <span class="nav-brand">Stats</span>
+  </div>
+
+  <div class="hero">
+    <h1 class="hero-title">Tester Stats</h1>
+    <div class="hero-sub">Live beta tester activity</div>
+  </div>
+
+  <!-- Downloads -->
+  <div class="card">
+    <h2>Downloads</h2>
+    <div class="counters">
+      <div class="counter">
+        <div class="counter-icon">&#63743;</div>
+        <div class="counter-number" id="iosCount">--</div>
+        <div class="counter-label">iOS</div>
+      </div>
+      <div class="counter">
+        <div class="counter-icon">&#9654;</div>
+        <div class="counter-number" id="androidCount">--</div>
+        <div class="counter-label">Android</div>
+      </div>
+    </div>
+    <div class="total-count">
+      <span class="total-number" id="totalCount">--</span>
+      <span class="total-label"> total testers</span>
+    </div>
+  </div>
+
+  <!-- Locations -->
+  <div class="card">
+    <h2>Testers by Country</h2>
+    <div class="country-list" id="countryList">
+      <div style="text-align:center;color:var(--text-dim);padding:20px">Loading...</div>
+    </div>
+    <div id="map"></div>
+  </div>
+
+  <div class="footer">
+    <span id="lastUpdate">Loading...</span>
+    &nbsp;|&nbsp; <a href="/lovelace/">Back to Lovelace</a>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/protect.js"></script>
+<script>
+const API = 'https://api.posada.io/api';
+
+// ISO country names + flags
+const COUNTRIES = {
+  DK: { name: 'Denmark', flag: '🇩🇰' },
+  NG: { name: 'Nigeria', flag: '🇳🇬' },
+  DE: { name: 'Germany', flag: '🇩🇪' },
+  PH: { name: 'Philippines', flag: '🇵🇭' },
+  TH: { name: 'Thailand', flag: '🇹🇭' },
+  US: { name: 'United States', flag: '🇺🇸' },
+  GB: { name: 'United Kingdom', flag: '🇬🇧' },
+  BR: { name: 'Brazil', flag: '🇧🇷' },
+  PT: { name: 'Portugal', flag: '🇵🇹' },
+  ES: { name: 'Spain', flag: '🇪🇸' },
+  FR: { name: 'France', flag: '🇫🇷' },
+  AR: { name: 'Argentina', flag: '🇦🇷' },
+  CO: { name: 'Colombia', flag: '🇨🇴' },
+  JP: { name: 'Japan', flag: '🇯🇵' },
+  KR: { name: 'South Korea', flag: '🇰🇷' },
+  IN: { name: 'India', flag: '🇮🇳' },
+  UNKNOWN: { name: 'Unknown', flag: '🌍' },
+};
+
+// The DB stores region/state codes from device geocoding (not always ISO).
+// Map them to actual countries.
+const REGION_TO_COUNTRY = {
+  // Denmark regions
+  RE: 'DK', // Region of Southern Denmark
+  HV: 'DK', // Hovedstaden (Capital Region)
+  SJ: 'DK', // Sjælland
+  MJ: 'DK', // Midtjylland
+  NJ: 'DK', // Nordjylland
+  // Nigerian states
+  LA: 'NG', // Lagos
+  OY: 'NG', // Oyo
+  KW: 'NG', // Kwara
+  KA: 'NG', // Kaduna
+  AK: 'NG', // Akwa Ibom
+  RI: 'NG', // Rivers
+  FC: 'NG', // FCT (Abuja)
+  ED: 'NG', // Edo
+  // German regions
+  RH: 'DE', // Rheinland-Pfalz
+  BW: 'DE', // Baden-Württemberg
+  BY: 'DE', // Bayern
+  BE: 'DE', // Berlin
+  BB: 'DE', // Brandenburg
+  // Philippines (Baguio is in Benguet province)
+  // BE → DE collision: disambiguate by city below
+  // Thai provinces all start with non-ASCII, will fall through
+};
+
+// City-based overrides when the region code is ambiguous or wrong
+const CITY_TO_COUNTRY = {
+  baguio: 'PH',
+  manila: 'PH',
+  bangkok: 'TH',
+};
+
+function resolveCountry(loc) {
+  const cityKey = (loc.city || '').toLowerCase().trim();
+  if (CITY_TO_COUNTRY[cityKey]) return CITY_TO_COUNTRY[cityKey];
+
+  const code = (loc.country || '').toUpperCase().trim();
+  if (COUNTRIES[code]) return code;
+  if (REGION_TO_COUNTRY[code]) return REGION_TO_COUNTRY[code];
+
+  // Thai script check
+  if (loc.city && /[\u0E00-\u0E7F]/.test(loc.city)) return 'TH';
+
+  return 'UNKNOWN';
+}
+
+function animateCount(el, target, duration) {
+  if (target === 0) { el.textContent = '0'; return; }
+  const start = performance.now();
+  function step(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    el.textContent = Math.floor(progress * target);
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = target;
+  }
+  requestAnimationFrame(step);
+}
+
+async function loadDownloads() {
+  try {
+    const res = await fetch(API + '/stats/downloads');
+    const json = await res.json();
+    if (!json.success) return;
+    const d = json.data;
+    animateCount(document.getElementById('iosCount'), d.ios, 1200);
+    animateCount(document.getElementById('androidCount'), d.android, 1200);
+    animateCount(document.getElementById('totalCount'), d.total, 1400);
+  } catch (e) {
+    console.error('Downloads fetch failed:', e);
+  }
+}
+
+let mapInstance = null;
+let mapMarkers = [];
+
+async function loadLocations() {
+  if (!mapInstance) {
+    mapInstance = L.map('map', {
+      scrollWheelZoom: false,
+      attributionControl: false,
+    }).setView([20, 0], 2);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 18,
+    }).addTo(mapInstance);
+  }
+
+  try {
+    const res = await fetch(API + '/stats/locations');
+    const json = await res.json();
+    if (!json.success) return;
+
+    const locations = json.data.locations;
+    const maxCount = Math.max(...locations.map(l => l.count), 1);
+
+    // Group by resolved country code
+    const byCountry = {};
+    locations.forEach(loc => {
+      const cc = resolveCountry(loc);
+      if (!byCountry[cc]) byCountry[cc] = { cities: [], total: 0 };
+      byCountry[cc].cities.push({ city: loc.city || 'Unknown', count: loc.count });
+      byCountry[cc].total += loc.count;
+    });
+
+    const sorted = Object.entries(byCountry).sort((a, b) => b[1].total - a[1].total);
+    const grandTotal = sorted.reduce((sum, [, v]) => sum + v.total, 0);
+
+    const list = document.getElementById('countryList');
+    list.innerHTML = sorted.map(([cc, data]) => {
+      const country = COUNTRIES[cc] || COUNTRIES.UNKNOWN;
+      const barWidth = Math.max(20, (data.total / grandTotal) * 150);
+      data.cities.sort((a, b) => b.count - a.count);
+
+      // Merge duplicate city names within the same country
+      const merged = {};
+      data.cities.forEach(c => {
+        if (!merged[c.city]) merged[c.city] = 0;
+        merged[c.city] += c.count;
+      });
+      const cityRows = Object.entries(merged)
+        .sort((a, b) => b[1] - a[1])
+        .map(([name, count]) =>
+          '<div class="city-row"><span>' + name + '</span><span class="city-count">' + count + '</span></div>'
+        ).join('');
+
+      return '<div>'
+        + '<div class="country-row" onclick="this.classList.toggle(\'open\');this.nextElementSibling.classList.toggle(\'open\')">'
+        +   '<span class="arrow">▶</span>'
+        +   '<span class="flag">' + country.flag + '</span>'
+        +   '<span class="name">' + country.name + '</span>'
+        +   '<span class="bar" style="width:' + barWidth + 'px"></span>'
+        +   '<span class="count">' + data.total + '</span>'
+        + '</div>'
+        + '<div class="city-list">' + cityRows + '</div>'
+      + '</div>';
+    }).join('');
+
+    // Update map markers (clear old, add new)
+    mapMarkers.forEach(m => mapInstance.removeLayer(m));
+    mapMarkers = [];
+    locations.forEach(loc => {
+      if (!loc.lat || !loc.lng) return;
+      const radius = Math.max(6, Math.min(30, (loc.count / maxCount) * 30));
+      const marker = L.circleMarker([loc.lat, loc.lng], {
+        radius: radius,
+        fillColor: '#f472b6',
+        color: '#f9a8d4',
+        weight: 1,
+        opacity: 0.8,
+        fillOpacity: 0.6,
+      })
+      .bindPopup('<b>' + (loc.city || 'Unknown') + '</b><br>' + loc.count + ' tester' + (loc.count > 1 ? 's' : ''))
+      .addTo(mapInstance);
+      mapMarkers.push(marker);
+    });
+
+  } catch (e) {
+    console.error('Locations fetch failed:', e);
+    document.getElementById('countryList').innerHTML =
+      '<div style="text-align:center;color:var(--text-dim);padding:20px">Could not load locations</div>';
+  }
+}
+
+function refreshData() {
+  loadDownloads();
+  loadLocations();
+  document.getElementById('lastUpdate').textContent = 'Updated: ' + new Date().toLocaleString();
+}
+
+refreshData();
+setInterval(refreshData, 5 * 60 * 1000);
+</script>
+</body>
+</html>

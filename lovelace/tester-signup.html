@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tester Sign-Up — Lovelace</title>
+<style>
+:root { --bg:#080b12; --accent:#f472b6; --accent-bright:#f9a8d4; --accent-dim:rgba(244,114,182,0.12); --accent-glow:rgba(244,114,182,0.06); --text:#e8eaed; --text-muted:#8b949e; --text-dim:#555d66; --border:rgba(255,255,255,0.06); --radius:16px; --font:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; --transition:0.22s ease; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;-webkit-font-smoothing:antialiased}
+body{min-height:100vh;font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.8}
+body::before{content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:1000px;height:600px;background:radial-gradient(ellipse,var(--accent-glow),transparent 70%);pointer-events:none;z-index:0}
+.page{position:relative;z-index:1;max-width:620px;margin:0 auto;padding:48px 24px 96px}
+.back{display:inline-block;margin-bottom:40px;font-size:0.8rem;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;color:var(--text-dim);transition:color var(--transition)}.back:hover{color:var(--accent)}
+h1{font-size:2rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+p{color:var(--text-muted);margin-bottom:1.2em;font-size:0.95rem}
+h2{font-size:1.1rem;font-weight:700;color:var(--text);margin:32px 0 12px}
+ul{color:var(--text-muted);margin:0 0 1.2em 20px;font-size:0.95rem}li{margin-bottom:6px}
+strong{color:var(--text)}
+.form{margin:32px 0}
+label{display:block;font-size:0.85rem;color:var(--text-muted);margin-bottom:6px;font-weight:500}
+select,input[type="email"]{width:100%;padding:12px 14px;background:rgba(17,24,32,0.8);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:0.9rem;font-family:var(--font);margin-bottom:16px;transition:border-color var(--transition)}
+select:focus,input:focus{outline:none;border-color:var(--accent)}
+.checkbox{display:flex;align-items:flex-start;gap:10px;margin:12px 0;font-size:0.82rem;color:var(--text-muted)}
+.checkbox input{margin-top:3px;accent-color:var(--accent)}
+.btn{display:inline-block;padding:14px 32px;background:var(--accent);color:#080b12;font-size:0.9rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border:none;border-radius:var(--radius);cursor:pointer;transition:all var(--transition);margin-top:12px}
+.btn:hover{background:var(--accent-bright);box-shadow:0 0 20px var(--accent-glow)}
+.note{margin-top:24px;padding:16px;background:var(--accent-dim);border-left:3px solid var(--accent);border-radius:0 var(--radius) var(--radius) 0;font-size:0.82rem;color:var(--text-muted);line-height:1.7}
+.footer{text-align:center;margin-top:64px;padding-top:24px;border-top:1px solid var(--border);color:var(--text-dim);font-size:0.75rem}
+.footer a{color:var(--text-muted);text-decoration:none}.footer a:hover{color:var(--text)}
+</style>
+</head>
+<body>
+<div class="page">
+
+<a href="index.html" class="back" data-i18n="common.back_to_lovelace_full">&larr; Back to Lovelace</a>
+
+<h1 data-i18n="tester_signup.title">Tester Sign-Up</h1>
+<p data-i18n="tester_signup.desc">Join our invite-only tester group. You'll receive a <strong>lifetime subscription</strong>, can start in any group you choose, and get <strong>35 $LILY</strong> credited to your account after launch.</p>
+
+<form class="form" action="#" method="post">
+  <label for="email" data-i18n="tester_signup.email_label">Email address</label>
+  <input type="email" id="email" name="email" placeholder="you@example.com" data-i18n-placeholder="tester_signup.email_placeholder" required>
+
+  <label for="group" data-i18n="tester_signup.group_label">Preferred group (you can switch later)</label>
+  <select id="group" name="group">
+    <option value="elite" data-i18n="tester_signup.seg_elite">Elite/Luxy</option>
+    <option value="lgbtq" data-i18n="tester_signup.seg_lgbtq">LGBTQ</option>
+    <option value="hetero" data-i18n="tester_signup.seg_hetero">Hetero</option>
+    <option value="kink" data-i18n="tester_signup.seg_kink">SM/Kink</option>
+  </select>
+
+  <div class="checkbox">
+    <input type="checkbox" id="c1" required>
+    <label for="c1" data-i18n="tester_signup.check1">I understand I will receive a lifetime subscription for my tester account (non-transferable, personal use, subject to fair-use and community rules).</label>
+  </div>
+
+  <div class="checkbox">
+    <input type="checkbox" id="c2" required>
+    <label for="c2" data-i18n="tester_signup.check2">I will receive 35 $LILY credited after public launch to my in-app wallet (subject to verification and anti-abuse checks).</label>
+  </div>
+
+  <div class="checkbox">
+    <input type="checkbox" id="c3" required>
+    <label for="c3">I accept the <a href="privacy-policy.html" style="color:var(--accent)">Privacy Policy</a> and agree to receive onboarding emails about my tester status.</label>
+  </div>
+
+  <div class="checkbox">
+    <input type="checkbox" id="c4" required>
+    <label for="c4" data-i18n="tester_signup.check4">I acknowledge testers may be asked to complete photo &amp; age verification (DID/VC) and provide feedback/bug reports.</label>
+  </div>
+
+  <button type="submit" class="btn" data-i18n="tester_signup.submit_btn">Apply as Tester</button>
+</form>
+
+<h2 data-i18n="tester_signup.what_get_title">What you get</h2>
+<ul>
+  <li data-i18n="tester_signup.what_get_1">Lifetime subscription for your tester account.</li>
+  <li data-i18n="tester_signup.what_get_2">Start in any group you choose; you can switch later.</li>
+  <li data-i18n="tester_signup.what_get_3">35 $LILY bonus after public launch (post-verification).</li>
+</ul>
+
+<h2 data-i18n="tester_signup.how_selected_title">How we select testers</h2>
+<ul>
+  <li data-i18n="tester_signup.how_selected_1">Invites are sent in waves by city/segment to balance supply/demand.</li>
+  <li data-i18n="tester_signup.how_selected_2">Verified profiles are prioritized for higher quality matching.</li>
+  <li data-i18n="tester_signup.how_selected_3">Referral codes can improve prioritization.</li>
+</ul>
+
+<div class="note" data-i18n="tester_signup.note">
+  <strong>Notes:</strong> "Lifetime" means no subscription fees for the tester account's core/premium features available at the time of grant. We may introduce enterprise or add-on products outside the lifetime scope. Abuse or policy violations can void benefits. $LILY rewards require successful account verification (DID/VC) and compliance with anti-abuse checks.
+</div>
+
+<div class="footer">&copy; 2026 <a href="/">Posada.io</a> / Lovelace</div>
+
+</div>
+<script src="/i18n/i18n.js"></script>
+</body>
+</html>

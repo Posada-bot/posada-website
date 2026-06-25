@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["U3R44JGD4K.Io.posada.lovelace"],
+        "components": [
+          {
+            "/": "/lovelace/ref/*",
+            "comment": "Lovelace referral deep links"
+          }
+        ]
+      }
+    ]
+  }
+}

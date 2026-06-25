@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "Io.posada.lovelace",
+      "sha256_cert_fingerprints": [
+        "66:D3:1B:62:8B:C5:63:74:FE:D4:80:A6:FB:47:BA:3A:6F:4A:D7:B3:78:7D:91:7B:D0:9E:00:86:EC:67:8D:F8"
+      ]
+    }
+  }
+]

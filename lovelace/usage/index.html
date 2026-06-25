@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lovelace — Usage</title>
+<style>
+:root {
+  --bg: #0a0a0a; --accent: #f472b6; --accent2: #c084fc; --green: #22c55e;
+  --orange: #f97316; --red: #ef4444; --text: #e0e0e0; --muted: #888;
+  --dim: #555; --card-bg: #1a1a2e; --border: #333; --font: system-ui, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* Login */
+.login-wrap { display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+.login-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 32px; width: 320px; text-align: center; }
+.login-box h2 { color: var(--accent); margin-bottom: 16px; font-size: 1.2rem; }
+.login-box input { width: 100%; padding: 10px 14px; background: #111; border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 1rem; margin-bottom: 12px; }
+.login-box button { width: 100%; padding: 10px; background: var(--accent); border: none; border-radius: 8px; color: #000; font-weight: 700; font-size: 1rem; cursor: pointer; }
+.login-box button:hover { opacity: 0.9; }
+.login-error { color: var(--red); font-size: 0.85rem; margin-top: 8px; display: none; }
+
+/* Dashboard */
+.dashboard { display: none; max-width: 1200px; margin: 0 auto; padding: 24px; }
+.nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.nav a { color: var(--dim); text-decoration: none; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; }
+.nav a:hover { color: var(--accent); }
+h1 { color: var(--accent); font-size: 1.8rem; margin-bottom: 4px; }
+.sub { color: var(--muted); margin-bottom: 24px; font-size: 0.9rem; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 32px; }
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
+.card .num { font-size: 2rem; font-weight: 800; color: var(--accent); }
+.card .label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+.funnel { display: flex; gap: 4px; align-items: end; margin-bottom: 32px; }
+.funnel-bar { border-radius: 4px 4px 0 0; min-width: 80px; text-align: center; }
+.funnel-bar .n { color: #fff; font-weight: 700; padding: 8px 0 2px; }
+.funnel-bar .l { color: rgba(255,255,255,0.6); font-size: 0.7rem; padding: 2px 4px 6px; }
+.section-title { color: var(--accent); font-size: 1.1rem; margin-bottom: 12px; }
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+th { text-align: left; padding: 8px 10px; color: var(--accent); border-bottom: 1px solid var(--border); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; }
+td { padding: 8px 10px; border-bottom: 1px solid var(--card-bg); }
+tr:hover { background: var(--card-bg); }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 600; }
+.badge-kyc { background: rgba(34,197,94,0.15); color: var(--green); }
+.badge-stuck { background: rgba(239,68,68,0.15); color: var(--red); }
+.ts { color: var(--dim); font-size: 0.8rem; }
+.footer { color: var(--dim); font-size: 0.8rem; margin-top: 24px; text-align: center; }
+@media (max-width: 600px) { .cards { grid-template-columns: repeat(2, 1fr); } .funnel-bar { min-width: 60px; } }
+</style>
+</head><body>
+
+<div class="login-wrap" id="loginWrap">
+  <div class="login-box">
+    <h2>Lovelace Usage</h2>
+    <input type="password" id="pwInput" placeholder="Password" autofocus>
+    <button onclick="doLogin()">Enter</button>
+    <div class="login-error" id="loginError">Wrong password</div>
+  </div>
+</div>
+
+<div class="dashboard" id="dashboard">
+  <div class="nav">
+    <a href="/lovelace/">&larr; Lovelace</a>
+    <a href="#" onclick="loadData()">Refresh</a>
+  </div>
+  <h1>Usage Dashboard</h1>
+  <div class="sub" id="updatedAt">Loading...</div>
+
+  <div class="cards" id="cards"></div>
+
+  <h2 class="section-title">Funnel</h2>
+  <div class="funnel" id="funnel"></div>
+
+  <div style="margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap">
+    <a href="/lovelace/usage/fraud/" style="display:inline-block;padding:10px 20px;background:var(--card-bg);border:1px solid var(--red);border-radius:8px;color:var(--red);text-decoration:none;font-weight:600;font-size:0.9rem;">Fraud Alerts <span id="fraudBadge"></span> &rarr;</a>
+    <a href="/lovelace/usage/t24/" style="display:inline-block;padding:10px 20px;background:var(--card-bg);border:1px solid #f97316;border-radius:8px;color:#f97316;text-decoration:none;font-weight:600;font-size:0.9rem;">T24 Monitor &rarr;</a>
+  </div>
+
+  <h2 class="section-title">All Users</h2>
+  <table>
+    <thead><tr>
+      <th>Name</th><th>Email</th><th>Location</th><th>KYC</th><th>Profile</th>
+      <th>Msgs</th><th>Matches</th><th>Gifts</th><th>Signed Up</th><th>Last Active</th>
+    </tr></thead>
+    <tbody id="userBody"><tr><td colspan="10" style="text-align:center;color:var(--muted)">Loading...</td></tr></tbody>
+  </table>
+
+  <div class="footer" id="footer"></div>
+</div>
+
+<script>
+const API = 'https://api.posada.io/admin/api';
+const KEY_STORE = 'lovelaceUsageKey_v2';
+let apiKey = sessionStorage.getItem(KEY_STORE) || '';
+
+document.getElementById('pwInput').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function doLogin() {
+  apiKey = document.getElementById('pwInput').value;
+  authenticate();
+}
+
+function authenticate() {
+  fetch(API, { headers: { 'Authorization': 'Bearer ' + apiKey } })
+    .then(r => r.json())
+    .then(d => {
+      if (!d.success) {
+        document.getElementById('loginError').style.display = 'block';
+        sessionStorage.removeItem(KEY_STORE);
+        return;
+      }
+      sessionStorage.setItem(KEY_STORE, apiKey);
+      document.getElementById('loginWrap').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      render(d);
+      loadFraudAlerts();
+      setInterval(loadData, 30 * 60 * 1000);
+      setInterval(loadFraudAlerts, 30 * 60 * 1000);
+    })
+    .catch(() => {
+      document.getElementById('loginError').style.display = 'block';
+      sessionStorage.removeItem(KEY_STORE);
+    });
+}
+
+// Auto-login if a key was saved earlier this session (e.g. from another page).
+if (apiKey) authenticate();
+
+function loadData() {
+  fetch(API, { headers: { 'Authorization': 'Bearer ' + apiKey } })
+    .then(r => r.json())
+    .then(d => { if (d.success) render(d); })
+    .catch(e => console.error('Refresh failed:', e));
+}
+
+function render(d) {
+  const t = d.totals;
+  document.getElementById('updatedAt').textContent = 'Updated: ' + new Date().toLocaleString();
+
+  const stats = [
+    ['Total Users', t.total_users], ['KYC Passed', t.kyc_passed], ['Licensed', t.licensed],
+    ['Active 24h', t.active_24h], ['Active 7d', t.active_7d],
+    ['Messages', t.total_messages], ['Matches', t.total_matches], ['Gifts', t.total_gifts]
+  ];
+  document.getElementById('cards').innerHTML = stats.map(([l,n]) =>
+    '<div class="card"><div class="num">' + n + '</div><div class="label">' + l + '</div></div>'
+  ).join('');
+
+  const funnelData = [
+    [t.total_users, 'Signed up', '#f472b6'],
+    [t.kyc_passed, 'KYC passed', '#c084fc'],
+    [t.profile_50, 'Profile 50%+', '#22c55e'],
+    [t.active_7d, 'Active 7d', '#f97316']
+  ];
+  const max = Math.max(t.total_users, 1);
+  document.getElementById('funnel').innerHTML = funnelData.map(([n, l, c]) =>
+    '<div class="funnel-bar" style="height:' + Math.max(40, (n/max)*200) + 'px;background:' + c + '">' +
+    '<div class="n">' + n + '</div><div class="l">' + l + '</div></div>'
+  ).join('');
+
+  const tbody = document.getElementById('userBody');
+  tbody.innerHTML = d.users.map(u => {
+    const days = Math.round((Date.now() - new Date(u.last_active).getTime()) / 86400000);
+    const kyc = u.is_age_verified
+      ? '<span class="badge badge-kyc">Verified</span>'
+      : '<span class="badge badge-stuck">Stuck</span>';
+    const signup = new Date(u.created_at).toISOString().slice(0,10);
+    const lastAct = days === 0 ? 'Today' : days === 1 ? 'Yesterday' : days + 'd ago';
+    return '<tr>'
+      + '<td><strong>' + (u.display_name || '-') + '</strong>' + (u.is_admin ? ' \u{1F451}' : '') + '</td>'
+      + '<td class="ts">' + u.email + '</td>'
+      + '<td>' + (u.location || '-') + '</td>'
+      + '<td>' + kyc + '</td>'
+      + '<td>' + (u.profile_completion_score || 0) + '%</td>'
+      + '<td>' + u.messages_sent + '</td>'
+      + '<td>' + u.match_count + '</td>'
+      + '<td>' + (parseInt(u.gifts_sent) + parseInt(u.gifts_received)) + '</td>'
+      + '<td class="ts">' + signup + '</td>'
+      + '<td class="ts">' + lastAct + '</td>'
+      + '</tr>';
+  }).join('');
+
+  document.getElementById('footer').textContent = 'Auto-refreshes every 30 minutes. Next: ' +
+    new Date(Date.now() + 30*60*1000).toLocaleTimeString();
+}
+
+function loadFraudAlerts() {
+  fetch('https://api.posada.io/admin/api/fraud-alerts?status=active', { headers: { 'Authorization': 'Bearer ' + apiKey } })
+    .then(r => r.json())
+    .then(d => {
+      if (!d.success) return;
+      const badge = document.getElementById('fraudBadge');
+      badge.textContent = d.data.length > 0 ? '(' + d.data.length + ')' : '';
+    })
+    .catch(() => {});
+}
+</script>
+</body></html>

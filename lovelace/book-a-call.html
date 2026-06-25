@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book A Call — Lovelace</title>
+<style>
+:root { --bg:#080b12; --accent:#f472b6; --accent-bright:#f9a8d4; --accent-dim:rgba(244,114,182,0.12); --accent-glow:rgba(244,114,182,0.06); --text:#e8eaed; --text-muted:#8b949e; --text-dim:#555d66; --border:rgba(255,255,255,0.06); --radius:16px; --font:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; --transition:0.22s ease; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;-webkit-font-smoothing:antialiased}
+body{min-height:100vh;font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.8}
+body::before{content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:1000px;height:600px;background:radial-gradient(ellipse,var(--accent-glow),transparent 70%);pointer-events:none;z-index:0}
+.page{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:48px 24px 96px}
+.back{display:inline-block;margin-bottom:40px;font-size:0.8rem;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;color:var(--text-dim);transition:color var(--transition)}.back:hover{color:var(--accent)}
+h1{font-size:2rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+p{color:var(--text-muted);margin-bottom:1.2em;font-size:0.95rem}
+strong{color:var(--text)}
+.calendly-wrap{margin:32px 0;border-radius:var(--radius);overflow:hidden;background:rgba(17,24,32,0.6);border:1px solid var(--border);min-height:700px}
+.calendly-wrap iframe{width:100%;height:700px;border:none}
+.fallback{margin-top:16px;font-size:0.85rem;color:var(--text-dim)}
+.fallback a{color:var(--accent);text-decoration:none}.fallback a:hover{text-decoration:underline}
+.footer{text-align:center;margin-top:64px;padding-top:24px;border-top:1px solid var(--border);color:var(--text-dim);font-size:0.75rem}
+.footer a{color:var(--text-muted);text-decoration:none}.footer a:hover{color:var(--text)}
+</style>
+</head>
+<body>
+<div class="page">
+
+<a href="index.html" class="back" data-i18n="common.back_to_lovelace_full">&larr; Back to Lovelace</a>
+
+<h1 data-i18n="book_call.title">Book a Development Call</h1>
+<p data-i18n="book_call.desc">Pick a time that works for you. Calls cover scope, timeline, budget, and integration with <strong>Lovelace</strong> (Hydra, Midnight, Identus, Iagon).</p>
+
+<div class="calendly-wrap">
+  <iframe src="https://calendly.com/lohalsab/offer-development-for-lovechain_lily" loading="lazy" title="Schedule a call"></iframe>
+</div>
+
+<p class="fallback"><span data-i18n="book_call.fallback">Widget not loading?</span> <a href="https://calendly.com/lohalsab/offer-development-for-lovechain_lily" target="_blank" rel="noopener" data-i18n="book_call.fallback_link">Open scheduling page directly</a>.</p>
+
+<div class="footer">&copy; 2026 <a href="/">Posada.io</a> / Lovelace</div>
+
+</div>
+<script src="/i18n/i18n.js"></script>
+</body>
+</html>

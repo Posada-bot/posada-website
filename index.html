@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Posada.io — Building on Cardano</title>
+<link rel="canonical" href="https://posada.io/">
+<meta name="description" content="Posada.io builds privacy-first apps on Cardano. Lovelace is a decentralized dating app with zero data harvesting, real human verification, and ZK privacy proofs. NoteG is an automated Cardano trading bot on Minswap DEX. One identity. One account. Your data stays yours.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "name": "Posada.io",
+      "url": "https://posada.io",
+      "description": "Posada builds privacy-enhanced decentralized applications on Cardano. Every product is connected through the $LILY token and built on the principle that your identity, data, and connections belong to you.",
+      "foundingLocation": {
+        "@type": "Place",
+        "name": "São Paulo, Brazil"
+      },
+      "knowsAbout": ["Cardano blockchain", "decentralized social", "privacy technology", "zero-knowledge proofs", "DID identity"]
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "Lovelace",
+      "applicationCategory": "SocialNetworkingApplication",
+      "operatingSystem": "Android, iOS",
+      "url": "https://posada.io/lovelace/",
+      "description": "A decentralized dating app on Cardano with ZK age proofs, Identus DID verification, one-person-one-account enforcement, and no data harvesting. Bot-free by design.",
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "USD",
+        "price": "0"
+      }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "NoteG",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Android",
+      "url": "https://posada.io/tradingbot.html",
+      "description": "Automated Cardano trading bot operating on Minswap DEX. Real-time signals, portfolio risk management, fully non-custodial."
+    }
+  ]
+}
+</script>
+<style>
+:root {
+  --bg: #080b12;
+  --bg-alt: #0c1018;
+  --panel: #111820;
+  --text: #e8eaed;
+  --text-muted: #8b949e;
+  --text-dim: #555d66;
+  --border: rgba(255, 255, 255, 0.06);
+  --card-bg: rgba(17, 24, 32, 0.80);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --transition: 0.22s ease;
+
+  /* ── Brand colors ── */
+  --lily:     #c084fc;   /* LILY token — soft violet */
+  --lily-dim: rgba(192, 132, 252, 0.12);
+  --lily-glow: rgba(192, 132, 252, 0.08);
+
+  --posada:     #ff8c32;   /* Posada bot — original orange */
+  --posada-dim: rgba(255, 140, 50, 0.12);
+  --posada-glow: rgba(255, 140, 50, 0.06);
+
+  --lovelace:     #f472b6;   /* Lovelace — rose pink */
+  --lovelace-dim: rgba(244, 114, 182, 0.12);
+  --lovelace-glow: rgba(244, 114, 182, 0.06);
+
+  --byron:     #60a5fa;   /* Byron — calm blue */
+  --byron-dim: rgba(96, 165, 250, 0.12);
+  --byron-glow: rgba(96, 165, 250, 0.06);
+
+  --shelley:     #34d399;   /* Shelley — teal green */
+  --shelley-dim: rgba(52, 211, 153, 0.12);
+  --shelley-glow: rgba(52, 211, 153, 0.06);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Accessible/SEO heading, visually hidden (hero uses stylized brand text) */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+html { font-size: 15px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+
+body {
+  min-height: 100vh;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* ── Ambient glow ── */
+body::before {
+  content: '';
+  position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 1000px; height: 600px;
+  background: radial-gradient(ellipse, var(--lily-glow), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+.site {
+  position: relative; z-index: 1;
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+}
+
+/* ══════════════════════════════════════════
+   HERO
+   ══════════════════════════════════════════ */
+.hero {
+  text-align: center;
+  padding: 64px 20px 48px;
+  margin-bottom: 48px;
+}
+
+.hero-brand {
+  font-size: 3.2rem;
+  font-weight: 800;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, var(--lily), var(--posada), var(--lovelace), var(--byron), var(--shelley));
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 8s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  25% { background-position: 50% 0%; }
+  50% { background-position: 100% 50%; }
+  75% { background-position: 50% 100%; }
+}
+
+.hero-tagline {
+  margin-top: 16px;
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 300;
+}
+
+.hero-sub {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── Manifesto link ── */
+.hero-manifesto {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 28px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text-muted);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 24px;
+  transition: all var(--transition);
+}
+.hero-manifesto:hover {
+  color: var(--text);
+  border-color: var(--lily);
+  box-shadow: 0 0 20px var(--lily-glow);
+}
+
+/* ── Color dots under tagline ── */
+.hero-dots {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+.hero-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  opacity: 0.7;
+}
+
+/* ══════════════════════════════════════════
+   LILY TOKEN BANNER
+   ══════════════════════════════════════════ */
+.lily-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 28px 32px;
+  margin-bottom: 40px;
+  background: linear-gradient(135deg, var(--lily-dim), rgba(17,24,32,0.9));
+  border: 1px solid var(--lily);
+  border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
+}
+.lily-banner::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 30% 50%, rgba(192,132,252,0.08), transparent 60%);
+  pointer-events: none;
+}
+.lily-banner:hover {
+  border-color: #d8b4fe;
+  box-shadow: 0 0 40px rgba(192,132,252,0.12), 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.lily-icon {
+  font-size: 2.4rem;
+  position: relative;
+}
+.lily-info {
+  position: relative;
+}
+.lily-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--lily);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+.lily-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* ══════════════════════════════════════════
+   PRODUCT CARDS
+   ══════════════════════════════════════════ */
+.products {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 48px;
+}
+
+.product {
+  display: flex;
+  flex-direction: column;
+  padding: 36px 28px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: var(--text);
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.product::before {
+  content: '';
+  position: absolute; inset: 0;
+  opacity: 0;
+  transition: opacity var(--transition);
+  pointer-events: none;
+}
+.product:hover {
+  transform: translateY(-3px);
+}
+.product:hover::before {
+  opacity: 1;
+}
+.product:active {
+  transform: translateY(0);
+}
+
+.product-icon {
+  font-size: 2rem;
+  margin-bottom: 16px;
+}
+.product-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.product-role {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+.product-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  flex: 1;
+}
+.product-status {
+  margin-top: 20px;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 20px;
+  display: inline-block;
+  align-self: flex-start;
+  font-weight: 600;
+}
+
+/* ── Posada ── */
+.product.posada { border-color: var(--posada); }
+.product.posada::before { background: radial-gradient(ellipse at 30% 30%, var(--posada-glow), transparent 60%); }
+.product.posada:hover { border-color: #ffaa55; box-shadow: 0 0 30px rgba(255,140,50,0.12), 0 8px 32px rgba(0,0,0,0.3); }
+.product.posada .product-name { color: var(--posada); }
+.product.posada .product-role { color: var(--posada); }
+.product.posada .product-status { background: var(--posada-dim); color: var(--posada); }
+
+/* ── Lovelace ── */
+.product.lovelace { border-color: var(--lovelace); }
+.product.lovelace::before { background: radial-gradient(ellipse at 30% 30%, var(--lovelace-glow), transparent 60%); }
+.product.lovelace:hover { border-color: #f9a8d4; box-shadow: 0 0 30px rgba(244,114,182,0.12), 0 8px 32px rgba(0,0,0,0.3); }
+.product.lovelace .product-name { color: var(--lovelace); }
+.product.lovelace .product-role { color: var(--lovelace); }
+.product.lovelace .product-status { background: var(--lovelace-dim); color: var(--lovelace); }
+
+/* ── Byron ── */
+.product.byron { border-color: var(--byron); }
+.product.byron::before { background: radial-gradient(ellipse at 30% 30%, var(--byron-glow), transparent 60%); }
+.product.byron:hover { border-color: #93c5fd; box-shadow: 0 0 30px rgba(96,165,250,0.12), 0 8px 32px rgba(0,0,0,0.3); }
+.product.byron .product-name { color: var(--byron); }
+.product.byron .product-role { color: var(--byron); }
+.product.byron .product-status { background: var(--byron-dim); color: var(--byron); }
+
+/* ── Shelley ── */
+.product.shelley { border-color: var(--shelley); }
+.product.shelley::before { background: radial-gradient(ellipse at 30% 30%, var(--shelley-glow), transparent 60%); }
+.product.shelley:hover { border-color: #6ee7b7; box-shadow: 0 0 30px rgba(52,211,153,0.12), 0 8px 32px rgba(0,0,0,0.3); }
+.product.shelley .product-name { color: var(--shelley); }
+.product.shelley .product-role { color: var(--shelley); }
+.product.shelley .product-status { background: var(--shelley-dim); color: var(--shelley); }
+
+/* ══════════════════════════════════════════
+   ECOSYSTEM STRIP
+   ══════════════════════════════════════════ */
+.ecosystem {
+  text-align: center;
+  padding: 40px 20px;
+  margin-bottom: 24px;
+}
+.ecosystem-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  margin-bottom: 20px;
+}
+.ecosystem-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.eco-node {
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.eco-arrow {
+  color: var(--text-dim);
+  font-size: 1.2rem;
+}
+
+/* ── Footer ── */
+.footer {
+  text-align: center;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+.footer-links {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+.footer-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.75rem;
+  transition: color var(--transition);
+}
+.footer-links a:hover { color: var(--text); }
+
+/* ── Responsive ── */
+@media (max-width: 700px) {
+  .hero-brand { font-size: 2rem; letter-spacing: 3px; }
+  .hero-tagline { font-size: 0.95rem; }
+  .products { grid-template-columns: 1fr; }
+  .lily-banner { flex-direction: column; text-align: center; padding: 24px 20px; }
+  .product { padding: 28px 20px; }
+  .ecosystem-flow { gap: 8px; }
+  .eco-arrow { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="site">
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <h1 class="sr-only">Decentralized Trading, Dating &amp; Social on Cardano</h1>
+    <div class="hero-brand">Posada.io</div>
+    <div class="hero-tagline" data-i18n="home.tagline">Building on Cardano</div>
+    <div class="hero-sub" data-i18n="home.desc">
+      Five products. One blockchain. A complete decentralized platform
+      for trading, social, payments, and communication.
+    </div>
+    <a href="/manifesto.html" class="hero-manifesto" data-i18n="home.read_manifesto">Read our Manifesto</a>
+    <div class="hero-dots">
+      <div class="hero-dot" style="background: var(--lily)"></div>
+      <div class="hero-dot" style="background: var(--posada)"></div>
+      <div class="hero-dot" style="background: var(--lovelace)"></div>
+      <div class="hero-dot" style="background: var(--byron)"></div>
+      <div class="hero-dot" style="background: var(--shelley)"></div>
+    </div>
+  </div>
+
+  <!-- ── LILY Token Banner ── -->
+  <a href="/token/" class="lily-banner" style="text-decoration:none; color:inherit;">
+    <div class="lily-icon">&#x1F338;</div>
+    <div class="lily-info">
+      <div class="lily-title" data-i18n="home.lily_banner_title">LILY Token</div>
+      <div class="lily-desc" data-i18n="home.lily_banner_desc">The native utility token powering the entire Posada ecosystem &mdash; governance, staking, payments, and rewards across all platforms.</div>
+    </div>
+  </a>
+
+  <!-- ── Product Grid ── -->
+  <div class="products">
+
+    <!-- Posada Bot -->
+    <a href="/tradingbot.html" class="product posada" style="text-decoration:none; color:inherit;">
+      <div class="product-icon">&#x1F916;</div>
+      <div class="product-name">NoteG</div>
+      <div class="product-role" data-i18n="home.posada_role">Autonomous Trading Bot</div>
+      <div class="product-desc" data-i18n="home.posada_desc">
+        Strategy-driven automated trading on Cardano via Minswap DEX.
+        Real-time signals, risk management, and a full dashboard to
+        monitor your portfolio.
+      </div>
+      <span class="product-status" data-i18n="home.posada_status">Live</span>
+    </a>
+
+    <!-- Lovelace -->
+    <a href="/lovelace/" class="product lovelace" style="text-decoration:none; color:inherit;">
+      <div class="product-icon">&#x1F498;</div>
+      <div class="product-name">Lovelace</div>
+      <div class="product-role" data-i18n="home.lovelace_role">Dating Made Safe</div>
+      <div class="product-desc" data-i18n="home.lovelace_desc">
+        Privacy-first dating on Cardano. Verified human profiles via
+        Identus DID, zero-knowledge age proofs, encrypted messaging,
+        and $LILY rewards for genuine connections.
+      </div>
+      <span class="product-status" data-i18n="home.lovelace_status">In Development</span>
+    </a>
+
+    <!-- Byron -->
+    <div class="product byron" style="cursor:default;">
+      <div class="product-icon">&#x1F310;</div>
+      <div class="product-name">Byron</div>
+      <div class="product-role" data-i18n="home.byron_role">Decentralized Social</div>
+      <div class="product-desc" data-i18n="home.byron_desc">
+        A new kind of social network. Your data, your identity, your rules.
+        Content ownership on-chain, censorship-resistant feeds, and
+        community-governed moderation.
+      </div>
+      <span class="product-status" data-i18n="home.byron_status">Coming Soon</span>
+    </div>
+
+    <!-- Shelley -->
+    <div class="product shelley" style="cursor:default;">
+      <div class="product-icon">&#x1F4AC;</div>
+      <div class="product-name">Shelley</div>
+      <div class="product-role" data-i18n="home.shelley_role">Encrypted Messaging</div>
+      <div class="product-desc" data-i18n="home.shelley_desc">
+        End-to-end encrypted chat with on-chain identity verification.
+        Group channels, voice, media sharing &mdash; all decentralized
+        with no central server.
+      </div>
+      <span class="product-status" data-i18n="home.shelley_status">Coming Soon</span>
+    </div>
+
+  </div>
+
+  <!-- ── Ecosystem Flow ── -->
+  <div class="ecosystem">
+    <div class="ecosystem-title" data-i18n="home.powered_by">Powered by LILY</div>
+    <div class="ecosystem-flow">
+      <span class="eco-node" style="background: var(--posada-dim); color: var(--posada);">NoteG</span>
+      <span class="eco-arrow">&larr;</span>
+      <span class="eco-node" style="background: var(--lovelace-dim); color: var(--lovelace);">Lovelace</span>
+      <span class="eco-arrow">&larr;</span>
+      <span class="eco-node" style="background: var(--lily-dim); color: var(--lily);">LILY</span>
+      <span class="eco-arrow">&rarr;</span>
+      <span class="eco-node" style="background: var(--byron-dim); color: var(--byron);">Byron</span>
+      <span class="eco-arrow">&rarr;</span>
+      <span class="eco-node" style="background: var(--shelley-dim); color: var(--shelley);">Shelley</span>
+    </div>
+  </div>
+
+  <!-- ── Footer ── -->
+  <div class="footer">
+    &copy; 2026 Posada.io &mdash; Built on Cardano
+    <div class="footer-links">
+      <a href="/manifesto.html" data-i18n="common.manifesto">Manifesto</a>
+      <a href="/lovelace/whitepaper.html" data-i18n="common.whitepaper">Whitepaper</a>
+      <a href="/token/" data-i18n="common.lily_token">LILY Token</a>
+      <a href="mailto:support@posada.io" data-i18n="common.contact">Contact</a>
+    </div>
+  </div>
+
+</div>
+
+<script src="/i18n/i18n.js"></script>
+<script src="/protect.js"></script>
+</body>
+</html>

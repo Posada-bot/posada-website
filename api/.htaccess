@@ -1,0 +1,12 @@
+# Block direct access to config — secrets live here
+<FilesMatch "^(config|debug_whales)\.php$">
+    Require all denied
+</FilesMatch>
+
+# Only allow requests from posada.io (same-origin AJAX)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTP_REFERER} !^https?://(www\.)?posada\.io [NC]
+    RewriteCond %{HTTP_REFERER} !^$
+    RewriteRule \.(php)$ - [F,L]
+</IfModule>

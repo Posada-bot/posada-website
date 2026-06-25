@@ -1,0 +1,11 @@
+# Apple Universal Links: AASA must be served as application/json
+<Files "apple-app-site-association">
+  ForceType application/json
+  Header set Cache-Control "public, max-age=3600"
+</Files>
+
+# Android App Links: assetlinks.json must be JSON
+<Files "assetlinks.json">
+  ForceType application/json
+  Header set Cache-Control "public, max-age=3600"
+</Files>

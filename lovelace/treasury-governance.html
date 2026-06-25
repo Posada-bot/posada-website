@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Treasury Governance — Lovelace</title>
+<style>
+:root { --bg:#080b12; --accent:#f472b6; --accent-dim:rgba(244,114,182,0.12); --accent-glow:rgba(244,114,182,0.06); --text:#e8eaed; --text-muted:#8b949e; --text-dim:#555d66; --border:rgba(255,255,255,0.06); --radius:16px; --font:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; --transition:0.22s ease; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;-webkit-font-smoothing:antialiased}
+body{min-height:100vh;font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.8}
+body::before{content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:1000px;height:600px;background:radial-gradient(ellipse,var(--accent-glow),transparent 70%);pointer-events:none;z-index:0}
+.page{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:48px 24px 96px}
+.back{display:inline-block;margin-bottom:40px;font-size:0.8rem;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;color:var(--text-dim);transition:color var(--transition)}.back:hover{color:var(--accent)}
+h1{font-size:2rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:32px}
+h2{font-size:1.2rem;font-weight:700;color:var(--accent);letter-spacing:1px;margin:36px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+p{color:var(--text-muted);margin-bottom:1.2em;font-size:0.95rem}
+ul{color:var(--text-muted);margin:0 0 1.2em 20px;font-size:0.95rem}li{margin-bottom:6px}
+strong{color:var(--text)}
+.footer{text-align:center;margin-top:64px;padding-top:24px;border-top:1px solid var(--border);color:var(--text-dim);font-size:0.75rem}
+.footer a{color:var(--text-muted);text-decoration:none}.footer a:hover{color:var(--text)}
+</style>
+</head>
+<body>
+<div class="page">
+
+<a href="index.html" class="back" data-i18n="common.back_to_lovelace_full">&larr; Back to Lovelace</a>
+
+<h1 data-i18n="treasury_gov.title">Treasury Governance</h1>
+
+<p data-i18n="treasury_gov.intro">The Lovelace Treasury is structured for strong security, accountability, and clarity to the community and investors.</p>
+
+<h2 data-i18n="treasury_gov.multisig_title">Multisig Structure</h2>
+<p data-i18n="treasury_gov.multisig_desc">The Lovelace Treasury is managed via a <strong>3-of-3 multisig wallet</strong> on Cardano.</p>
+
+<h2 data-i18n="treasury_gov.signers_title">Signers</h2>
+<ul>
+  <li data-i18n="treasury_gov.signer1"><strong>Founder</strong> &mdash; overall project responsibility.</li>
+  <li data-i18n="treasury_gov.signer2"><strong>CEO/CTO</strong> &mdash; technical oversight &amp; protocol alignment.</li>
+</ul>
+
+<h2 data-i18n="treasury_gov.rationale_title">Rationale</h2>
+<ul>
+  <li data-i18n="treasury_gov.rationale1">Ensures no single person can move funds unilaterally.</li>
+  <li data-i18n="treasury_gov.rationale2">Balances decision-making across business, technical, and financial domains.</li>
+</ul>
+
+<h2 data-i18n="treasury_gov.risk_title">Risk Management</h2>
+<ul>
+  <li data-i18n="treasury_gov.risk1">At no point will more than <strong>20%</strong> of Treasury assets be exposed in liquidity pools.</li>
+  <li data-i18n="treasury_gov.risk2">Remaining reserves held in secure, cold-storage multisig accounts.</li>
+  <li data-i18n="treasury_gov.risk3">Regular audits and quarterly reports published to the community.</li>
+</ul>
+
+<h2 data-i18n="treasury_gov.transparency_title">Transparency</h2>
+<ul>
+  <li data-i18n="treasury_gov.transparency1">All Treasury transactions are on-chain and verifiable.</li>
+  <li data-i18n="treasury_gov.transparency2">Multisig activity monitored and reported via a public dashboard.</li>
+  <li data-i18n="treasury_gov.transparency3">Signer identities are transparent, reinforcing accountability.</li>
+</ul>
+
+<p data-i18n="treasury_gov.contact">Questions about the Treasury? Contact <strong>privacy@posada.io</strong> or check our public updates.</p>
+
+<div class="footer">&copy; 2026 <a href="/">Posada.io</a> / Lovelace</div>
+
+</div>
+<script src="/i18n/i18n.js"></script>
+</body>
+</html>

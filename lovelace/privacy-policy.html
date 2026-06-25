@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy — Lovelace</title>
+<style>
+:root { --bg:#080b12; --accent:#f472b6; --accent-dim:rgba(244,114,182,0.12); --accent-glow:rgba(244,114,182,0.06); --text:#e8eaed; --text-muted:#8b949e; --text-dim:#555d66; --border:rgba(255,255,255,0.06); --radius:16px; --font:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; --transition:0.22s ease; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{min-height:100vh;font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.8}
+body::before{content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:1000px;height:600px;background:radial-gradient(ellipse,var(--accent-glow),transparent 70%);pointer-events:none;z-index:0}
+.page{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:48px 24px 96px}
+.back{display:inline-block;margin-bottom:40px;font-size:0.8rem;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;color:var(--text-dim);transition:color var(--transition)}.back:hover{color:var(--accent)}
+h1{font-size:2rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.updated{font-size:0.8rem;color:var(--text-dim);margin-bottom:40px}
+h2{font-size:1.2rem;font-weight:700;color:var(--accent);letter-spacing:1px;margin:40px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+h3{font-size:1.05rem;font-weight:600;color:var(--text);margin:24px 0 8px}
+p{color:var(--text-muted);margin-bottom:1.2em;font-size:0.95rem}
+ul,ol{color:var(--text-muted);margin:0 0 1.2em 20px;font-size:0.95rem}li{margin-bottom:6px}
+strong{color:var(--text)}
+pre{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0 24px;font-size:0.8rem;color:var(--text-muted);line-height:1.5;white-space:pre}
+code{font-family:'SF Mono',Menlo,monospace;font-size:0.85em}
+table{width:100%;border-collapse:collapse;margin:16px 0 24px;font-size:0.85rem}
+th{text-align:left;padding:10px 12px;background:var(--accent-dim);color:var(--accent);font-weight:600;border-bottom:1px solid var(--border)}
+td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text-muted);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.footer{text-align:center;margin-top:64px;padding-top:24px;border-top:1px solid var(--border);color:var(--text-dim);font-size:0.75rem}
+.footer a{color:var(--text-muted);text-decoration:none}.footer a:hover{color:var(--text)}
+@media(max-width:600px){h1{font-size:1.5rem}table{font-size:0.75rem}pre{font-size:0.7rem}}
+</style>
+</head>
+<body>
+<div class="page">
+<div style="margin-bottom:24px"><img src="header.jpg" alt="Lovelace" style="width:100%;height:auto;display:block;border-radius:16px;box-shadow:0 0 40px rgba(244,114,182,0.15),0 16px 48px rgba(0,0,0,0.35)" /></div>
+<a href="index.html" class="back">&larr; Back to Lovelace</a>
+
+<h1>Privacy Policy — Lovelace</h1>
+<p>Last updated: March 2026</p>
+<p>This Privacy Policy describes how Lovelace ("we", "us", "our"), a Posada.io product, processes personal data in connection with our dating application. Our platform is built on privacy-enhancing technologies including zero-knowledge proofs, decentralized identity, and blockchain infrastructure.</p>
+<h2>1. Controller & Contact</h2>
+<p><strong>Controller:</strong> Lovelace / POSADA.IO</p>
+<p><strong>Privacy inquiries:</strong> privacy@posada.io</p>
+<p><strong>Support:</strong> support@posada.io</p>
+<h2>2. Purposes of Processing</h2>
+<ul>
+<li><strong>Account Creation & Privacy-Preserving Verification:</strong> Creating your account with automated wallet generation and verifying your age and identity using zero-knowledge proofs and decentralized credentials.</li>
+<li><strong>Proof of Human:</strong> Ensuring each account represents a unique real person through on-device facial geometry analysis. A mathematical face embedding vector is stored server-side for uniqueness comparison — not a photo.</li>
+<li><strong>Matchmaking & Communication:</strong> Enabling matches based on user-defined preferences, real-time messaging, and safety features.</li>
+<li><strong>Service Operation:</strong> Maintaining security, preventing fraud, and improving reliability through crash reporting (technical data only).</li>
+</ul>
+<h2>3. Legal Basis</h2>
+<ul>
+<li><strong>Contract (Article 6(1)(b) GDPR):</strong> To provide the core dating service you request.</li>
+<li><strong>Legitimate Interests (Article 6(1)(f) GDPR):</strong> For security, fraud prevention, and service improvement.</li>
+<li><strong>Consent (Article 6(1)(a) GDPR):</strong> For optional features, which you can withdraw at any time.</li>
+</ul>
+<h2>4. What We Collect and Where It Lives</h2>
+<p>We minimize data collection by design. Here is an honest accounting of what our server holds today and what stays on your device.</p>
+<h3>Data that NEVER reaches our server</h3>
+<ul>
+<li>Identity document images — scanned on-device only, never transmitted</li>
+<li>Date of birth — extracted on-device for ZK proof generation, then immediately discarded</li>
+<li>Facial comparison between your selfie and ID photo — runs on-device via ML Kit</li>
+<li>DID private keys — generated and stored in your device's secure keystore via Identus Edge Agent</li>
+<li>Verifiable credentials — issued over DIDComm and stored on your device</li>
+</ul>
+<h3>Data our server holds today</h3>
+<table>
+<tr><th>Data Category</th><th>What We Store</th><th>Why</th></tr>
+<tr><td>Account data</td><td>Email address, display name</td><td>Authentication, identification</td></tr>
+<tr><td>Profile preferences</td><td>Gender, religion, language, culture, orientation (all optional)</td><td>Matchmaking</td></tr>
+<tr><td>Location</td><td>Approximate city-level location</td><td>Distance-based matching. We do not store or transmit exact GPS coordinates.</td></tr>
+<tr><td>Face embedding</td><td>A normalized geometric vector (~280 dimensions) derived from facial contour points. This is biometric-derived data under GDPR/LGPD.</td><td>Designed to enforce one-person-one-account. Non-reversible — not designed to be reversible and cannot be practically reconstructed into a facial image. Stored server-side for comparison against new registrations.</td></tr>
+<tr><td>Profile photos</td><td>Photos you voluntarily upload for your dating profile</td><td>Displayed to other users as part of the dating service</td></tr>
+<tr><td>Chat messages</td><td>Message content and timestamps</td><td>Delivery and conversation history. Encrypted in transit via TLS.</td></tr>
+<tr><td>DID reference</td><td>Your public DID identifier and credential ID</td><td>Linking your device identity to your account</td></tr>
+<tr><td>Reward balances</td><td>$LILY token balance (simulated during beta)</td><td>Reward tracking</td></tr>
+<tr><td>Crash reports</td><td>Technical error data via Sentry: stack traces, device info, screen navigation. User ID attached for debugging. No message content, no profile data, no photos.</td><td>Stability and bug resolution. PII scrubbing applied. Retained 90 days.</td></tr>
+</table>
+<h3>What changes after Lovelace production launch on Cardano mainnet</h3>
+<ul>
+<li>Profile data and chat messages will migrate to <strong>Iagon decentralized encrypted storage</strong> — designed so that we do not have access to decrypted content</li>
+<li>Payments will move to <strong>Hydra L2</strong> channels on Cardano</li>
+<li>ZK verification will migrate to <strong>Midnight</strong> for on-chain privacy-preserving proofs (dependent on Midnight mainnet readiness)</li>
+</ul>
+<p>Until these migrations are complete, the data listed above is stored on secured infrastructure (Hetzner VPS, PostgreSQL, TLS encryption in transit).</p>
+<h2>5. Zero-Knowledge Age Verification</h2>
+<p>The verification process has distinct on-device and server-side stages:</p>
+<p><strong>On-device (works without network connectivity):</strong></p>
+<ol>
+<li>Your camera scans your identity document via ML Kit MRZ reader</li>
+<li>Date of birth is extracted from the MRZ data</li>
+<li>A Halo2 zero-knowledge proof is generated proving you are 18 or older</li>
+<li>The raw date of birth is immediately discarded from device memory</li>
+</ol>
+<p><strong>Server-side (requires network connectivity):</strong></p>
+<ol>
+<li>The proof — not your date of birth — is transmitted to our server</li>
+<li>Our server mathematically verifies the proof</li>
+<li>Your account is marked as age-verified</li>
+</ol>
+<p>You can verify the on-device nature of the scan and proof generation by enabling airplane mode before scanning. Document scanning and proof generation complete without network access. Final server verification occurs when connectivity is restored.</p>
+<h2>6. Decentralized Identity (Identus)</h2>
+<p>Your device creates a Decentralized Identifier (DID) using the Hyperledger Identus Edge Agent SDK. This is a cryptographic keypair generated and stored on your device. The DID itself is a cryptographic identifier and does not contain personal data, but because it is associated with your account, it may constitute personal data under GDPR. The DID is registered with our backend to establish a secure DIDComm connection via our Cloud Agent. Verifiable credentials (such as your age verification) are issued over this connection and stored on your device — not our server. We store only the public DID identifier and credential ID reference.</p>
+<h2>7. Face Embedding & Proof of Human</h2>
+<p>To help enforce one-person-one-account, we extract a face embedding from your selfie during verification.</p>
+<p><strong>What a face embedding is:</strong> A list of approximately 280 numbers representing the mathematical geometry of your face — distances between features, proportional relationships, contour shapes. It is computed on your device by ML Kit and then sent to our server for comparison.</p>
+<p><strong>What a face embedding is NOT:</strong> It is not a photo. It is not designed to be reversible and cannot be practically reconstructed into a facial image. It cannot identify you in a crowd or be used for surveillance purposes.</p>
+<p><strong>Legal classification:</strong> Under GDPR and LGPD, a face embedding is considered biometric-derived data because it is derived from facial features. We treat it accordingly — it is collected only with your consent during the verification process, stored with access controls, and permanently deleted when you delete your account. Our server maintains a database of these embeddings for comparison purposes. We process this data under GDPR Article 9(2)(a) (explicit consent) and LGPD Article 11.</p>
+<p>The embedding is compared server-side against existing users using cosine similarity. If a match is found above our confidence threshold, the new account is rejected as a duplicate. This is a probabilistic biometric matching system that significantly raises the barrier to multi-account abuse.</p>
+<p>If you delete your account, your embedding is permanently deleted.</p>
+<p><strong>Note:</strong> The "no photo stored" commitment applies to the identity verification and anti-duplicate system. As a dating app, Lovelace stores profile photos that you voluntarily upload for display to other users.</p>
+<h2>8. What We NEVER Do</h2>
+<ul>
+<li>We never store identity document images</li>
+<li>We never store your date of birth</li>
+<li>We do not sell, share, or monetize your data. If this ever changes, we will notify you in advance and require your explicit consent.</li>
+<li>We never use advertising SDKs, behavioral analytics, or tracking services. We use Sentry for technical crash diagnostics only — this is not behavioral analytics.</li>
+<li>We never use the IDFA or any cross-app tracking frameworks</li>
+<li>We never access your contacts, call logs, browsing history, or other device data</li>
+</ul>
+<h2>9. Data Retention</h2>
+<p>We retain personal data only as long as your account is active. You can delete your account via app settings. This removes from active systems:</p>
+<ul>
+<li>Profile data</li>
+<li>Face embedding vector</li>
+<li>Chat messages</li>
+<li>DID registration reference</li>
+<li>Profile photos</li>
+<li>All associated personal data</li>
+</ul>
+<p>Residual data in server backups is purged within 30 days of account deletion. Crash reports via Sentry are retained for 90 days and then automatically deleted.</p>
+<p>Data already recorded on the Cardano blockchain (such as token transactions) cannot be removed due to the immutable nature of blockchain technology.</p>
+<h2>10. Data Sharing & Processors</h2>
+<p>We share data only with the following, under strict contractual obligations:</p>
+<table>
+<tr><th>Provider</th><th>Purpose</th><th>Data Involved</th></tr>
+<tr><td>Sentry</td><td>Crash reporting</td><td>Technical error data only. No personal content.</td></tr>
+<tr><td>Google ML Kit</td><td>Face detection</td><td>Configured for on-device processing only. No data is transmitted to Google.</td></tr>
+<tr><td>Hyperledger Identus</td><td>DID and credential infrastructure</td><td>Open source protocol. DID operations.</td></tr>
+<tr><td>Hetzner</td><td>Server hosting</td><td>Infrastructure provider.</td></tr>
+<tr><td>Transak / MoonPay (future)</td><td>Fiat on-ramp</td><td>PCI-DSS compliant payment processing. We receive confirmation only.</td></tr>
+</table>
+<p><strong>We do not use advertising networks, data brokers, or behavioral analytics services.</strong></p>
+<h2>11. International Data Transfers</h2>
+<p>When personal data is transferred outside the EU/EEA to a country without an adequacy decision, we ensure safeguards such as EU Standard Contractual Clauses (SCCs).</p>
+<h2>12. Your Rights (GDPR & LGPD)</h2>
+<p>Under applicable data protection laws (including the EU GDPR and Brazil's LGPD), you have the right to:</p>
+<ul>
+<li><strong>Access</strong> your personal data and obtain confirmation of processing</li>
+<li><strong>Correct</strong> incomplete, inaccurate, or outdated data</li>
+<li><strong>Delete</strong> or anonymize unnecessary or excessive data</li>
+<li><strong>Restrict</strong> or object to processing</li>
+<li><strong>Data portability</strong> — receive your data in a structured, machine-readable format (in-app "Export my data" feature)</li>
+<li><strong>Withdraw consent</strong> at any time, without affecting prior lawful processing</li>
+<li><strong>Information about sharing</strong> — know which third parties have access to your data</li>
+</ul>
+<p>Contact: privacy@posada.io</p>
+<p>Rights to erasure do not apply to data immutably recorded on a public blockchain.</p>
+<p><strong>LGPD Notice:</strong> For users in Brazil, our legal basis for processing includes consent (Art. 7, I), contract performance (Art. 7, V), and legitimate interests (Art. 7, IX) under the LGPD. You may contact Brazil's Autoridade Nacional de Proteção de Dados (ANPD) to file a complaint.</p>
+<h2>13. Security & Authentication</h2>
+<ul>
+<li><strong>Authentication:</strong> Email and password-based login. Passwords are hashed using industry-standard algorithms and never stored in plaintext. The Identus DID provides an additional cryptographic identity layer but does not replace password authentication.</li>
+<li>All data in transit encrypted via TLS/HTTPS</li>
+<li>Database stored on secured infrastructure. Encryption at rest is planned as part of the Iagon migration.</li>
+<li>API communication uses HTTPS exclusively</li>
+<li>Strict principle of least privilege for server access</li>
+<li>Sentry crash reporting configured with PII scrubbing</li>
+<li>Continuous monitoring via server logging</li>
+</ul>
+<h2>14. Apple App Store Disclosures</h2>
+<ul>
+<li><strong>Data Used to Track You:</strong> None. We do not track users across apps or websites.</li>
+<li><strong>Data Linked to You:</strong> Contact info (email), identifiers (user ID, wallet address), usage data (app interactions).</li>
+<li><strong>Data Not Linked to You:</strong> Diagnostics (crash logs, performance data).</li>
+<li><strong>Data Not Collected:</strong> Financial information, health data, browsing history, search history.</li>
+</ul>
+<p>We comply with Apple's App Tracking Transparency framework.</p>
+<h2>15. Children</h2>
+<p>Lovelace is for users aged 18 and older only. Age is cryptographically verified during signup using zero-knowledge proofs. We do not knowingly collect data from anyone under 18.</p>
+<h2>16. Changes to This Policy</h2>
+<p>We will notify users in-app of any material changes to this privacy policy.</p>
+<h2>17. Contact & Complaints</h2>
+<p><strong>Privacy:</strong> privacy@posada.io</p>
+<p><strong>Support:</strong> support@posada.io</p>
+<p>You have the right to lodge a complaint with your local Data Protection Authority.</p>
+<p>© 2026 Posada.io / Lovelace</p>
+
+<div class="footer"><p>&copy; 2026 <a href="https://posada.io">Posada.io</a> / Lovelace &mdash; Built on Cardano</p></div>
+</div>
+</body>
+</html>

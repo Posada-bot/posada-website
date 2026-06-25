@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lovelace — T24 Monitor</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #0a0a0a; --accent: #f472b6; --green: #22c55e;
+  --orange: #f97316; --red: #ef4444; --text: #e0e0e0; --muted: #888;
+  --dim: #555; --card-bg: #1a1a2e; --border: #333; --font: system-ui, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; }
+.login-wrap { display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+.login-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 32px; width: 320px; text-align: center; }
+.login-box h2 { color: var(--accent); margin-bottom: 16px; font-size: 1.2rem; }
+.login-box input { width: 100%; padding: 10px 14px; background: #111; border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 1rem; margin-bottom: 12px; }
+.login-box button { width: 100%; padding: 10px; background: var(--accent); border: none; border-radius: 8px; color: #000; font-weight: 700; cursor: pointer; }
+.login-error { color: var(--red); font-size: 0.85rem; margin-top: 8px; display: none; }
+.dash { display: none; max-width: 1200px; margin: 0 auto; padding: 24px; }
+.nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.nav a { color: var(--dim); text-decoration: none; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; }
+.nav a:hover { color: var(--accent); }
+h1 { color: var(--orange); font-size: 1.5rem; margin-bottom: 2px; }
+.sub { color: var(--muted); margin-bottom: 20px; font-size: 0.85rem; }
+h2 { color: var(--accent); font-size: 1rem; margin: 24px 0 10px; text-transform: uppercase; letter-spacing: 1px; }
+.status-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 20px; }
+.status-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+.status-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+.status-value { font-size: 1.3rem; font-weight: 700; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.dot-green { background: var(--green); }
+.dot-red { background: var(--red); }
+.dot-grey { background: var(--dim); }
+.rates { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.rate-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; text-align: center; }
+.rate-val { font-size: 1.6rem; font-weight: 800; color: var(--orange); }
+.rate-label { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+.formula { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; font-family: monospace; font-size: 0.85rem; color: var(--muted); margin-bottom: 16px; }
+table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-bottom: 20px; }
+th { text-align: left; padding: 7px 8px; color: var(--accent); border-bottom: 1px solid var(--border); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; }
+td { padding: 6px 8px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+.mono { font-family: monospace; font-size: 0.75rem; color: var(--muted); }
+.accepted { color: var(--green); }
+.rejected { color: var(--red); }
+canvas { max-height: 250px; margin-bottom: 20px; }
+.footer { text-align: center; color: var(--dim); font-size: 0.75rem; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
+</style>
+</head><body>
+
+<div class="login-wrap" id="loginWrap">
+  <div class="login-box">
+    <h2>T24 Monitor</h2>
+    <input type="password" id="pwInput" placeholder="Password" autofocus>
+    <button onclick="doLogin()">Enter</button>
+    <div class="login-error" id="loginError">Wrong password</div>
+  </div>
+</div>
+
+<div class="dash" id="dash">
+  <div class="nav">
+    <a href="/lovelace/usage/">&larr; Usage Dashboard</a>
+    <a href="#" onclick="loadData()">Refresh</a>
+  </div>
+  <h1>T24 Live Monitor</h1>
+  <div class="sub" id="updated">Loading...</div>
+
+  <div class="status-grid" id="statusGrid"></div>
+
+  <h2>Conversion Rates</h2>
+  <div class="rates" id="rates"></div>
+
+  <h2>Oracle — Live Prices</h2>
+  <div class="formula" id="formula"></div>
+  <table><thead><tr><th>Feed</th><th>Value (USD)</th><th>Raw (millionths)</th><th>Last Updated</th><th>Source</th></tr></thead>
+  <tbody id="oracleBody"></tbody></table>
+
+  <h2>Peg History</h2>
+  <canvas id="pegChart"></canvas>
+
+  <h2>Node Network</h2>
+  <table><thead><tr><th>Node DID</th><th>Status</th><th>Last Heartbeat</th><th>Battery</th><th>Network</th><th>Observations</th><th>Accepted</th></tr></thead>
+  <tbody id="nodeBody"></tbody></table>
+
+  <h2>Recent Observations</h2>
+  <table><thead><tr><th>Time</th><th>Node</th><th>Electricity (USD)</th><th>Source</th><th>Accepted</th></tr></thead>
+  <tbody id="obsBody"></tbody></table>
+
+  <h2>Contract Suite</h2>
+  <table>
+    <thead><tr><th>Validator</th><th>Tests</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>Mint / Burn / Convert</td><td>21</td><td style="color:var(--green)">&#x2705;</td></tr>
+      <tr><td>Liquidation</td><td>13</td><td style="color:var(--green)">&#x2705;</td></tr>
+      <tr><td>Oracle (Rational/ref inputs)</td><td>35</td><td style="color:var(--green)">&#x2705;</td></tr>
+      <tr><td>Collateral Pool</td><td>20</td><td style="color:var(--green)">&#x2705;</td></tr>
+      <tr><td><strong>Total</strong></td><td><strong>89</strong></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <div class="footer">T24 — Posada Oracle Network</div>
+</div>
+
+<script>
+const API = 'https://api.posada.io/admin/api';
+const KEY_STORE = 'lovelaceUsageKey_v2';
+let apiKey = sessionStorage.getItem(KEY_STORE) || '';
+let pegChart = null;
+
+document.getElementById('pwInput').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function doLogin() {
+  apiKey = document.getElementById('pwInput').value;
+  authenticate();
+}
+
+function authenticate() {
+  fetch(API + '/t24', { headers: { 'Authorization': 'Bearer ' + apiKey } })
+    .then(r => r.json())
+    .then(d => {
+      if (!d.success) {
+        document.getElementById('loginError').style.display = 'block';
+        sessionStorage.removeItem(KEY_STORE);
+        return;
+      }
+      sessionStorage.setItem(KEY_STORE, apiKey);
+      document.getElementById('loginWrap').style.display = 'none';
+      document.getElementById('dash').style.display = 'block';
+      render(d);
+      setInterval(loadData, 30000);
+    })
+    .catch(() => {
+      document.getElementById('loginError').style.display = 'block';
+      sessionStorage.removeItem(KEY_STORE);
+    });
+}
+
+// Auto-login if a key was saved earlier this session (e.g. from another page).
+if (apiKey) authenticate();
+
+function loadData() {
+  fetch(API + '/t24', { headers: { 'Authorization': 'Bearer ' + apiKey } })
+    .then(r => r.json())
+    .then(d => { if (d.success) render(d); })
+    .catch(() => {});
+}
+
+function fmt(millionths) { return '$' + (millionths / 1000000).toFixed(2); }
+function fmtNum(n) { return n.toLocaleString(); }
+function truncDid(did) {
+  if (!did || did.length < 20) return did || '-';
+  return did.slice(0, 10) + '...' + did.slice(-6);
+}
+function ago(dateStr) {
+  if (!dateStr) return '-';
+  const ms = Date.now() - new Date(dateStr + 'Z').getTime();
+  if (ms < 60000) return Math.round(ms/1000) + 's ago';
+  if (ms < 3600000) return Math.round(ms/60000) + 'm ago';
+  if (ms < 86400000) return Math.round(ms/3600000) + 'h ago';
+  return Math.round(ms/86400000) + 'd ago';
+}
+
+function render(d) {
+  const s = d.status;
+  const ns = d.nodeStatus;
+  const r = d.rate;
+  const o = s?.oracle;
+
+  document.getElementById('updated').textContent = 'Updated: ' + new Date().toLocaleTimeString() + ' — Oracle: ' + ago(o?.updated_at);
+
+  // Status grid
+  const backendUp = s?.active;
+  const oracleFresh = o?.updated_at && (Date.now() - new Date(o.updated_at + 'Z').getTime()) < 3600000;
+  const activeNodes = ns?.nodes?.active || 0;
+
+  document.getElementById('statusGrid').innerHTML = [
+    ['T24 Backend', backendUp ? '<span class="dot dot-green"></span>UP' : '<span class="dot dot-red"></span>DOWN'],
+    ['Oracle', oracleFresh ? '<span class="dot dot-green"></span>FRESH' : '<span class="dot dot-red"></span>STALE'],
+    ['Phone Nodes', '<span class="dot ' + (activeNodes > 0 ? 'dot-green' : 'dot-grey') + '"></span>' + activeNodes + ' active / ' + (ns?.nodes?.total || 0) + ' total'],
+    ['Consensus', (ns?.nodes?.min_for_consensus || 1) + ' node min'],
+  ].map(([l,v]) => '<div class="status-item"><div class="status-label">' + l + '</div><div class="status-value">' + v + '</div></div>').join('');
+
+  // Rates
+  document.getElementById('rates').innerHTML = [
+    [fmt(o?.peg_value_usd || 0), '1 T24 = USD'],
+    [r?.ada_per_t24 ? r.ada_per_t24.toFixed(2) + ' ADA' : '-', '1 T24 = ADA'],
+    [(r?.lily_per_t24 || 0) + ' $LILY', '1 T24 = LILY'],
+  ].map(([v,l]) => '<div class="rate-card"><div class="rate-val">' + v + '</div><div class="rate-label">' + l + '</div></div>').join('');
+
+  // Formula
+  const wl = o?.components?.weight_labor || 70;
+  const we = o?.components?.weight_energy || 30;
+  document.getElementById('formula').innerHTML = 'peg = (wage &times; ' + (wl/100).toFixed(1) + ') + (electricity &times; ' + (we/100).toFixed(1) + ') = ' + fmt(o?.peg_value_usd || 0);
+
+  // Oracle table
+  document.getElementById('oracleBody').innerHTML = [
+    ['Hourly Wage', o?.components?.hourly_wage_usd, 'Static', '<span style="color:var(--muted)">ILO global median $3.25</span>'],
+    ['Electricity', o?.components?.electricity_kwh_usd, ago(o?.updated_at), '<span style="color:var(--green)">GlobalPetrolPrices (quarterly, 150+ countries)</span>'],
+    ['ADA/USD', s?.oracle?.ada_price_usd, ago(o?.updated_at), '<span style="color:var(--orange)">CoinGecko API (every 5m)</span>'],
+    ['Composite Peg (' + wl + '/' + we + ')', o?.peg_value_usd, ago(o?.updated_at), '<span style="color:var(--accent)">Calculated: (wage&times;0.7)+(elec&times;0.3)</span>'],
+  ].map(([feed, raw, upd, src]) =>
+    '<tr><td>' + feed + '</td><td>' + fmt(raw || 0) + '</td><td class="mono">' + fmtNum(raw || 0) + '</td><td class="mono">' + upd + '</td><td>' + src + '</td></tr>'
+  ).join('');
+
+  // Peg chart
+  if (d.history && d.history.length > 0) {
+    const labels = d.history.map(h => {
+      const d = new Date(h.updated_at + 'Z');
+      return d.toLocaleDateString(undefined, {month:'short', day:'numeric'}) + ' ' + d.toLocaleTimeString(undefined, {hour:'2-digit', minute:'2-digit'});
+    });
+    const wage = o?.components?.weight_labor || 70;
+    const energy = o?.components?.weight_energy || 30;
+    const values = d.history.map(h => {
+      const w = h.hourly_wage_usd || h.median_wage_usd || 0;
+      const e = h.electricity_kwh_usd || 0;
+      return ((w * wage / 100) + (e * energy / 100)) / 1000000;
+    });
+
+    if (pegChart) pegChart.destroy();
+    pegChart = new Chart(document.getElementById('pegChart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'T24 Peg (USD)',
+          data: values,
+          borderColor: '#f97316',
+          backgroundColor: 'rgba(249,115,22,0.1)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 2,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#555', maxTicksLimit: 8, font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.03)' } },
+          y: { ticks: { color: '#555', callback: v => '$' + v.toFixed(2) }, grid: { color: 'rgba(255,255,255,0.05)' } }
+        }
+      }
+    });
+  }
+
+  // Nodes
+  const nodeBody = document.getElementById('nodeBody');
+  if (d.nodes && d.nodes.length > 0) {
+    nodeBody.innerHTML = d.nodes.map(n => {
+      const active = n.last_heartbeat && (Date.now() - new Date(n.last_heartbeat + 'Z').getTime()) < 600000;
+      return '<tr>'
+        + '<td class="mono">' + truncDid(n.node_did) + '</td>'
+        + '<td><span class="dot ' + (active ? 'dot-green' : 'dot-grey') + '"></span>' + (active ? 'Active' : 'Inactive') + '</td>'
+        + '<td class="mono">' + ago(n.last_heartbeat) + '</td>'
+        + '<td>' + (n.battery_level != null ? n.battery_level + '%' + (n.is_charging ? ' &#9889;' : '') : '-') + '</td>'
+        + '<td>' + (n.network_type || '-') + '</td>'
+        + '<td>' + (n.observations_total || 0) + '</td>'
+        + '<td>' + (n.observations_accepted || 0) + '</td>'
+        + '</tr>';
+    }).join('');
+  } else {
+    nodeBody.innerHTML = '<tr><td colspan="7" style="color:var(--dim);text-align:center">No nodes registered</td></tr>';
+  }
+
+  // Observations
+  const obsBody = document.getElementById('obsBody');
+  if (d.observations && d.observations.length > 0) {
+    obsBody.innerHTML = d.observations.map(ob => {
+      const acc = ob.accepted === 1;
+      return '<tr>'
+        + '<td class="mono">' + ago(ob.observed_at) + '</td>'
+        + '<td class="mono">' + truncDid(ob.node_did) + '</td>'
+        + '<td>' + fmt(ob.electricity_kwh_usd) + '</td>'
+        + '<td>' + (ob.source_name || '-') + '</td>'
+        + '<td class="' + (acc ? 'accepted' : 'rejected') + '">' + (acc ? 'Yes' : 'No') + '</td>'
+        + '</tr>';
+    }).join('');
+  } else {
+    obsBody.innerHTML = '<tr><td colspan="5" style="color:var(--dim);text-align:center">No observations yet</td></tr>';
+  }
+}
+</script>
+</body></html>

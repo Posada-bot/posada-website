@@ -1,0 +1,18 @@
+# ── Secrets — NEVER commit ──────────────────────────────────────────────
+api/config.php
+config.php
+**/config.php
+onecom_pw.txt
+
+# ── Server-only backends / data / artifacts (live on one.com, not in repo) ─
+license/                     # license-server PHP backend (source lives in bot-bot/license-server)
+data/                        # generated price/volume caches
+releases/                    # APK / binary release artifacts
+apk/
+lovelace/download/data/      # customer license data (licenses.json)
+
+# ── Junk ────────────────────────────────────────────────────────────────
+*.bak
+*.cache
+.DS_Store
+err_test.php

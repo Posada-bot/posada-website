@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Whitepaper v2.3 — Lovelace</title>
+<style>
+:root { --bg:#080b12; --accent:#f472b6; --accent-dim:rgba(244,114,182,0.12); --accent-glow:rgba(244,114,182,0.06); --text:#e8eaed; --text-muted:#8b949e; --text-dim:#555d66; --border:rgba(255,255,255,0.06); --radius:16px; --font:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; --transition:0.22s ease; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{min-height:100vh;font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.8}
+body::before{content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:1000px;height:600px;background:radial-gradient(ellipse,var(--accent-glow),transparent 70%);pointer-events:none;z-index:0}
+.page{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:48px 24px 96px}
+.back{display:inline-block;margin-bottom:40px;font-size:0.8rem;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;color:var(--text-dim);transition:color var(--transition)}.back:hover{color:var(--accent)}
+h1{font-size:2rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.updated{font-size:0.8rem;color:var(--text-dim);margin-bottom:40px}
+h2{font-size:1.2rem;font-weight:700;color:var(--accent);letter-spacing:1px;margin:40px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+h3{font-size:1.05rem;font-weight:600;color:var(--text);margin:24px 0 8px}
+p{color:var(--text-muted);margin-bottom:1.2em;font-size:0.95rem}
+ul,ol{color:var(--text-muted);margin:0 0 1.2em 20px;font-size:0.95rem}li{margin-bottom:6px}
+strong{color:var(--text)}
+pre{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0 24px;font-size:0.8rem;color:var(--text-muted);line-height:1.5;white-space:pre}
+code{font-family:'SF Mono',Menlo,monospace;font-size:0.85em}
+table{width:100%;border-collapse:collapse;margin:16px 0 24px;font-size:0.85rem}
+th{text-align:left;padding:10px 12px;background:var(--accent-dim);color:var(--accent);font-weight:600;border-bottom:1px solid var(--border)}
+td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text-muted);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.footer{text-align:center;margin-top:64px;padding-top:24px;border-top:1px solid var(--border);color:var(--text-dim);font-size:0.75rem}
+.footer a{color:var(--text-muted);text-decoration:none}.footer a:hover{color:var(--text)}
+@media(max-width:600px){h1{font-size:1.5rem}table{font-size:0.75rem}pre{font-size:0.7rem}}
+</style>
+</head>
+<body>
+<div class="page">
+<div style="margin-bottom:24px"><img src="header.jpg" alt="Lovelace" style="width:100%;height:auto;display:block;border-radius:16px;box-shadow:0 0 40px rgba(244,114,182,0.15),0 16px 48px rgba(0,0,0,0.35)" /></div>
+<a href="index.html" class="back">&larr; Back to Lovelace</a>
+
+<h1>Whitepaper v2.3</h1>
+<h2>Lovelace — A Privacy-First Dating Ecosystem on Cardano</h2>
+<p>Document Version: 2.3</p>
+<p>Release Date: March 2026</p>
+<p>Official Website: posada.io/lovelace</p>
+<p>Contact: info@posada.io</p>
+<h2>Executive Summary</h2>
+<p>Lovelace is a dating platform built on Cardano, designed to eliminate bots, scams, and data exploitation from online dating. We replace the extractive Web2 model with a privacy-enhanced ecosystem where identity verification happens on the user's device, incentives reward genuine interactions, and the architecture is designed to progressively decentralize as Cardano's infrastructure matures.</p>
+<p>Our solution integrates Cardano's technology stack:</p>
+<ul>
+<li><strong>Identus DID & Verifiable Credentials</strong> — Human-only, cryptographically verified identity. Live on iOS and Android.</li>
+<li><strong>Halo2 Zero-Knowledge Proofs</strong> — Privacy-preserving age verification. Proof generation runs on-device; verification runs server-side. Live in production.</li>
+<li><strong>Face Embedding Proof of Human</strong> — Designed to enforce one-person-one-account through facial geometry uniqueness checks. No photos stored in the identity verification system.</li>
+<li><strong>$LILY Token</strong> — Utility backbone for rewards, premium features, and ecosystem participation. Aiken CIP-0113 Programmable Token: 6 validators (issuance, transfer, admin, blacklist ×2, proof token), deployed on Preview testnet. 24/24 tests passing. Audit pending.</li>
+<li><strong>Iagon Encrypted Decentralized Storage</strong> — User-owned profile data and chat history. Planned for integration after Lovelace production launch on Cardano mainnet.</li>
+<li><strong>Hydra Head Channels</strong> — Instant micro-payments for gifts, tips, and rewards. Planned for integration after Lovelace production launch on Cardano mainnet.</li>
+<li><strong>Midnight</strong> — On-chain privacy-preserving ZK verification. Planned for integration after Midnight reaches production readiness (post-Mohalu).</li>
+</ul>
+<p>Lovelace is built by a solo founder-developer with AI-assisted development. An application for Orion funding ($90,000) has been submitted. The project is self-funded until external funding is secured.</p>
+<h2>1. The Problem: The Trust Crisis in Digital Dating</h2>
+<p>The current dating app market is dominated by platforms whose business models are fundamentally misaligned with user success:</p>
+<ul>
+<li><strong>The Bot & Scam Epidemic:</strong> Fake profiles, romance scams, and catfishing are rampant. Traditional verification (phone, email, photo check) is easily bypassed.</li>
+<li><strong>Data Exploitation:</strong> User data — photos, messages, preferences, behavioral patterns — is harvested, sold, and used for advertising and engagement manipulation.</li>
+<li><strong>Perverse Incentives:</strong> Platforms are financially incentivized to keep users single, swiping, and paying. Their revenue model requires users to stay, not succeed.</li>
+<li><strong>Barriers to Web3 Adoption:</strong> Existing blockchain social apps require users to understand wallets, seed phrases, and cryptocurrency before signing up — a massive friction barrier for mainstream users.</li>
+</ul>
+<p>Lovelace addresses these failures at their core.</p>
+<h2>2. Our Solution: Privacy-Enhanced Dating with Aligned Incentives</h2>
+<ul>
+<li><strong>Human-Only Environment:</strong> Identus DIDs and Verifiable Credentials create a reusable, portable identity layer. Halo2 ZK proofs verify age without accessing documents. Face embedding uniqueness checks enforce one-person-one-account.</li>
+<li><strong>Minimized Data Collection:</strong> We avoid storing raw ID documents, dates of birth, and biometric photos. Verification data is processed on-device wherever possible. Data that does reach our server (such as face embeddings, chat messages, and profile information) is stored on secured infrastructure with encryption in transit. As the architecture matures, sensitive data will migrate to Iagon decentralized encrypted storage where we hold no decryption keys.</li>
+<li><strong>Frictionless Web3 Onboarding:</strong> Users experience a familiar sign-up. Behind the scenes, the system creates a Cardano wallet and Identus DID automatically. Crypto complexity is abstracted away. Fiat on-ramp via PIX (Transak/MoonPay) converts BRL to ADA/stablecoins merchant-side — users pay in their local currency and never need to acquire or manage cryptocurrency directly.</li>
+<li><strong>Incentives for Positive Behavior:</strong> The $LILY token rewards users for verification, quality interactions, referrals, and reporting bad actors.</li>
+<li><strong>Multi-Dimensional Matching:</strong> No single axis dominates. Users define their own filter priorities across gender, religion, country, language, sexual orientation, culture, age range, and distance. Custom user-created tags extend beyond the defaults.</li>
+</ul>
+<h2>3. Technical Architecture</h2>
+<h3>Current Architecture (Beta)</h3>
+<pre>
++-------------------------------------------------------------+
+|                   User Layer (Flutter Mobile)                |
+|  - iOS (Codemagic CI/CD, TestFlight)                        |
+|  - Android (Codemagic CI/CD, Shorebird OTA patches)         |
++----------------------------+--------------------------------+
+                             | HTTPS / WSS
++----------------------------v--------------------------------+
+|              Application &amp; Backend Layer                     |
+|  - Node.js / Express, PostgreSQL, Hetzner VPS               |
+|  - Matchmaking Engine                                        |
+|  - 26-Reward Engine (7 trigger categories)                   |
+|  - KYC: ML Kit MRZ scan + selfie + ZK proof + Identus DID   |
+|  - Real-time chat (WebSocket, TLS encrypted in transit)      |
+|  - Sentry crash reporting (technical data only, PII scrubbed)|
++----+------------+-------------------------------------------+
+     |            |
++----v-----+ +---v------+
+| Identus  | |  Halo2   |
+|  DID/VC  | | ZK Proofs|
+| [LIVE]   | |  [LIVE]  |
++----------+ +----------+
+     |            |
+     +------+-----+
+            |
+     +------v----------+
+     |     Cardano      |
+     |    Layer 1       |
+     |   (Preprod)      |
+     +------------------+
+</pre>
+<h3>Target Architecture (Post-Mainnet Launch)</h3>
+<pre>
++-------------------------------------------------------------+
+|                   User Layer (Flutter Mobile)                |
++----------------------------+--------------------------------+
+                             | HTTPS / WSS
++----------------------------v--------------------------------+
+|              Application &amp; Backend Layer                     |
++----+------------+-------------+-------------+---------------+
+     |            |             |             |
++----v-----+ +---v------+ +---v--------+ +--v--------+
+| Identus  | | Midnight | |   Iagon    | |   Hydra   |
+|  DID/VC  | | ZK Proofs| | Encrypted  | |   Head    |
+|          | |          | |  Storage   | | Channels  |
++----------+ +----------+ +------------+ +-----------+
+     |            |              |              |
+     +------+-----+--------------+--------------+
+            |
+     +------v----------+
+     |     Cardano      |
+     |    Mainnet       |
+     +------------------+
+</pre>
+<h3>Layer descriptions:</h3>
+<ul>
+<li><strong>Cardano Layer 1:</strong> Secure settlement layer for $LILY token transactions, reward distributions, and Hydra channel state.</li>
+<li><strong>Identus (LIVE):</strong> Decentralized identity. DID creation on-device, DIDComm connections, verifiable credential issuance. Operational on both iOS and Android. Infrastructure: Cloud Agent (Docker), PRISM Node, DIDComm Mediator.</li>
+<li><strong>Halo2 ZK Proofs (LIVE):</strong> Age verification. Document scan and date of birth extraction happen on-device on both platforms. Proof generation runs on-device on Android. On iOS, releases in the 1.7.x line generate the proof server-side via a TLS-protected endpoint that the app already uses for the KYC document and selfie upload — the trust boundary is identical to the existing enrollment flow, the date of birth is consumed in-process by the prover and never written to disk, never logged, and never persisted in any table. iOS will return to fully on-device proof generation in the 1.8.0 release. Server receives the proof rather than the date of birth or document contents. The Halo2 circuit is the first candidate for open-sourcing under the posada-io GitHub organization.</li>
+<li><strong>Midnight (after Midnight mainnet):</strong> On-chain privacy-preserving proofs. Currently on testnet, deploying to mainnet. Lovelace will migrate ZK verification to Midnight when the network reaches production readiness (post-Mohalu, Q2 2026+). Until then, Halo2 server-side verification operates independently.</li>
+<li><strong>Iagon (after Lovelace production launch on Cardano mainnet):</strong> Decentralized encrypted storage for user-owned profile data and chat history. Will replace current Hetzner VPS storage for sensitive user data. The design intent is for users to hold their own decryption keys.</li>
+<li><strong>Hydra (after Lovelace production launch on Cardano mainnet):</strong> Layer 2 head channels for instant micro-payments — gifts, tips, and rewards within the app.</li>
+<li><strong>Sentry (LIVE):</strong> Crash reporting. Captures technical error data only — stack traces, device info, screen navigation breadcrumbs. User ID is attached for debugging but no personal content (messages, profile data, photos) is transmitted. PII scrubbing is applied.</li>
+<li><strong>Application Layer:</strong> Flutter mobile app (23+ screens), Node.js backend, PostgreSQL database, 18-language i18n system.</li>
+</ul>
+<h2>4. Identity & Proof of Human</h2>
+<h3>4.1 Identus Decentralized Identity (Live)</h3>
+<p>The full Identus DID chain is connected and operational on iOS and Android:</p>
+<ol>
+<li>User completes KYC (document scan + selfie match via on-device ML Kit)</li>
+<li>Device creates a DID locally via the Identus Edge Agent SDK</li>
+<li>DID is registered with the backend</li>
+<li>Backend creates a DIDComm connection via the Identus Cloud Agent</li>
+<li>Device accepts the connection — DIDComm channel established</li>
+<li>Backend verifies age via ZK proof and issues a verifiable age credential over the connection</li>
+<li>Credential stored on-device, credential ID recorded server-side</li>
+</ol>
+<p>If any Identus step fails, the user still passes KYC via the ZK proof alone. Identus is additive — it does not gate access.</p>
+<h3>4.2 Zero-Knowledge Age Verification (Live)</h3>
+<p>The KYC verification flow has distinct on-device and server-side stages:</p>
+<p><strong>On-device (runs without network connectivity):</strong></p>
+<ul>
+<li>ML Kit MRZ reader scans the identity document (passport, ID card, or driver's license)</li>
+<li>Date of birth is extracted from the MRZ data</li>
+<li>A Halo2 zero-knowledge proof is generated proving age ≥ 18</li>
+<li>The raw date of birth is immediately discarded from device memory</li>
+</ul>
+<p><strong>Server-side (requires network connectivity):</strong></p>
+<ul>
+<li>The proof (not the date of birth) is transmitted to the server</li>
+<li>The server verifies the mathematical proof</li>
+<li>The user is marked as age-verified</li>
+</ul>
+<p>Users can verify the on-device nature of the scan and proof generation by enabling airplane mode — document scanning and proof generation complete without network access. Final server verification occurs when connectivity is restored.</p>
+<h3>4.3 Face Embedding Uniqueness (Live)</h3>
+<p>We designed one-person-one-account enforcement using facial geometry uniqueness checks:</p>
+<ul>
+<li>During KYC, ML Kit (configured for on-device processing only — no data transmitted to Google) extracts facial contour points and landmarks from the selfie</li>
+<li>A normalized geometric feature vector (~280 dimensions) is computed on-device</li>
+<li>The vector is sent to the backend and compared against all existing users via cosine similarity</li>
+<li>If similarity exceeds the threshold, the account is rejected as a duplicate</li>
+<li>The selfie photo used during KYC verification is not stored by the anti-duplicate system — only the mathematical vector is retained</li>
+<li>The vector is not designed to be reversible and cannot be practically reconstructed into a facial image</li>
+<li>Deleted from active systems when the account is deleted; purged from backups within 30 days</li>
+</ul>
+<p>This is a probabilistic biometric matching system. It significantly raises the barrier to multi-account abuse but, like all biometric systems, operates within a confidence threshold rather than absolute certainty.</p>
+<p><strong>Legal classification:</strong> The face embedding is biometric-derived data under GDPR (Article 9) and LGPD (Article 11). It is collected only with explicit user consent during the verification process and treated with the corresponding level of protection.</p>
+<p><strong>Note on profile photos:</strong> Lovelace is a dating app. Users upload profile photos as part of normal use. These photos are stored on the backend for display to other users. The "no photo stored" commitment applies specifically to the identity verification and anti-duplicate system — not to voluntary profile content.</p>
+<h2>5. Current Data Architecture — Honest Assessment</h2>
+<p>Lovelace is a <strong>privacy-enhanced dating app with progressive decentralization</strong>. Today's live architecture is:</p>
+<p><strong>What runs on-device (never reaches our server):</strong></p>
+<ul>
+<li>Identity document images</li>
+<li>Date of birth (extracted, used for proof, immediately discarded)</li>
+<li>Facial comparison between ID photo and selfie (ML Kit, on-device)</li>
+<li>DID private keys (Identus Edge Agent, device keystore)</li>
+<li>Verifiable credentials (stored on-device)</li>
+</ul>
+<p><strong>What our server holds today:</strong></p>
+<ul>
+<li>Email address, display name, optional profile preferences</li>
+<li>Face embedding vector (biometric-derived data — mathematical, not a photo)</li>
+<li>Chat messages (encrypted in transit via TLS, stored in PostgreSQL)</li>
+<li>DID public identifier and credential ID references</li>
+<li>Profile photos (user-uploaded for the dating service)</li>
+<li>Crash reports (Sentry — technical data only)</li>
+<li>$LILY reward balances (simulated in database during beta)</li>
+</ul>
+<p><strong>What changes post-mainnet:</strong></p>
+<ul>
+<li>Profile data and chat messages migrate to Iagon decentralized encrypted storage (user holds decryption keys, we cannot access content)</li>
+<li>Payments move to Hydra L2 (on-chain, no server intermediary)</li>
+<li>ZK verification moves to Midnight (on-chain, no server intermediary)</li>
+</ul>
+<p>We minimize what we store and avoid storing raw identity documents or dates of birth. We do not sell, share, or monetize user data. If this ever changes, users will be notified in advance and explicit consent will be required. The architecture is designed so that each integration milestone reduces what our server holds, moving toward a model where we cannot access sensitive user content even if compelled.</p>
+<h2>6. $LILY Token Economics</h2>
+<h3>6.1 Token Utility (Designed)</h3>
+<ul>
+<li><strong>In-App Rewards:</strong> Earned for positive actions (verification, referrals, quality interactions)</li>
+<li><strong>Social Payments:</strong> Used for sending gifts between users</li>
+<li><strong>Premium Access:</strong> Unlocks enhanced features and higher membership tiers</li>
+<li><strong>Governance (Future):</strong> Token holders may govern treasury allocations and feature priorities</li>
+</ul>
+<h3>6.2 Current Status</h3>
+<p>Token utility logic is fully designed, smart contracts are tested, and reward accounting is implemented in the backend. <strong>During beta, all $LILY balances are simulated in the database.</strong> No real tokens move until the $LILY token is minted on Cardano mainnet and listed on DEX. Beta reward balances will transfer to users' mainnet wallets at launch.</p>
+<h3>6.3 Tokenomics</h3>
+<table>
+<tr><th>Parameter</th><th>Value</th></tr>
+<tr><td>Total Supply</td><td>500,000,000 $LILY (fixed, no inflation)</td></tr>
+<tr><td>Initial Circulation</td><td>0 — all LILY distributed from treasury as earned</td></tr>
+<tr><td>Treasury Reserve</td><td>500,000,000 (100%) — single treasury, rewards via Aiken SC</td></tr>
+<tr><td>Policy ID (Preview)</td><td>23ef4c204a8c9ed4169b39088a1b2af4c68a45bf3de5d4a290d09dc3</td></tr>
+<tr><td>Standard</td><td>CIP-0113 Programmable Token — transfers require soulbound Verified Human proof token on both sender and receiver</td></tr>
+<tr><td>Smart Contracts</td><td>CIP-0113 Layer 3 validators: issuance logic, transfer logic, admin logic, blacklist, proof token. 24/24 tests passing. Registered on Preview testnet registry.</td></tr>
+<tr><td>DEX Listings</td><td>Minswap + SundaeSwap at mainnet launch</td></tr>
+</table>
+<h4>Reward Amounts</h4>
+<table>
+<tr><th>Event</th><th>Reward</th></tr>
+<tr><td>Sign-up bonus</td><td>35 $LILY (one-time, new users only)</td></tr>
+<tr><td>Per-referral bonus</td><td>10 $LILY (paid to referrer on qualification)</td></tr>
+<tr><td>Profile 100% complete</td><td>15 $LILY (one-time)</td></tr>
+<tr><td>Ambassador threshold</td><td>10+ referrals/month = +10% bonus on all referrals that month</td></tr>
+</table>
+<p>The gift Lily (🌸) = $1 USD worth of $LILY tokens. The token price will float freely on the DEX — the app dynamically calculates the $LILY amount per reward. Amounts display as "$X in Lily" to abstract token mechanics from non-crypto users.</p>
+<h3>6.4 Reward Engine</h3>
+<p>26 reward types across 7 trigger categories. 6 categories active in beta, remainder gated on feature completion.</p>
+<h3>6.5 Treasury Management</h3>
+<ul>
+<li>Treasury will be managed via a 3-of-3 multisig wallet on Cardano. Signers: Founder/CEO, and a licensed Brazilian accountant (required by Brazilian corporate law as an independent third-party signatory). The multisig wallet will be created upon company formation in Brazil.</li>
+<li>Maximum 20% treasury exposure to any single liquidity pool</li>
+<li>On-chain transactions, publicly verifiable</li>
+</ul>
+<h2>7. Product — What's Live</h2>
+<p>As of March 2026:</p>
+<table>
+<tr><th>Component</th><th>Status</th></tr>
+<tr><td>Flutter mobile app (iOS + Android)</td><td>23+ screens, light premium UI</td></tr>
+<tr><td>Identus DID (iOS + Android)</td><td>Full chain operational</td></tr>
+<tr><td>Halo2 ZK age proof</td><td>Live — proof generation on-device, verification server-side</td></tr>
+<tr><td>Face embedding uniqueness</td><td>Live</td></tr>
+<tr><td>KYC (MRZ scan + selfie + ZK + DID)</td><td>Live</td></tr>
+<tr><td>Real-time chat + gifts</td><td>Live</td></tr>
+<tr><td>26-reward engine</td><td>6 categories active, rewards simulated in database</td></tr>
+<tr><td>18-language i18n</td><td>Live, server-push</td></tr>
+<tr><td>Sentry crash reporting</td><td>Live, technical data only</td></tr>
+<tr><td>Shorebird OTA (Android)</td><td>Live</td></tr>
+<tr><td>Codemagic CI/CD (iOS + Android)</td><td>Live</td></tr>
+<tr><td>100 Elite tester licenses</td><td>Live, in-app claim</td></tr>
+<tr><td>Version check + forced update</td><td>Live</td></tr>
+<tr><td>Ambassador/affiliate referral</td><td>Live</td></tr>
+<tr><td>Tester stats dashboard</td><td>Live</td></tr>
+<tr><td>$LILY token on mainnet</td><td>Not yet — contracts on preprod</td></tr>
+<tr><td>PIX fiat on-ramp</td><td>Not yet — Transak/MoonPay planned</td></tr>
+<tr><td>Iagon decentralized storage</td><td>Not yet — planned post-mainnet launch</td></tr>
+<tr><td>Hydra micro-payments</td><td>Not yet — planned post-mainnet launch</td></tr>
+<tr><td>Midnight ZK on-chain</td><td>Not yet — planned post-Midnight mainnet</td></tr>
+</table>
+<h2>8. Membership Tiers</h2>
+<p>Membership will be paid in ADA or stablecoins via the business wallet. The PIX fiat on-ramp (Transak/MoonPay) handles currency conversion merchant-side — users pay in BRL and never need to acquire or manage cryptocurrency. The converted ADA/stablecoins are credited to their in-app wallet automatically. $LILY wallets handle token transactions only (gifts, rewards, affiliate earnings).</p>
+<table>
+<tr><th>Tier</th><th>Monthly</th><th>Annual (15% off)</th><th>Distance</th><th>Key Features</th></tr>
+<tr><td>Free</td><td>$0</td><td>—</td><td>5 km</td><td>Basic profile, local discovery</td></tr>
+<tr><td>Starter</td><td>$4</td><td>$40.80</td><td>25 km</td><td>Verified profile, affiliate program</td></tr>
+<tr><td>Connect</td><td>$7</td><td>$71.40</td><td>55 km</td><td>Priority matching, ambassador eligible</td></tr>
+<tr><td>Premium</td><td>$12</td><td>$122.40</td><td>200 km</td><td>ZK-verified, event access</td></tr>
+<tr><td>Elite</td><td>$24</td><td>$244.80</td><td>Global</td><td>VIP perks, full feature access</td></tr>
+</table>
+<h2>9. Matching System</h2>
+<p>Lovelace does not use a single primary axis for matching. All dimensions are equal — the user decides what matters to them:</p>
+<ol>
+<li><strong>Gender</strong> — Man, Woman, Non-binary, Other (free text)</li>
+<li><strong>Age range</strong> — Min/max preference</li>
+<li><strong>Sexual orientation</strong> — Informational, displayed on profile</li>
+<li><strong>Religion</strong> — Select from common options or free text</li>
+<li><strong>Country</strong> — Detected from location or set manually</li>
+<li><strong>Language</strong> — Must-share toggle for communication compatibility</li>
+<li><strong>Culture</strong> — Free-text field for cultural identity</li>
+<li><strong>Distance</strong> — Gated by membership tier</li>
+<li><strong>Custom tags</strong> — User-created labels (e.g., "Vegan", "Dog person", "Gamer")</li>
+</ol>
+<p>Matching is <strong>bidirectional</strong> — you only see people whose preferences also include you.</p>
+<h2>10. Go-to-Market Strategy</h2>
+<h3>Target Markets</h3>
+<ul>
+<li><strong>São Paulo, Brazil</strong> — Primary launch market. PIX fiat on-ramp for frictionless payments. 212 million population, 175 million smartphones.</li>
+<li><strong>Rio de Janeiro</strong> — Second city expansion</li>
+<li><strong>Buenos Aires, Argentina</strong> — Regional expansion</li>
+<li><strong>Seoul, Hong Kong</strong> — Asia-Pacific beachheads</li>
+<li><strong>Europe</strong> — Post-mainnet growth phase</li>
+</ul>
+<h3>Target Users</h3>
+<ul>
+<li>Privacy-conscious daters tired of data exploitation</li>
+<li>Cardano community members (early adopters, stress-testers)</li>
+<li>LGBTQ+ users seeking privacy-preserving platforms</li>
+<li>Young professionals (20s-30s) in urban markets</li>
+</ul>
+<h3>Growth Model</h3>
+<ul>
+<li>Ambassador/affiliate referral program with $LILY rewards</li>
+<li>Beta testers receive Elite Lifelong membership</li>
+<li>Organic growth via privacy differentiation</li>
+</ul>
+<h2>11. Roadmap</h2>
+<table>
+<tr><th>Phase</th><th>Status</th><th>Key Deliverables</th></tr>
+<tr><td>Phase 1: Core Infrastructure</td><td><strong>Mostly complete</strong></td><td>Aiken smart contracts, Identus DID (iOS+Android), Halo2 ZK, KYC, face embedding, i18n, Sentry, CI/CD, license system</td></tr>
+<tr><td>Phase 1 remaining</td><td>In progress</td><td>PIX on-ramp, $LILY minting, smart contract audit, matching/filter system</td></tr>
+<tr><td>Phase 2: MVP & São Paulo</td><td>Next</td><td>City-specific launch, full reward engine, $LILY DEX listing</td></tr>
+<tr><td>Phase 3: Scaling</td><td>After Lovelace production launch</td><td>Rio + Buenos Aires, Byron social network, Shelley messaging, Hydra payments, Iagon storage migration, 10k-30k MAU</td></tr>
+<tr><td>Phase 4: Full V1</td><td>After Midnight mainnet</td><td>Midnight ZK on-chain verification, video chat (WebRTC), 50k-100k MAU</td></tr>
+<tr><td>Phase 5: Global</td><td>Long-term</td><td>Europe + Asia expansion, Leios consensus benefits (higher throughput reduces transaction costs for high-volume reward distributions), 100k-300k MAU</td></tr>
+</table>
+<h2>12. Funding</h2>
+<p>Lovelace is currently self-funded by the founder. Revenue flows via Posada Bot (posada.io). An application for Orion funding ($90,000) has been submitted.</p>
+<h3>Initial Capital Requirements</h3>
+<table>
+<tr><th>Item</th><th>Amount</th></tr>
+<tr><td>Smart Contract Audit</td><td>$5,000–10,000</td></tr>
+<tr><td>Development Hardware</td><td>$3,000</td></tr>
+<tr><td>6-Month Operational Runway</td><td>$23,000</td></tr>
+<tr><td><strong>Total Initial Capital</strong></td><td><strong>$31,000–36,000</strong></td></tr>
+</table>
+<h3>Year 1 Operating Budget (Post-Funding)</h3>
+<table>
+<tr><th>Category</th><th>Amount</th><th>Purpose</th></tr>
+<tr><td>Liquidity Pool</td><td>$30,000</td><td>Initial $LILY/ADA and $LILY/USDM pools</td></tr>
+<tr><td>Infrastructure</td><td>$100,000</td><td>Hosting, Iagon migration, affiliate programs, AI customer service</td></tr>
+<tr><td><strong>Total</strong></td><td><strong>$130,000</strong></td><td></td></tr>
+</table>
+<p>The gap between initial capital ($31–36k) and Year 1 operating budget ($130k) is expected to be bridged by: Orion funding ($90k if approved), $LILY token sale proceeds from initial DEX offering, subscription revenue from paid membership tiers, and Posada Bot revenue. If external funding is not secured, the project will operate within founder funding and scale more gradually.</p>
+<h2>13. Competitive Positioning</h2>
+<table>
+<tr><th>Feature</th><th>Web2 Apps</th><th>Emerging Web3</th><th>Lovelace</th></tr>
+<tr><td>Human Verification</td><td>Basic photo check</td><td>Early DID trials</td><td>Identus DID + Halo2 ZK + face embedding</td></tr>
+<tr><td>Data Storage</td><td>Company servers, sold to third parties</td><td>Varies</td><td>Centralized during beta, migrating to Iagon user-owned storage</td></tr>
+<tr><td>Payments</td><td>Centralized, slow</td><td>On-chain, UX friction</td><td>PIX fiat-first, Hydra post-mainnet</td></tr>
+<tr><td>Onboarding</td><td>Simple but data-heavy</td><td>Crypto knowledge required</td><td>Auto-wallet, PIX, zero crypto knowledge</td></tr>
+<tr><td>Privacy</td><td>GDPR-compliant only</td><td>Pseudonymous</td><td>ZK proofs (no DOB stored), on-device verification, face math not photos</td></tr>
+<tr><td>OTA Updates</td><td>App store only</td><td>App store only</td><td>App Store + Shorebird patches</td></tr>
+</table>
+<h2>14. Strategic Value to Cardano</h2>
+<ul>
+<li><strong>Mainstream User On-boarding:</strong> Fiat-first PIX flow brings non-crypto Brazilians into Cardano wallets automatically</li>
+<li><strong>Real Network Usage:</strong> Dating activity, gifts, and rewards generate sustained transaction volume</li>
+<li><strong>Ecosystem Showcase:</strong> Single consumer product demonstrating Identus and Halo2 ZK (live), with Hydra, Midnight, Iagon, and Leios integrations planned</li>
+<li><strong>Sustainable Token Model:</strong> $LILY designed for utility and genuine connection rewards, not speculation</li>
+<li><strong>Geographic Beachhead:</strong> São Paulo → Rio → Buenos Aires → Seoul → Hong Kong mirrors Cardano's growth regions</li>
+</ul>
+<h2>15. Risk Assessment</h2>
+<table>
+<tr><th>Risk</th><th>Mitigation</th></tr>
+<tr><td>Midnight mainnet delays</td><td>Halo2 ZK runs independently. Migration to Midnight is additive, not blocking.</td></tr>
+<tr><td>Iagon integration complexity</td><td>Current architecture is functional. Iagon migration is an improvement, not a prerequisite.</td></tr>
+<tr><td>User acquisition in competitive market</td><td>Privacy differentiation + PIX on-ramp + referral rewards. Dense geographic launches.</td></tr>
+<tr><td>Regulatory (KYC/AML for token apps)</td><td>ZK age verification, licensed fiat ramp providers, LGPD/GDPR compliance by design</td></tr>
+<tr><td>Token liquidity</td><td>Active treasury management, 20% pool exposure cap</td></tr>
+<tr><td>Single developer risk</td><td>Comprehensive documentation, AI-assisted development (Claude Code), modular architecture.</td></tr>
+<tr><td>Face embedding evasion</td><td>Threshold is tunable. Combined with DID uniqueness and document verification, multi-layer defense. No single system is absolute.</td></tr>
+</table>
+<h2>16. Team</h2>
+<ul>
+<li><strong>Alain "Diesel" Da Silva Lohals</strong> — Founder and CEO. Product vision, full-stack development, go-to-market, and operations.</li>
+<li><strong>AI-Assisted Development:</strong> Claude Code for accelerated development across Flutter, Node.js, Aiken, and infrastructure. AI-assisted development significantly reduces the need for a traditional core team in the early stages.</li>
+<li><strong>Brazilian Accountant (post-company formation):</strong> Required by Brazilian corporate law. Will serve as independent third-party multisig signatory.</li>
+</ul>
+<h2>Disclaimer</h2>
+<p>This whitepaper outlines the current vision, technology, and plan for Lovelace. It is for informational purposes only and does not constitute a financial offering or guarantee of future performance. The roadmap is subject to change based on development, market, and regulatory conditions. Technology integrations marked as "planned" or "post-mainnet" are dependent on third-party infrastructure readiness and may be delayed or modified.</p>
+<p>© 2026 Posada.io / Lovelace — Built on Cardano</p>
+
+<div class="footer"><p>&copy; 2026 <a href="https://posada.io">Posada.io</a> / Lovelace &mdash; Built on Cardano</p></div>
+</div>
+</body>
+</html>

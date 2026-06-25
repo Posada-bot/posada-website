@@ -1,0 +1,26 @@
+# Posada.io
+
+Posada.io is a Cardano-native product ecosystem building privacy-enhanced decentralized applications. Founded by Alain (Diesel), based in São Paulo, Brazil.
+
+## Products
+
+### Lovelace
+A decentralized dating app built on Cardano. Key features: zero-knowledge age proofs (Halo2), Identus DID identity verification, one-person-one-account enforcement via biometric uniqueness, no data harvesting, no bot accounts. 18-language support. Launching in São Paulo, Rio de Janeiro, Buenos Aires, Seoul, and Hong Kong. Android and iOS. Currently in closed beta testing.
+
+### NoteG
+An automated trading bot operating on Minswap DEX on Cardano mainnet. Strategy-driven with real-time signals and portfolio risk management. Controlled via Android mobile app. Non-custodial.
+
+### $LILY Token
+CIP-0113 programmable token on Cardano. 500M fixed supply. Powers governance, staking, payments, and rewards across all Posada products. Only wallets with valid Identus DID credentials can transact — structurally blocking bots and fake accounts. Mainnet listing pending smart contract audit.
+
+### Byron
+Decentralized social network on Cardano. Censorship-resistant, on-chain content ownership. Coming soon.
+
+### Shelley
+End-to-end encrypted messaging with on-chain identity. Coming soon.
+
+## Core values
+Privacy by design. One real person, one account. Your data never leaves your device. No advertising. No data harvesting. Blockchain-verified identity without exposing personal information.
+
+## Contact
+https://posada.io

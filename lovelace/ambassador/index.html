@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ambassador Program — Lovelace</title>
+<style>
+:root {
+  --bg: #080b12;
+  --panel: #111820;
+  --text: #e8eaed;
+  --text-muted: #8b949e;
+  --text-dim: #555d66;
+  --border: rgba(255, 255, 255, 0.06);
+  --card-bg: rgba(17, 24, 32, 0.80);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --transition: 0.22s ease;
+
+  --accent: #f472b6;
+  --accent-dim: rgba(244, 114, 182, 0.12);
+  --accent-glow: rgba(244, 114, 182, 0.06);
+  --accent-bright: #f9a8d4;
+
+  --lily: #c084fc;
+  --lily-dim: rgba(192, 132, 252, 0.12);
+
+  --green: #22c55e;
+  --green-dim: rgba(34, 197, 94, 0.12);
+
+  --red: #CC1133;
+  --red-dim: rgba(204, 17, 51, 0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+
+body {
+  min-height: 100vh;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+}
+body::before {
+  content: '';
+  position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 1000px; height: 600px;
+  background: radial-gradient(ellipse, var(--accent-glow), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+.page {
+  position: relative; z-index: 1;
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 32px 24px 96px;
+}
+
+/* ── Nav ── */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 48px;
+}
+.nav-back {
+  font-size: 0.8rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text-dim);
+  transition: color var(--transition);
+}
+.nav-back:hover { color: var(--accent); }
+.nav-brand {
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ── Hero ── */
+.hero {
+  text-align: center;
+  padding: 32px 20px 48px;
+}
+.hero-title {
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.hero-sub {
+  margin-top: 12px;
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+/* ── Cards ── */
+.card {
+  background: var(--card-bg);
+  border: 1px solid rgba(244, 114, 182, 0.25);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, var(--accent-glow), transparent 70%);
+  pointer-events: none;
+}
+.card h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+  position: relative;
+}
+.card p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+  position: relative;
+}
+.card p:last-child { margin-bottom: 0; }
+.card p strong { color: var(--text); }
+
+/* ── Steps ── */
+.steps {
+  position: relative;
+  counter-reset: step;
+}
+.step {
+  display: flex;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+.step:last-child { border-bottom: none; }
+.step::before {
+  counter-increment: step;
+  content: counter(step);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.step-content strong {
+  display: block;
+  color: var(--text);
+  font-size: 0.9rem;
+  margin-bottom: 2px;
+}
+.step-content span {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+/* ── Milestone table ── */
+.milestone-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0 0;
+  font-size: 0.88rem;
+  position: relative;
+}
+.milestone-table th {
+  text-align: left;
+  padding: 10px 14px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+}
+.milestone-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.milestone-table tr:last-child td { border-bottom: none; }
+.milestone-table td:first-child { color: var(--text); font-weight: 600; }
+.milestone-table td:last-child { color: var(--green); font-weight: 700; }
+
+/* ── Rewards list ── */
+.rewards-list {
+  list-style: none;
+  padding: 0;
+  position: relative;
+}
+.rewards-list li {
+  padding: 8px 0 8px 24px;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+.rewards-list li:last-child { border-bottom: none; }
+.rewards-list li::before {
+  content: '\2713';
+  position: absolute;
+  left: 0;
+  color: var(--green);
+  font-weight: 700;
+}
+.rewards-list li strong { color: var(--text); }
+
+/* ── Requirements ── */
+.req-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  position: relative;
+}
+.req-item {
+  padding: 14px 16px;
+  background: rgba(244, 114, 182, 0.04);
+  border: 1px solid rgba(244, 114, 182, 0.15);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.req-item strong {
+  display: block;
+  color: var(--text);
+  font-size: 0.82rem;
+  margin-bottom: 2px;
+}
+
+/* ── Rules list ── */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  position: relative;
+}
+.rules-list li {
+  padding: 8px 0 8px 24px;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+.rules-list li:last-child { border-bottom: none; }
+.rules-list li::before {
+  content: '\2022';
+  position: absolute;
+  left: 6px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ── CTA ── */
+.cta {
+  text-align: center;
+  border-color: var(--accent);
+  border-width: 2px;
+  background: linear-gradient(135deg, var(--accent-dim), var(--card-bg));
+}
+.cta h2 { font-size: 1.3rem; }
+.cta p { font-size: 0.95rem; }
+.btn-cta {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 14px 36px;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  background: var(--accent);
+  color: #fff;
+  transition: all var(--transition);
+  position: relative;
+}
+.btn-cta:hover {
+  background: var(--accent-bright);
+  box-shadow: 0 0 24px rgba(244, 114, 182, 0.3);
+}
+
+/* ── Footer ── */
+.footer {
+  text-align: center;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+.footer a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+.footer a:hover { color: var(--text); }
+
+@media (max-width: 600px) {
+  .hero-title { font-size: 1.7rem; letter-spacing: 2px; }
+  .card { padding: 20px 16px; }
+  .req-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="nav">
+    <a href="/lovelace/" class="nav-back" data-i18n="common.back_to_lovelace">&larr; Lovelace</a>
+    <span class="nav-brand">Ambassador</span>
+  </div>
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <h1 class="hero-title" data-i18n="ambassador.title">Lovelace Ambassador Program</h1>
+    <div class="hero-sub" data-i18n="ambassador.subtitle">Earn $LILY. Grow the community. Build something real.</div>
+  </div>
+
+  <!-- ── What is an Ambassador ── -->
+  <div class="card">
+    <h2 data-i18n="ambassador.what_title">What is an Ambassador?</h2>
+    <p data-i18n="ambassador.what_p1">Lovelace Ambassadors are the people who bring real humans into the ecosystem. Every person you refer gets a better first experience &mdash; and you earn $LILY for every successful connection you make happen.</p>
+    <p data-i18n="ambassador.what_p2"><strong>No pyramid schemes. No chain bonuses. One level deep, always.</strong></p>
+  </div>
+
+  <!-- ── How it Works ── -->
+  <div class="card">
+    <h2 data-i18n="ambassador.how_title">How it Works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-content">
+          <strong data-i18n="ambassador.step1_title">Get your referral link</strong>
+          <span data-i18n="ambassador.step1_desc">Unique to your account, found in Settings</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-content">
+          <strong data-i18n="ambassador.step2_title">Share it</strong>
+          <span data-i18n="ambassador.step2_desc">Your referred user signs up and activates their account</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-content">
+          <strong data-i18n="ambassador.step3_title">They get rewarded</strong>
+          <span data-i18n="ambassador.step3_desc">35 $LILY added to their wallet on signup</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-content">
+          <strong data-i18n="ambassador.step4_title">You get rewarded</strong>
+          <span data-i18n="ambassador.step4_desc">10 $LILY per qualified referral</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Milestone Bonuses ── -->
+  <div class="card">
+    <h2 data-i18n="ambassador.milestone_title">Milestone Bonuses</h2>
+    <p data-i18n="ambassador.milestone_desc">Hit referral milestones in a single month and earn extra:</p>
+    <table class="milestone-table">
+      <thead>
+        <tr>
+          <th data-i18n="ambassador.milestone_header_refs">Monthly Referrals</th>
+          <th data-i18n="ambassador.milestone_header_bonus">Bonus</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-i18n="ambassador.milestone_10">10 referrals</td>
+          <td data-i18n="ambassador.milestone_10_bonus">+10% on all referrals that month</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:12px;" data-i18n="ambassador.milestone_reset">Resets every month. Uncapped.</p>
+  </div>
+
+  <!-- ── Extra Rewards ── -->
+  <div class="card">
+    <h2 data-i18n="ambassador.extra_title">Extra Rewards</h2>
+    <ul class="rewards-list">
+      <li><strong data-i18n="ambassador.extra_badge">Founding Ambassador Badge</strong> &mdash; <span data-i18n="ambassador.extra_badge_desc">first 100 ambassadors earn a permanent badge on their profile</span></li>
+      <li><strong data-i18n="ambassador.extra_leaderboard">Leaderboard</strong> &mdash; <span data-i18n="ambassador.extra_leaderboard_desc">top ambassadors featured monthly</span></li>
+      <li><strong data-i18n="ambassador.extra_tiers">Free Tier Upgrades</strong> &mdash; <span data-i18n="ambassador.extra_tiers_desc">hit milestones, unlock membership tiers for free</span></li>
+      <li><strong data-i18n="ambassador.extra_gift">Gift Multiplier</strong> &mdash; <span data-i18n="ambassador.extra_gift_desc">your Lily gifts carry extra weight in the matching algorithm</span></li>
+      <li><strong data-i18n="ambassador.extra_early">Early Access</strong> &mdash; <span data-i18n="ambassador.extra_early_desc">new features before general release</span></li>
+    </ul>
+  </div>
+
+  <!-- ── Who Can Be an Ambassador ── -->
+  <div class="card">
+    <h2 data-i18n="ambassador.who_title">Who Can Be an Ambassador?</h2>
+    <div class="req-grid">
+      <div class="req-item">
+        <strong data-i18n="ambassador.who_connect">Connect Tier+</strong>
+        <span data-i18n="ambassador.who_connect_desc">Connect tier and above</span>
+      </div>
+      <div class="req-item">
+        <strong data-i18n="ambassador.who_active">Active Account</strong>
+        <span data-i18n="ambassador.who_active_desc">30+ days active</span>
+      </div>
+      <div class="req-item">
+        <strong data-i18n="ambassador.who_zk">ZK Age Verified</strong>
+        <span data-i18n="ambassador.who_zk_desc">Zero-knowledge age proof</span>
+      </div>
+      <div class="req-item">
+        <strong data-i18n="ambassador.who_did">Identus DID Verified</strong>
+        <span data-i18n="ambassador.who_did_desc">Verified human wallet required</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Qualified Referral Rules ── -->
+  <div class="card">
+    <h2 data-i18n="ambassador.rules_title">Qualified Referral Rules</h2>
+    <ul class="rules-list">
+      <li data-i18n="ambassador.rule1">Referred user must sign up using your link</li>
+      <li data-i18n="ambassador.rule2">Must remain active for 30 days</li>
+      <li data-i18n="ambassador.rule3">One account per person &mdash; no self-referral</li>
+      <li data-i18n="ambassador.rule4">Direct referrals only &mdash; no chain or network bonuses</li>
+    </ul>
+  </div>
+
+  <!-- ── $LILY Payouts ── -->
+  <div class="card">
+    <h2 data-i18n="ambassador.payout_title">$LILY Payouts</h2>
+    <p data-i18n="ambassador.payout_desc">All ambassador earnings are paid in $LILY at current DEX price. Tokens are credited to your in-app wallet as milestones mature. Withdraw anytime to your Cardano wallet.</p>
+  </div>
+
+  <!-- ── CTA ── -->
+  <div class="card cta">
+    <h2 data-i18n="ambassador.cta_title">Ready to Start?</h2>
+    <p data-i18n="ambassador.cta_desc">Download Lovelace &rarr; upgrade to Connect or above &rarr; find your referral link in Settings.</p>
+    <a href="/lovelace/download/" class="btn-cta" data-i18n="common.get_started">Get Started</a>
+  </div>
+
+  <!-- ── Footer ── -->
+  <div class="footer">
+    <span data-i18n="common.copyright">&copy; 2026</span> <a href="/" data-i18n="common.back_posada">Posada.io</a> / <a href="/lovelace/" data-i18n="common.back_lovelace">Lovelace</a> &mdash; <span data-i18n="common.built_on_cardano">Built on Cardano</span>
+    &nbsp;|&nbsp; <a href="/token/" data-i18n="common.lily_token">$LILY Token</a>
+    &nbsp;|&nbsp; <a href="/lovelace/privacy-policy.html" data-i18n="common.privacy">Privacy</a>
+    &nbsp;|&nbsp; <a href="/lovelace/terms.html" data-i18n="common.terms">Terms</a>
+  </div>
+
+</div>
+
+<script src="/i18n/i18n.js"></script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Plan — Lovelace</title>
+<style>
+:root { --bg:#080b12; --accent:#f472b6; --accent-dim:rgba(244,114,182,0.12); --accent-glow:rgba(244,114,182,0.06); --text:#e8eaed; --text-muted:#8b949e; --text-dim:#555d66; --border:rgba(255,255,255,0.06); --radius:16px; --font:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; --transition:0.22s ease; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{min-height:100vh;font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.8}
+body::before{content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:1000px;height:600px;background:radial-gradient(ellipse,var(--accent-glow),transparent 70%);pointer-events:none;z-index:0}
+.page{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:48px 24px 96px}
+.back{display:inline-block;margin-bottom:40px;font-size:0.8rem;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;color:var(--text-dim);transition:color var(--transition)}.back:hover{color:var(--accent)}
+h1{font-size:2rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.updated{font-size:0.8rem;color:var(--text-dim);margin-bottom:40px}
+h2{font-size:1.2rem;font-weight:700;color:var(--accent);letter-spacing:1px;margin:40px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+h3{font-size:1.05rem;font-weight:600;color:var(--text);margin:24px 0 8px}
+p{color:var(--text-muted);margin-bottom:1.2em;font-size:0.95rem}
+ul,ol{color:var(--text-muted);margin:0 0 1.2em 20px;font-size:0.95rem}li{margin-bottom:6px}
+strong{color:var(--text)}
+pre{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0 24px;font-size:0.8rem;color:var(--text-muted);line-height:1.5;white-space:pre}
+code{font-family:'SF Mono',Menlo,monospace;font-size:0.85em}
+table{width:100%;border-collapse:collapse;margin:16px 0 24px;font-size:0.85rem}
+th{text-align:left;padding:10px 12px;background:var(--accent-dim);color:var(--accent);font-weight:600;border-bottom:1px solid var(--border)}
+td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text-muted);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.footer{text-align:center;margin-top:64px;padding-top:24px;border-top:1px solid var(--border);color:var(--text-dim);font-size:0.75rem}
+.footer a{color:var(--text-muted);text-decoration:none}.footer a:hover{color:var(--text)}
+@media(max-width:600px){h1{font-size:1.5rem}table{font-size:0.75rem}pre{font-size:0.7rem}}
+</style>
+</head>
+<body>
+<div class="page">
+<div style="margin-bottom:24px"><img src="header.jpg" alt="Lovelace" style="width:100%;height:auto;display:block;border-radius:16px;box-shadow:0 0 40px rgba(244,114,182,0.15),0 16px 48px rgba(0,0,0,0.35)" /></div>
+<a href="index.html" class="back">&larr; Back to Lovelace</a>
+
+<p>LOVELACE</p>
+<p>by Posada.io</p>
+<p>5-Year Business Plan  ·  2026–2031</p>
+<p>Privacy-Enhanced Dating on Cardano</p>
+<p>Self-Funded  ·  Lovelace  ·  posada.io</p>
+<ol>
+<li>Vision & Problem</li>
+</ol>
+<p>Web2 dating apps monetize user data, compromise privacy, and optimize for engagement over genuine human connection. They are fundamentally broken by design — their revenue model requires keeping users single and scrolling.</p>
+<p>Lovelace is the flagship app of the Posada.io ecosystem: a privacy-enhanced, human-only dating platform built on Cardano, where data collection is minimized, identities are cryptographically verified on-device, and incentives reward meaningful behavior — not screen time. The architecture is designed for progressive decentralization, with user-owned data via Iagon integration planned post-mainnet launch.</p>
+<p>The Posada.io ecosystem comprises five interconnected products:</p>
+<ol>
+<li>Lovelace — Privacy-enhanced dating app (primary product, São Paulo beta live)</li>
+<li>Byron — Decentralized social network (post-MVP)</li>
+<li>Shelley — Encrypted messaging layer (post-MVP)</li>
+<li>Posada Bot — Live trading bot and analytics suite (live at posada.io)</li>
+<li>$LILY Token — Utility token tying the ecosystem together on Cardano</li>
+</ol>
+<p>Core technology stack:</p>
+<ul>
+<li>Identus DID — Verified human identity with documents processed on-device and not transmitted to our servers (live on Android and iOS, end-to-end chain connected)</li>
+<li>Halo2 ZK proofs — Privacy-preserving age verification, running server-side at beta. On-chain verification via Plutus V3 BLS12-381 planned for mainnet. Midnight integration post-Mohalu (Q2 2026+)</li>
+<li>Iagon — User-owned, encrypted profile data storage (planned, not yet integrated)</li>
+<li>Hydra — Instant micro-payments for gifts, tips, and rewards (post-MVP)</li>
+<li>$LILY Token — Utility rewards token on Cardano. DEX listing at mainnet launch.</li>
+<li>Aiken — CIP-0113 Programmable Token: 6 validators (issuance, transfer, admin, blacklist ×2, proof token). 24/24 tests passing. Audit pending.</li>
+</ul>
+<p>Goal: Build Cardano's first mainstream-ready dating dApp — seamlessly onboarding non-crypto users through fiat-first PIX on-ramps (Transak, MoonPay) while delivering genuine privacy that Web2 competitors cannot match.</p>
+<ol>
+<li>Current State — What's Live</li>
+</ol>
+<p>Lovelace is beyond concept stage. As of Q1 2026, the following are live or in active beta:</p>
+<ul>
+<li>Flutter mobile app — 17+ screens, light premium UI, live on Android (Google Play / direct APK) and iOS (TestFlight). Download at posada.io/lovelace/download</li>
+<li>Node.js / PostgreSQL backend — deployed on Hetzner VPS, API live at api.posada.io</li>
+<li>26-reward engine — implemented with backend validation, daily/monthly/one-time caps, DB-level double-claim prevention. 6 active in beta, remainder gated on feature completion</li>
+<li>Membership tiers — Free / Starter / Connect / Premium / Elite with distance radius matching</li>
+<li>Smart contracts — Aiken CIP-0113 Programmable Token: 6 validators (issuance, transfer, admin, blacklist ×2, proof token). 24/24 tests passing. Audit pending.</li>
+<li>Identus DID — Full chain connected end-to-end on Android: DID creation → registration → DIDComm connection → credential issuance</li>
+<li>Halo2 ZK age proof — Live on backend. Proves age ≥ 18 without transmitting date of birth</li>
+<li>KYC flow — On-device ML Kit document scan + selfie match + ZK age verification</li>
+<li>Sentry crash reporting — Live (sentry_dart), Dart-level exception capture with user context</li>
+<li>Posada trading bot — Live at posada.io</li>
+<li>100 lifetime Elite tester licenses — Issued, redemption flow built, in-app license screen deployed</li>
+<li>OTA update infrastructure — Shorebird (Android patches), Codemagic (full builds for iOS + Android)</li>
+<li>Version check system — Backend-driven update prompts with forced/optional update support</li>
+<li>i18n — 18 languages, 468 keys, server-push architecture via Riverpod</li>
+<li>HTTPS API — Let's Encrypt via nginx, api.posada.io</li>
+</ul>
+<ol>
+<li>Roadmap</li>
+</ol>
+<p>Phase 1 — Core & Privacy Infrastructure (Complete / In Progress)</p>
+<ul>
+<li>Aiken smart contracts — CIP-0113 design, 6 validators, 24/24 tests passing. Audit pending. ✓</li>
+<li>Halo2 age proof circuit — ZK age verification running server-side (complete) ✓</li>
+<li>Identus DID integration — Live on Android, full chain connected (complete) ✓</li>
+<li>iOS build pipeline — Codemagic, TestFlight distribution (complete) ✓</li>
+<li>i18n — 18 languages deployed (complete) ✓</li>
+<li>Sentry crash reporting (complete) ✓</li>
+<li>Tester license system (complete) ✓</li>
+<li>Version check system (complete) ✓</li>
+<li>PIX fiat on-ramp — Transak and MoonPay integration (next)</li>
+<li>$LILY minted on testnet + independent audit (next)</li>
+<li>Automatic wallet creation backend, <3 seconds, non-custodial (next)</li>
+<li>Public transparency dashboard (in progress)</li>
+<li>iOS Identus integration — Requires Mac with Xcode for Swift SDK iteration (blocked on hardware)</li>
+</ul>
+<p>Phase 2 — MVP Application (Months 6–12)</p>
+<ul>
+<li>São Paulo public beta — city-by-city go-to-market</li>
+<li>SP → Rio → Buenos Aires</li>
+<li>Matching/filter system — Multi-dimensional: gender, religion, country, language, sexual orientation, and more. User defines their own filter hierarchy.</li>
+<li>Proof of Human — liveness challenge → Verifiable Credential → device hardware hash</li>
+<li>Iagon decentralized storage integration</li>
+<li>Full 26-reward engine live</li>
+<li>$LILY DEX listing — Minswap and SundaeSwap at mainnet launch.</li>
+<li>Public analytics dashboard</li>
+</ul>
+<p>Phase 3 — Public Beta & Scaling</p>
+<ul>
+<li>Regional pilots: Brazil and Argentina</li>
+<li>Target: 10,000–30,000 early adopters</li>
+<li>Byron decentralized social network — beta</li>
+<li>Shelley decentralized micro-blogging platform — beta</li>
+<li>Hydra micro-payments integration (<1 second latency for gifts and tips)</li>
+<li>Advanced matchmaking engine</li>
+<li>Admin panel + moderation tooling</li>
+</ul>
+<p>Phase 4 — Full Version 1</p>
+<ul>
+<li>Full Hydra + Midnight mainnet integration (pending Midnight production readiness post-Mohalu)</li>
+<li>Video chat — WebRTC peer-to-peer, in-app (no external app handoff)</li>
+<li>First recurring subscription revenue at scale</li>
+<li>On-chain ZK verification — Plutus V3 BLS12-381 built-ins</li>
+<li>Target: 50,000–100,000 MAU</li>
+</ul>
+<p>Phase 5 — Global Scaling</p>
+<ul>
+<li>Expansion: Europe and Southeast Asia (Seoul, Hong Kong, then broader)</li>
+<li>Target: 100,000–300,000 MAU</li>
+<li>10,000–15,000 new Cardano wallets per month</li>
+<li>Leios consensus integration (requires zero app changes)</li>
+</ul>
+<p>Phase 6 — Hyper Growth</p>
+<ul>
+<li>Advanced Hydra channels for live events</li>
+<li>Global influencer and partnership campaigns</li>
+<li>Treasury buyback and $LILY stabilization mechanisms</li>
+<li>Full ecosystem — Lovelace + Byron + Shelley operating together</li>
+</ul>
+<ol>
+<li>Membership Tiers</li>
+</ol>
+<p>Membership is paid in ADA or stablecoins (USDM, USDCx) via the business wallet. $LILY user wallets handle only token transactions — gifts, rewards, and affiliate earnings. On-ramp via Transak or MoonPay (PIX supported for Brazil).</p>
+<p>Tier        Monthly   Annual (15% off)   Distance   Key Features</p>
+<p>Free        $0        —                  5 km       Basic profile, local discovery. No affiliate program.</p>
+<p>Starter     $4        $40.80             25 km      Verified profile, extended reach. Affiliate program.</p>
+<p>Connect     $7        $71.40             55 km      Priority matching, enhanced features. Affiliate + Ambassador eligible.</p>
+<p>Premium     $12       $122.40            200 km     ZK-verified age, event access. Affiliate + Ambassador.</p>
+<p>Elite       $24       $244.80            Global     ZK-verified age, VIP perks, event access. Affiliate + Ambassador.</p>
+<ol>
+<li>Tokenomics — $LILY</li>
+</ol>
+<p>The $LILY token is the economic layer of the Posada.io ecosystem. The gift Lily (🌸) = $1 USD worth of $LILY tokens. The token price floats freely on the DEX — the app dynamically calculates the $LILY amount per reward. Amounts always display as "$X in Lily" to abstract token mechanics from non-crypto users.</p>
+<p>Parameter              Value</p>
+<p>Total Supply           500,000,000 $LILY fixed, no inflation</p>
+<p>Circulating at Launch  0 — all LILY distributed from treasury as earned</p>
+<p>Treasury               500,000,000 (100%) — single treasury, rewards via Aiken smart contract</p>
+<p>DEX Listings           Minswap + SundaeSwap at mainnet launch</p>
+<p>Standard              CIP-0113 Programmable Token (identity-bound transfers)</p>
+<p>Policy ID (Preview)   23ef4c204a8c9ed4169b39088a1b2af4c68a45bf3de5d4a290d09dc3</p>
+<p>Reward Engine Summary</p>
+<p>26 reward types across 7 trigger categories. 6 live for beta. Monthly exposure at 100 beta testers:</p>
+<ul>
+<li>Month 1 (including one-time onboarding rewards): ~$32,550 in $LILY</li>
+<li>Month 2+ (recurring only): ~$27,150 in $LILY</li>
+<li>Real cash exposure at 20% withdrawal rate: ~$5,000–6,000/month</li>
+<li>All simulated in database during beta — no real tokens move until $LILY DEX listing</li>
+<li>500,000,000 $LILY treasury — rewards distributed as earned</li>
+</ul>
+<ol>
+<li>Financial Plan & Funding</li>
+</ol>
+<p>Lovelace is founder-funded. Revenue is already flowing via Posada Bot (posada.io). External funding requirements are minimal and focused on audit and initial operations.</p>
+<p>Initial Capital Requirements</p>
+<p>Item                          Amount        Notes</p>
+<p>Smart Contract Audit          $5,000–10,000 CIP-0113 validators + $LILY minting policy</p>
+<p>Development Hardware          $3,000        Primary build machine</p>
+<p>6-Month Operational Runway    $23,000       1–2 local hires (Brazil), company formation, mandatory accounting</p>
+<p>Total Initial Capital         $31,000–36,000</p>
+<p>Operating Budget — Year 1 (Post-Funding)</p>
+<p>Category        Amount     Purpose</p>
+<p>Liquidity Pool  $30,000    Initial $LILY/ADA and $LILY/USDM pools</p>
+<p>Infrastructure  $100,000   Hetzner + Iagon, hardware, affiliate programs, AI customer service</p>
+<p>Total           $130,000</p>
+<ol>
+<li>Growth Scenarios</li>
+</ol>
+<p>Scenario   Timeline   MAU              Monthly Revenue   Key Driver</p>
+<p>Moderate   Year 1–2   5,000–10,000     $15k–$30k        São Paulo beta + organic growth</p>
+<p>Moderate   Year 2–3   50,000–100,000   $100k–$250k      Brazil + Argentina</p>
+<p>Moderate   Year 3–5   300,000–800,000  $500k+            SE Asia + Europe + Hydra live events</p>
+<ol>
+<li>Competitive Positioning</li>
+</ol>
+<p>Feature               Web2 Apps              Emerging Web3            Lovelace</p>
+<p>Human Verification    Basic photo check      Early DID trials         Identus DID + Halo2 ZK proof</p>
+<p>Data Ownership        Company-owned, sold    Varies by project        User-owned, Iagon encrypted</p>
+<p>Payments              Centralized, slow       On-chain, UX friction   Hydra instant micro-payments</p>
+<p>Onboarding            Simple but data-heavy  Crypto knowledge needed  Auto-wallet, PIX fiat-first</p>
+<p>Incentives            Engagement algorithms  Token rewards (speculative) $LILY utility + behavior rewards</p>
+<p>Privacy Architecture  GDPR-compliant only    Pseudonymous             ZK proofs, no DOB stored</p>
+<p>OTA Updates           App store only         App store only           App Store + Shorebird patches (no store wait)</p>
+<ol>
+<li>Strategic Value to Cardano</li>
+<li>Mainstream User On-boarding — Fiat-first PIX, Transak, MoonPay flow brings non-crypto Brazilians into Cardano wallets automatically</li>
+<li>Real Network Usage — Dating activity, gifts, and rewards generate sustained transaction volume and fee revenue</li>
+<li>Ecosystem Showcase — Demonstrates Hydra, Midnight, Identus, Iagon, and Leios in a single integrated consumer product</li>
+<li>Sustainable Token Model — $LILY designed for utility and genuine connection rewards, not speculation</li>
+<li>Geographic Beachhead — São Paulo → Rio → Buenos Aires → Seoul → Hong Kong mirrors Cardano's own growth regions</li>
+<li>Posada Synergy — Live trading bot at posada.io generates revenue and credibility while the ecosystem matures. All products connected by $LILY token.</li>
+</ol>
+<ol>
+<li>Infrastructure & Technology</li>
+</ol>
+<p>Component    Beta (Now)                                          Growth (Post-Funding)</p>
+<p>Mobile       Flutter, Android via Shorebird OTA + Codemagic,     iOS + Android, Codemagic CI/CD</p>
+<p>             iOS via Codemagic + TestFlight</p>
+<p>Backend      Node.js/Express, PM2, Hetzner VPS                   Hetzner + Iagon decentralized storage</p>
+<p>Database     PostgreSQL, TLS in transit,                          PostgreSQL + read replicas, encryption at rest</p>
+<p>             encryption at rest planned</p>
+<p>Storage      VPS filesystem                                      Iagon decentralized encrypted storage</p>
+<p>Blockchain   Cardano preprod → mainnet                           Cardano mainnet + Hydra channels</p>
+<p>Identity     Identus DID (live E2E on iOS + Android),            Full production issuance</p>
+<p>             ZK age proof (Halo2, server-side),</p>
+<p>             face embedding uniqueness</p>
+<p>Scaling      Single VPS                                          Hydra, Midnight (post-Mohalu), Leios</p>
+
+<div class="footer"><p>&copy; 2026 <a href="https://posada.io">Posada.io</a> / Lovelace &mdash; Built on Cardano</p></div>
+</div>
+</body>
+</html>

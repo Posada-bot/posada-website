@@ -1,0 +1,5 @@
+RewriteEngine On
+
+# Referral codes: /lovelace/ref/{CODE} → index.html
+# Code is read client-side from window.location.pathname
+RewriteRule ^([A-Z0-9]{6,12})/?$ index.html [L]

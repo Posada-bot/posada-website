@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>$LILY Token — Posada Ecosystem</title>
+<style>
+:root {
+  --bg: #080b12;
+  --bg-alt: #0c1018;
+  --panel: #111820;
+  --text: #e8eaed;
+  --text-muted: #8b949e;
+  --text-dim: #555d66;
+  --border: rgba(255, 255, 255, 0.06);
+  --card-bg: rgba(17, 24, 32, 0.80);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'Courier New', Courier, monospace;
+  --transition: 0.22s ease;
+
+  --accent: #CC1133;
+  --accent-dim: rgba(204, 17, 51, 0.12);
+  --accent-glow: rgba(204, 17, 51, 0.06);
+  --accent-bright: #e6334d;
+
+  --lily: #c084fc;
+  --lily-dim: rgba(192, 132, 252, 0.12);
+  --lily-glow: rgba(192, 132, 252, 0.08);
+
+  --lovelace: #f472b6;
+  --lovelace-dim: rgba(244, 114, 182, 0.12);
+
+  --green: #22c55e;
+  --green-dim: rgba(34, 197, 94, 0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+
+body {
+  min-height: 100vh;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+}
+body::before {
+  content: '';
+  position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 1000px; height: 600px;
+  background: radial-gradient(ellipse, var(--accent-glow), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+.page {
+  position: relative; z-index: 1;
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 32px 24px 96px;
+}
+
+/* ── Nav ── */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 48px;
+}
+.nav-back {
+  font-size: 0.8rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text-dim);
+  transition: color var(--transition);
+}
+.nav-back:hover { color: var(--accent); }
+.nav-brand {
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.nav-brand a {
+  color: var(--lovelace);
+  text-decoration: none;
+}
+
+/* ── Hero ── */
+.hero {
+  text-align: center;
+  padding: 32px 20px 48px;
+}
+.hero-token {
+  font-size: 3.5rem;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: var(--accent);
+}
+.hero-sub {
+  margin-top: 8px;
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+/* ── Cards ── */
+.card {
+  background: var(--card-bg);
+  border: 1px solid rgba(204, 17, 51, 0.25);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, var(--accent-glow), transparent 70%);
+  pointer-events: none;
+}
+.card h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+  position: relative;
+}
+.card p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+  position: relative;
+}
+.card p:last-child { margin-bottom: 0; }
+.card p strong { color: var(--text); }
+
+/* ── Supply table ── */
+.supply-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0 0;
+  font-size: 0.9rem;
+  position: relative;
+}
+.supply-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.supply-table tr:last-child td { border-bottom: none; }
+.supply-table td:first-child {
+  color: var(--text);
+  font-weight: 600;
+  width: 45%;
+}
+.supply-table td:last-child {
+  font-family: var(--mono);
+  letter-spacing: 0.5px;
+}
+.policy-row td:last-child {
+  cursor: pointer;
+  transition: color var(--transition);
+}
+.policy-row td:last-child:hover {
+  color: var(--accent);
+}
+.policy-row .copy-hint {
+  font-family: var(--font);
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  margin-left: 8px;
+}
+
+/* ── How it works grid ── */
+.works-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  position: relative;
+}
+.works-card {
+  padding: 20px;
+  background: rgba(204, 17, 51, 0.04);
+  border: 1px solid rgba(204, 17, 51, 0.18);
+  border-radius: var(--radius-sm);
+}
+.works-card.full { grid-column: 1 / -1; }
+.works-card h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+.works-card p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+/* ── Verified Human section ── */
+.verified {
+  border-color: var(--accent);
+  border-width: 2px;
+  background: linear-gradient(135deg, var(--accent-dim), var(--card-bg));
+}
+.verified h2 { font-size: 1.2rem; }
+.verified .tagline {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--accent);
+  font-style: italic;
+  margin-top: 16px;
+  position: relative;
+}
+
+/* ── DEX buttons ── */
+.dex-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  position: relative;
+}
+.btn-dex {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  border: 2px solid var(--accent);
+  background: var(--accent-dim);
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all var(--transition);
+}
+.btn-dex:hover {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 20px rgba(204, 17, 51, 0.3);
+}
+
+/* ── Treasury ── */
+.treasury-stats {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  position: relative;
+}
+.treasury-stat {
+  flex: 1;
+  min-width: 140px;
+  text-align: center;
+  padding: 16px;
+  background: rgba(204, 17, 51, 0.04);
+  border: 1px solid rgba(204, 17, 51, 0.18);
+  border-radius: var(--radius-sm);
+}
+.treasury-stat .val {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+.treasury-stat .lbl {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+/* ── Footer ── */
+.footer {
+  text-align: center;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+.footer-links {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+.footer-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.75rem;
+  transition: color var(--transition);
+}
+.footer-links a:hover { color: var(--text); }
+
+@media (max-width: 600px) {
+  .hero-token { font-size: 2.4rem; }
+  .card { padding: 20px 16px; }
+  .works-grid { grid-template-columns: 1fr; }
+  .dex-buttons { flex-direction: column; align-items: center; }
+  .treasury-stats { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="nav">
+    <a href="/" class="nav-back" data-i18n="common.back_to_posada">&larr; Posada.io</a>
+    <span class="nav-brand"><a href="/lovelace/">Lovelace</a> / $LILY</span>
+  </div>
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <h1 class="hero-token" data-i18n="token.title">$LILY</h1>
+    <div class="hero-sub" data-i18n="token.subtitle">The value layer of the Posada ecosystem</div>
+  </div>
+
+  <!-- ── What is $LILY ── -->
+  <div class="card">
+    <h2 data-i18n="token.what_title">What is $LILY?</h2>
+    <p data-i18n="token.what_p1">$LILY is the native utility token of the Posada ecosystem, built on Cardano. It powers every human connection made through <strong>Lovelace</strong> &mdash; the privacy-first dating app where you send value, not just likes.</p>
+    <p data-i18n="token.what_p2"><strong>1 Lily = $1 USD worth of $LILY tokens.</strong> The price floats on DEX &mdash; always displayed in dollar value.</p>
+  </div>
+
+  <!-- ── Token Supply ── -->
+  <div class="card">
+    <h2 data-i18n="token.supply_title">Token Supply</h2>
+    <table class="supply-table">
+      <tr>
+        <td data-i18n="token.supply_total">Total Supply</td>
+        <td data-i18n="token.supply_total_val">500,000,000 LILY</td>
+      </tr>
+      <tr>
+        <td data-i18n="token.supply_circ">Circulating at Launch</td>
+        <td data-i18n="token.supply_circ_val">0 LILY</td>
+      </tr>
+      <tr>
+        <td data-i18n="token.supply_treasury">Treasury Reserve</td>
+        <td data-i18n="token.supply_treasury_val">500,000,000 LILY</td>
+      </tr>
+      <tr class="policy-row">
+        <td data-i18n="token.supply_policy">Policy ID (Preview)</td>
+        <td id="policyId" onclick="copyPolicy()"><code>23ef4c204a8c9ed4169b39088a1b2af4c68a45bf3de5d4a290d09dc3</code><span class="copy-hint" id="copyHint" data-i18n="token.copy_hint">click to copy</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ── How $LILY Works ── -->
+  <div class="card">
+    <h2 data-i18n="token.how_title">How $LILY Works</h2>
+    <div class="works-grid">
+
+      <div class="works-card full">
+        <h3 data-i18n="token.welcome_title">Welcome Bonus</h3>
+        <p data-i18n="token.welcome_desc">All new subscribers get <strong>35 $LILY</strong> tokens to use as they please &mdash; gift, boost, or save.</p>
+      </div>
+
+      <div class="works-card">
+        <h3 data-i18n="token.gift_title">Gift to Connect</h3>
+        <p data-i18n="token.gift_desc">Send 1 Lily ($1 in $LILY) to initiate contact. Recipients accept (keeping tokens) or decline (full refund). No spam. No ghosting incentive.</p>
+      </div>
+
+      <div class="works-card">
+        <h3 data-i18n="token.rewards_title">Rewards</h3>
+        <p data-i18n="token.rewards_desc">Earn $LILY for daily logins, profile completion, matches, and activity. 26 reward types across the ecosystem.</p>
+      </div>
+
+      <div class="works-card">
+        <h3 data-i18n="token.ambassador_title">Ambassador Program</h3>
+        <p data-i18n="token.ambassador_desc">Refer users, earn $LILY. Direct referrals only. 35 $LILY signup bonus for referred users. 10 $LILY per qualified referral. Make 10 referrals in 30 days and get 10% on top &mdash; for each 10 referrals same month.</p>
+      </div>
+
+      <div class="works-card">
+        <h3 data-i18n="token.membership_title">Membership</h3>
+        <p data-i18n="token.membership_desc">Upgrade tiers using the upgrade system in app, upgrading with fiat only. Higher tiers unlock greater match distance, ZK-verified identity badges, and ambassador eligibility.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Verified Human Token ── -->
+  <div class="card verified">
+    <h2 data-i18n="token.verified_title">Verified Human Token</h2>
+    <p data-i18n="token.verified_p1">$LILY is freely tradable on Cardano DEXes. The $LILY smart contract enforces that <strong>only wallets holding a valid Identus decentralized identity</strong> can send or receive tokens &mdash; making every $LILY holder a verified human by definition.</p>
+    <p data-i18n="token.verified_p2">Bots, fake accounts, and spam wallets <strong>cannot hold $LILY</strong>.</p>
+    <div class="tagline" data-i18n="token.verified_tagline">A token that proves you're real, without proving who you are.</div>
+  </div>
+
+  <!-- ── Treasury ── -->
+  <div class="card">
+    <h2 data-i18n="token.treasury_title">Treasury</h2>
+    <div class="treasury-stats">
+      <div class="treasury-stat">
+        <div class="val">500M</div>
+        <div class="lbl" data-i18n="token.treasury_held">Tokens Held</div>
+      </div>
+      <div class="treasury-stat">
+        <div class="val">6</div>
+        <div class="lbl" data-i18n="token.treasury_validators">Aiken Validators</div>
+      </div>
+      <div class="treasury-stat">
+        <div class="val">24/24</div>
+        <div class="lbl" data-i18n="token.treasury_tests">Tests Passing</div>
+      </div>
+    </div>
+    <p style="margin-top:16px;" data-i18n="token.treasury_desc">500,000,000 $LILY held in treasury. All rewards distributed directly from treasury via Aiken smart contract as users earn them. Operations funded from revenue only. Smart contracts in development — audit pending.</p>
+  </div>
+
+  <!-- ── Footer ── -->
+  <div class="footer">
+    <span data-i18n="common.copyright">&copy; 2026</span> <a href="/" style="color:var(--text-muted);text-decoration:none" data-i18n="common.back_posada">Posada.io</a> &mdash; <span data-i18n="common.built_on_cardano">Built on Cardano</span>
+    <div class="footer-links">
+      <a href="/lovelace/" data-i18n="common.back_lovelace">Lovelace</a>
+      <a href="/lovelace/whitepaper.html" data-i18n="common.whitepaper">Whitepaper</a>
+      <a href="/tokens.html" data-i18n="common.all_tokens">All Tokens</a>
+      <a href="mailto:support@posada.io" data-i18n="common.contact">Contact</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function copyPolicy() {
+  const id = document.querySelector('#policyId code').textContent;
+  navigator.clipboard.writeText(id).then(function() {
+    var hint = document.getElementById('copyHint');
+    hint.textContent = 'copied!';
+    hint.style.color = '#22c55e';
+    setTimeout(function() {
+      hint.textContent = 'click to copy';
+      hint.style.color = '';
+    }, 2000);
+  });
+}
+</script>
+<script src="/i18n/i18n.js"></script>
+
+</body>
+</html>

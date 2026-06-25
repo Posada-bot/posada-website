@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lovelace — Scoreboard</title>
+<style>
+:root {
+  --bg: #080b12;
+  --panel: #111820;
+  --accent: #f472b6;
+  --accent-bright: #f9a8d4;
+  --accent-dim: rgba(244, 114, 182, 0.12);
+  --accent-glow: rgba(244, 114, 182, 0.06);
+  --text: #e8eaed;
+  --text-muted: #8b949e;
+  --text-dim: #555d66;
+  --border: rgba(255, 255, 255, 0.06);
+  --card-bg: rgba(17, 24, 32, 0.80);
+  --radius: 16px;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --transition: 0.22s ease;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; }
+body {
+  min-height: 100vh;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+body::before {
+  content: '';
+  position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 1000px; height: 600px;
+  background: radial-gradient(ellipse, var(--accent-glow), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.site {
+  position: relative; z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+}
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 48px;
+}
+.nav-back {
+  font-size: 0.8rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text-dim);
+  transition: color var(--transition);
+}
+.nav-back:hover { color: var(--accent); }
+.nav-brand {
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.hero {
+  text-align: center;
+  padding: 32px 20px 40px;
+}
+.hero-title {
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.hero-tagline {
+  margin-top: 8px;
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+.search-bar {
+  max-width: 400px;
+  margin: 24px auto 32px;
+}
+.search-bar input {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  outline: none;
+}
+.search-bar input:focus { border-color: var(--accent); }
+.search-bar input::placeholder { color: var(--text-dim); }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+thead th {
+  text-align: left;
+  padding: 12px 10px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+}
+tbody td {
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+}
+tbody tr:hover { background: var(--accent-dim); }
+.rank { font-weight: 800; color: var(--accent); min-width: 40px; }
+.rank-1 { font-size: 1.2rem; }
+.rank-2 { font-size: 1.1rem; }
+.rank-3 { font-size: 1.05rem; }
+.code { font-family: monospace; letter-spacing: 1px; color: var(--accent-bright); }
+.num { text-align: center; }
+.loading { text-align: center; color: var(--text-muted); padding: 40px; }
+.footer {
+  margin-top: 48px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+.footer a { color: var(--text-muted); text-decoration: none; }
+.footer a:hover { color: var(--accent); }
+.footer-links { margin-top: 8px; display: flex; justify-content: center; gap: 16px; }
+@media (max-width: 600px) {
+  .hero-title { font-size: 1.8rem; letter-spacing: 3px; }
+  table { font-size: 0.8rem; }
+  thead th, tbody td { padding: 8px 6px; }
+}
+</style>
+</head>
+<body>
+
+<div class="site">
+
+  <div class="nav">
+    <a href="/lovelace/" class="nav-back">&larr; Lovelace</a>
+    <span class="nav-brand">Lovelace</span>
+  </div>
+
+  <div class="hero">
+    <h1 class="hero-title">Scoreboard</h1>
+    <div class="hero-tagline">Beta tester leaderboard — ranked by referrals and rewards</div>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" id="search" placeholder="Search by referral code..." />
+  </div>
+
+  <div id="table-container"><div class="loading">Loading...</div></div>
+
+  <div class="footer">
+    <span>&copy; 2026</span> <a href="/">Posada.io</a> / Lovelace &mdash; Built on Cardano
+    <div class="footer-links">
+      <a href="/lovelace/privacy-policy.html">Privacy</a>
+      <a href="/lovelace/whitepaper.html">Whitepaper</a>
+      <a href="/lovelace/ambassador/">Ambassador</a>
+      <a href="mailto:support@posada.io">Contact</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API = 'https://api.posada.io/api/scoreboard';
+let allEntries = [];
+
+async function load() {
+  try {
+    const r = await fetch(API);
+    const d = await r.json();
+    if (!d.success) { document.getElementById('table-container').innerHTML = '<div class="loading">Error loading data</div>'; return; }
+    allEntries = d.entries;
+    render(allEntries);
+  } catch (e) {
+    document.getElementById('table-container').innerHTML = '<div class="loading">Error: ' + e.message + '</div>';
+  }
+}
+
+function render(entries) {
+  if (entries.length === 0) {
+    document.getElementById('table-container').innerHTML = '<div class="loading">No results</div>';
+    return;
+  }
+  let h = '<table><thead><tr><th>Rank</th><th>Referral Code</th><th>Qualified Referrals</th><th>Total Referrals</th><th>Rewards</th></tr></thead><tbody>';
+  for (const e of entries) {
+    const rc = e.rank <= 3 ? ' rank-' + e.rank : '';
+    h += '<tr>';
+    h += '<td class="rank' + rc + '">#' + e.rank + '</td>';
+    h += '<td class="code">' + e.referral_code + '</td>';
+    h += '<td class="num">' + e.qualified_referrals + '</td>';
+    h += '<td class="num">' + e.total_referrals + '</td>';
+    h += '<td class="num">' + e.rewards_count + '</td>';
+    h += '</tr>';
+  }
+  h += '</tbody></table>';
+  document.getElementById('table-container').innerHTML = h;
+}
+
+document.getElementById('search').addEventListener('input', function() {
+  const q = this.value.trim().toUpperCase();
+  if (!q) { render(allEntries); return; }
+  render(allEntries.filter(e => e.referral_code.includes(q)));
+});
+
+load();
+</script>
+
+</body>
+</html>

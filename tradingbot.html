@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NoteG — Autonomous Cardano Trading Bot</title>
+<style>
+:root {
+  --bg: #080b12;
+  --bg-alt: #0c1018;
+  --panel: #111820;
+  --text: #e8eaed;
+  --text-muted: #8b949e;
+  --text-dim: #555d66;
+  --border: rgba(255, 255, 255, 0.06);
+  --card-bg: rgba(17, 24, 32, 0.80);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --transition: 0.22s ease;
+
+  --posada:     #ff8c32;   /* NoteG / Posada bot — orange */
+  --posada-dim: rgba(255, 140, 50, 0.12);
+  --posada-glow: rgba(255, 140, 50, 0.06);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+
+body {
+  min-height: 100vh;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+body::before {
+  content: '';
+  position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 1000px; height: 600px;
+  background: radial-gradient(ellipse, var(--posada-glow), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+.site {
+  position: relative; z-index: 1;
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+}
+
+.back {
+  display: inline-block;
+  margin-bottom: 4px;
+  font-size: 0.78rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text-dim);
+  transition: color var(--transition);
+}
+.back:hover { color: var(--posada); }
+
+/* ── Hero ── */
+.hero {
+  text-align: center;
+  padding: 56px 20px 40px;
+  margin-bottom: 40px;
+}
+.hero-brand {
+  font-size: 3.4rem;
+  font-weight: 800;
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  color: var(--posada);
+}
+.hero-tagline {
+  margin-top: 14px;
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-weight: 300;
+}
+.hero-sub {
+  margin: 16px auto 0;
+  max-width: 560px;
+  font-size: 0.92rem;
+  color: var(--text-dim);
+  line-height: 1.7;
+}
+
+/* ── Button row ── */
+.cta-row {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+.cta-btn {
+  display: inline-block;
+  padding: 14px 34px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 26px;
+  transition: all var(--transition);
+}
+.cta-primary { background: var(--posada); color: #080b12; }
+.cta-primary:hover { box-shadow: 0 0 28px rgba(255,140,50,0.4); transform: translateY(-2px); }
+.cta-ghost { color: var(--text-muted); border: 1px solid rgba(255,255,255,0.14); }
+.cta-ghost:hover { color: var(--text); border-color: var(--posada); box-shadow: 0 0 20px var(--posada-glow); }
+
+/* ── Feature grid ── */
+.features {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  margin-bottom: 44px;
+}
+.feature {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 26px;
+  transition: all var(--transition);
+}
+.feature:hover {
+  border-color: var(--posada);
+  transform: translateY(-3px);
+  box-shadow: 0 0 30px rgba(255,140,50,0.10), 0 8px 32px rgba(0,0,0,0.3);
+}
+.feature-icon { font-size: 1.6rem; margin-bottom: 12px; }
+.feature-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--posada);
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.feature-desc { font-size: 0.86rem; color: var(--text-muted); line-height: 1.65; }
+
+/* ── Steps teaser ── */
+.teaser {
+  text-align: center;
+  background: linear-gradient(135deg, var(--posada-dim), rgba(17,24,32,0.9));
+  border: 1px solid rgba(255,140,50,0.25);
+  border-radius: var(--radius);
+  padding: 36px 28px;
+  margin-bottom: 44px;
+}
+.teaser-title { font-size: 1.3rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.teaser-desc { font-size: 0.9rem; color: var(--text-muted); max-width: 520px; margin: 0 auto 22px; line-height: 1.7; }
+
+/* ── Footer ── */
+.footer {
+  text-align: center;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+.footer-links {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+.footer-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.75rem;
+  transition: color var(--transition);
+}
+.footer-links a:hover { color: var(--text); }
+
+@media (max-width: 700px) {
+  .hero-brand { font-size: 2.2rem; letter-spacing: 4px; }
+  .features { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="site">
+
+  <a href="/" class="back">&larr; Posada.io</a>
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <div class="hero-brand">NoteG</div>
+    <div class="hero-tagline">Autonomous Cardano Trading Bot</div>
+    <div class="hero-sub">
+      Strategy-driven automated trading on Cardano, controlled entirely from your
+      phone. Real-time signals, risk management, and a full dashboard to monitor
+      your portfolio — with every command cryptographically signed by your device.
+    </div>
+    <div class="cta-row">
+      <a href="/noteg-start.html" class="cta-btn cta-primary">Get Started</a>
+      <a href="https://subscribe.posada.io" class="cta-btn cta-ghost">Subscribe</a>
+    </div>
+  </div>
+
+  <!-- ── Features ── -->
+  <div class="features">
+    <div class="feature">
+      <div class="feature-icon">&#x1F4F1;</div>
+      <div class="feature-title">Phone-Controlled</div>
+      <div class="feature-desc">
+        Start, stop, tune strategies, force sells, and watch every trade live
+        from the NoteG app. No terminal, no desktop required.
+      </div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">&#x1F510;</div>
+      <div class="feature-title">Signed &amp; Secure</div>
+      <div class="feature-desc">
+        Every change is signed by a hardware-backed key in your phone's secure
+        enclave. Nobody can impersonate your device — not even us.
+      </div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">&#x1F9EA;</div>
+      <div class="feature-title">Dry-Run First</div>
+      <div class="feature-desc">
+        The bot starts in DRY RUN — it picks trades without spending a lovelace.
+        Watch its decisions for a day, then flip to LIVE with a fingerprint.
+      </div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">&#x1F4C8;</div>
+      <div class="feature-title">Risk-Managed</div>
+      <div class="feature-desc">
+        Per-strategy safety limits, position caps, and manual overrides. You set
+        the rails; the bot trades inside them on Cardano DEXes.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Teaser ── -->
+  <div class="teaser">
+    <div class="teaser-title">Up and running in ~10 minutes</div>
+    <div class="teaser-desc">
+      Install the app, subscribe, fund your bot, pair your phone, and start
+      trading. The full walkthrough takes you through every step.
+    </div>
+    <div class="cta-row" style="margin-top:0;">
+      <a href="/noteg-start.html" class="cta-btn cta-primary">Read the Guide</a>
+    </div>
+  </div>
+
+  <!-- ── Footer ── -->
+  <div class="footer">
+    &copy; 2026 Posada.io &mdash; Built on Cardano
+    <div class="footer-links">
+      <a href="/noteg-start.html">Getting Started</a>
+      <a href="/noteg-privacy.html">Privacy Policy</a>
+      <a href="https://subscribe.posada.io">Subscribe</a>
+      <a href="/manifesto.html">Manifesto</a>
+      <a href="mailto:support@posada.io">Contact</a>
+    </div>
+  </div>
+
+</div>
+
+<script src="/i18n/i18n.js"></script>
+<script src="/protect.js"></script>
+</body>
+</html>

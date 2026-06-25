@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manifesto — Posada.io</title>
+<style>
+:root {
+  --bg: #080b12;
+  --panel: #111820;
+  --text: #e8eaed;
+  --text-muted: #8b949e;
+  --text-dim: #555d66;
+  --border: rgba(255, 255, 255, 0.06);
+  --lily: #c084fc;
+  --lily-dim: rgba(192, 132, 252, 0.12);
+  --lily-glow: rgba(192, 132, 252, 0.08);
+  --radius: 16px;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --transition: 0.22s ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+
+body {
+  min-height: 100vh;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.8;
+}
+
+body::before {
+  content: '';
+  position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 1000px; height: 600px;
+  background: radial-gradient(ellipse, var(--lily-glow), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+.page {
+  position: relative; z-index: 1;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 48px 24px 96px;
+}
+
+/* ── Back link ── */
+.back {
+  display: inline-block;
+  margin-bottom: 48px;
+  font-size: 0.8rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text-dim);
+  transition: color var(--transition);
+}
+.back:hover { color: var(--lily); }
+
+/* ── Header ── */
+.manifesto-header {
+  text-align: center;
+  margin-bottom: 56px;
+}
+.manifesto-title {
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--lily);
+}
+.manifesto-rule {
+  width: 60px;
+  height: 2px;
+  background: var(--lily);
+  border: none;
+  margin: 24px auto 0;
+  opacity: 0.5;
+}
+
+/* ── Body text ── */
+.manifesto-body p {
+  margin-bottom: 1.6em;
+  color: var(--text-muted);
+  font-size: 1.05rem;
+}
+.manifesto-body p.lead {
+  font-size: 1.2rem;
+  color: var(--text);
+  font-weight: 400;
+}
+.manifesto-body p.emphasis {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* ── Principles block ── */
+.principles {
+  margin: 2.4em 0;
+  padding: 32px 28px;
+  background: var(--lily-dim);
+  border-left: 3px solid var(--lily);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.principles p {
+  margin-bottom: 0.6em;
+  color: var(--text);
+  font-size: 1.05rem;
+}
+.principles p:last-child { margin-bottom: 0; }
+
+/* ── Closing declarations ── */
+.declarations {
+  margin: 2.4em 0;
+}
+.declarations p {
+  margin-bottom: 0.5em;
+  color: var(--text);
+  font-size: 1.05rem;
+  font-weight: 400;
+}
+
+/* ── Final line ── */
+.closing {
+  text-align: center;
+  margin-top: 3em;
+  padding-top: 2em;
+  border-top: 1px solid var(--border);
+}
+.closing p {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--lily);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.closing .subtitle {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  text-transform: none;
+  margin-top: 8px;
+}
+
+/* ── Footer ── */
+.footer {
+  text-align: center;
+  margin-top: 64px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+.footer a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+.footer a:hover { color: var(--text); }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .manifesto-title { font-size: 1.8rem; letter-spacing: 2px; }
+  .manifesto-body p { font-size: 0.95rem; }
+  .principles { padding: 24px 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <a href="/" class="back">&larr; Back to Posada.io</a>
+
+  <div class="manifesto-header">
+    <h1 class="manifesto-title">Manifesto</h1>
+    <hr class="manifesto-rule">
+  </div>
+
+  <div class="manifesto-body">
+
+    <p class="lead">
+      We believe the internet lost its way when people became products.
+    </p>
+
+    <p>
+      For two decades, platforms have harvested behavior, predicted desire,
+      and quietly shaped choices. Convenience became the trade. Freedom
+      became the cost.
+    </p>
+
+    <p class="emphasis">
+      We reject the idea that connection must require surveillance.
+    </p>
+
+    <p>
+      LoveLace exists because identity should belong to the individual,
+      not the platform. Data should be controlled, not extracted.
+      Relationships should be voluntary, not engineered by opaque algorithms.
+    </p>
+
+    <p>
+      We stand on a simple principle:
+    </p>
+
+    <div class="principles">
+      <p>Cryptography replaces trust where trust is abused.</p>
+      <p>In a world of behavioral profiling, we choose consent.</p>
+      <p>In a world of algorithmic manipulation, we choose transparency.</p>
+      <p>In a world of digital feudalism, we choose sovereignty.</p>
+    </div>
+
+    <p>
+      We are not building another social network designed to maximize
+      engagement loops. We are building infrastructure for human choice.
+    </p>
+
+    <div class="declarations">
+      <p>Here, identity is self-owned.</p>
+      <p>Visibility is permissioned.</p>
+      <p>Discovery is intentional.</p>
+      <p>And value flows to the participants, not to intermediaries.</p>
+    </div>
+
+    <p>
+      The future of social technology will not be defined by who controls
+      the largest dataset. It will be defined by who gives control back
+      to people.
+    </p>
+
+    <p>
+      We build for the ones who believe privacy is normal.
+      That autonomy is non-negotiable.
+      And that technology should expand freedom, not quietly erode it.
+    </p>
+
+    <div class="closing">
+      <p>This is not disruption.</p>
+      <p>This is restoration.</p>
+      <div class="subtitle">The social layer is being rewritten.</div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    &copy; 2026 <a href="/">Posada.io</a> &mdash; Built on Cardano
+  </div>
+
+</div>
+
+</body>
+</html>
