@@ -31,6 +31,12 @@ IP=$(getent ahosts "$HOST" | awk '{print $1; exit}')
   echo "  -> NOTE: toggling it resets the SSH password — refresh ~/onecom_pw.txt afterwards."
   exit 3
 }
+# POS-211: prove $HERE is actually the posada.io site tree before mirroring it
+# onto the live docroot — never push an unverified/wrong directory to production.
+# index.html + lovelace/ are markers only the real site tree has.
+[ -f "$HERE/index.html" ] && [ -d "$HERE/lovelace" ] \
+  || { echo "FATAL: $HERE does not look like the posada.io site (missing index.html/lovelace/), refusing to deploy" >&2; exit 1; }
+
 echo "deploying to one.com via [$IP] ..."
 
 OUT=$(lftp "sftp://[$IP]" <<LFTP 2>&1
