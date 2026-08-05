@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Posada Fund — Ask. Get funded. No committee, no custody.</title>
+<link rel="canonical" href="https://posada.io/fund/">
+<meta name="description" content="Posada Fund is a permissionless, non-custodial funding board for Cardano projects. Post your project, publish your wallet, and backers send ADA straight to you. No escrow, no committee — the platform never holds the money.">
+<style>
+:root {
+  --bg: #080b12;
+  --panel: #111820;
+  --accent: #57D2C4;
+  --accent-bright: #7FE0D5;
+  --accent-dim: rgba(87, 210, 196, 0.12);
+  --accent-glow: rgba(87, 210, 196, 0.06);
+  --text: #e8eaed;
+  --text-muted: #8b949e;
+  --text-dim: #555d66;
+  --border: rgba(255, 255, 255, 0.06);
+  --card-bg: rgba(17, 24, 32, 0.80);
+  --radius: 16px;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --transition: 0.22s ease;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; }
+body {
+  min-height: 100vh;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+body::before {
+  content: '';
+  position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 1000px; height: 600px;
+  background: radial-gradient(ellipse, var(--accent-glow), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.site {
+  position: relative; z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+}
+
+/* ── Nav ── */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 48px;
+}
+.nav-back {
+  font-size: 0.8rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text-dim);
+  transition: color var(--transition);
+}
+.nav-back:hover { color: var(--accent); }
+.nav-brand {
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ── Hero ── */
+.hero {
+  text-align: center;
+  padding: 48px 20px 56px;
+}
+.hero-title {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.hero-tagline {
+  margin-top: 12px;
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+.hero-desc {
+  margin-top: 16px;
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── Grid ── */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 48px;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px 20px;
+  background: linear-gradient(135deg, var(--accent-dim), var(--card-bg));
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: var(--text);
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, var(--accent-glow), transparent 70%);
+  pointer-events: none;
+}
+.card:hover {
+  border-color: var(--accent-bright);
+  box-shadow: 0 0 24px rgba(87,210,196,0.15), 0 8px 32px rgba(0,0,0,0.3);
+  transform: translateY(-2px);
+}
+.card:active { transform: translateY(0); }
+.card-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--accent);
+  position: relative;
+}
+.card-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
+  position: relative;
+}
+
+
+/* ── Tech badges ── */
+.tech {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 40px;
+}
+.tech-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+/* ── Footer ── */
+.footer {
+  text-align: center;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+.footer a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+.footer a:hover { color: var(--text); }
+.footer-links {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+@media (max-width: 600px) {
+  .grid { grid-template-columns: 1fr; }
+  .hero-title { font-size: 2rem; letter-spacing: 3px; }
+  .card { padding: 24px 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="site">
+
+  <div class="nav">
+    <a href="/" class="nav-back" data-i18n="common.back_to_posada">&larr; Posada.io</a>
+    <span class="nav-brand">Posada Fund</span>
+  </div>
+
+  <div class="hero">
+    <h1 class="hero-title" data-i18n="fund_hub.title">Posada Fund</h1>
+    <div class="hero-tagline" data-i18n="fund_hub.tagline">Ask. Get funded. No committee, no custody.</div>
+    <div class="hero-desc" data-i18n="fund_hub.desc">
+      A permissionless, non-custodial funding board for Cardano projects.
+      Post your project, publish your wallet, and backers send ADA straight
+      to you. Posada Fund never holds the money.
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <a href="https://fund.posada.io/fund" class="card">
+      <span class="card-title" data-i18n="fund_hub.board">Open the Board</span>
+      <span class="card-desc" data-i18n="fund_hub.board_desc">Browse every live project asking for funding</span>
+    </a>
+
+    <a href="https://fund.posada.io/fund/new" class="card">
+      <span class="card-title" data-i18n="fund_hub.list">List a Project</span>
+      <span class="card-desc" data-i18n="fund_hub.list_desc">Publish your wallet and go live instantly &mdash; no review</span>
+    </a>
+
+    <a href="https://fund.posada.io/fund/dashboard" class="card">
+      <span class="card-title" data-i18n="fund_hub.dashboard">Owner Dashboard</span>
+      <span class="card-desc" data-i18n="fund_hub.dashboard_desc">Sign in with your wallet to manage your listing</span>
+    </a>
+
+    <a href="https://fund.posada.io/fund/p/lovelace-fund-the-smart-contracts-audits" class="card">
+      <span class="card-title" data-i18n="fund_hub.example">See a Live Listing</span>
+      <span class="card-desc" data-i18n="fund_hub.example_desc">Lovelace &mdash; funding the smart contract audits</span>
+    </a>
+
+    <a href="how-it-works.html" class="card">
+      <span class="card-title" data-i18n="fund_hub.how">How It Works</span>
+      <span class="card-desc" data-i18n="fund_hub.how_desc">The listing in plain terms &mdash; for creators and backers</span>
+    </a>
+
+    <a href="whitepaper.html" class="card">
+      <span class="card-title" data-i18n="fund_hub.whitepaper">Whitepaper</span>
+      <span class="card-desc" data-i18n="fund_hub.whitepaper_desc">The full technical vision and architecture</span>
+    </a>
+
+    <a href="/manifesto.html" class="card">
+      <span class="card-title" data-i18n="fund_hub.manifesto">Manifesto</span>
+      <span class="card-desc" data-i18n="fund_hub.manifesto_desc">Why we build what we build</span>
+    </a>
+
+    <a href="mailto:support@posada.io" class="card">
+      <span class="card-title" data-i18n="fund_hub.contact">Contact</span>
+      <span class="card-desc" data-i18n="fund_hub.contact_desc">Questions about listing or the fee</span>
+    </a>
+
+  </div>
+
+  <div class="tech">
+    <span class="tech-badge" data-i18n="fund_hub.badge_cardano">Cardano</span>
+    <span class="tech-badge" data-i18n="fund_hub.badge_cip30">CIP-30 Wallet</span>
+    <span class="tech-badge" data-i18n="fund_hub.badge_noncustodial">Non-Custodial</span>
+    <span class="tech-badge" data-i18n="fund_hub.badge_wallet_to_wallet">Wallet-to-Wallet</span>
+    <span class="tech-badge" data-i18n="fund_hub.badge_no_escrow">No Escrow</span>
+  </div>
+
+  <div class="footer">
+    <span data-i18n="common.copyright">&copy; 2026</span> <a href="/">Posada.io</a> / Posada Fund &mdash; <span data-i18n="common.built_on_cardano">Built on Cardano</span>
+    <div class="footer-links">
+      <a href="https://fund.posada.io/fund" data-i18n="fund_hub.board">Open the Board</a>
+      <a href="/manifesto.html" data-i18n="common.manifesto">Manifesto</a>
+      <a href="mailto:support@posada.io" data-i18n="common.contact">Contact</a>
+    </div>
+  </div>
+
+</div>
+
+<script src="/i18n/i18n.js"></script>
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Posada Fund — Whitepaper</title>
+<meta name="description" content="Posada Fund: a permissionless, non-custodial funding board on Cardano. Full technical vision and architecture.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0b10;
+    --surface:#14141c;
+    --surface-2:#191922;
+    --accent:#57D2C4;
+    --accent-deep:#35b8a8;
+    --accent-glow:rgba(87,210,196,.14);
+    --text:#f4f4f5;
+    --muted:#a1a1aa;
+    --dim:#6b6b76;
+    --hair:rgba(255,255,255,.08);
+    --hair-strong:rgba(255,255,255,.14);
+    --maxw:820px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--bg);color:var(--text);
+    font-family:'Inter',system-ui,sans-serif;
+    font-size:17px;line-height:1.7;-webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline;text-underline-offset:3px}
+
+  /* top bar */
+  .bar{
+    position:sticky;top:0;z-index:10;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:14px clamp(18px,5vw,40px);
+    background:rgba(11,11,16,.82);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--hair);
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk',sans-serif;
+    font-weight:700;letter-spacing:.14em;font-size:13px;text-transform:uppercase}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 10px 1px var(--accent)}
+  .bar .right{display:flex;align-items:center;gap:18px;font-size:12px;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-family:'Space Grotesk',sans-serif}
+  .bar .right a{color:var(--muted)}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(18px,5vw,40px)}
+
+  /* hero */
+  .hero{padding:clamp(48px,9vw,110px) 0 clamp(30px,5vw,54px)}
+  .eyebrow{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;
+    letter-spacing:.24em;text-transform:uppercase;color:var(--accent);margin:0 0 20px}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;
+    font-size:clamp(44px,9vw,84px);line-height:1.02;letter-spacing:-.02em;margin:0 0 18px}
+  .lede{font-size:clamp(18px,2.4vw,22px);color:var(--muted);max-width:640px;margin:0 0 40px}
+  .lede strong{color:var(--text);font-weight:600}
+
+  /* flow signature */
+  .flow{border:1px solid var(--hair);border-radius:18px;background:
+    radial-gradient(120% 140% at 50% -20%,var(--accent-glow),transparent 60%),var(--surface);
+    padding:26px clamp(16px,4vw,34px) 20px;margin:8px 0 4px}
+  .flow figcaption{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--dim);
+    text-align:center;margin-top:14px;letter-spacing:.02em}
+  .flow svg{width:100%;height:auto;display:block}
+
+  /* meta strip */
+  .meta{display:flex;flex-wrap:wrap;gap:10px;margin:34px 0 0}
+  .pill{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);
+    border:1px solid var(--hair-strong);border-radius:999px;padding:6px 13px;letter-spacing:.02em}
+
+  /* sections */
+  section{padding:clamp(30px,5vw,52px) 0;border-top:1px solid var(--hair)}
+  .num{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent-deep);
+    letter-spacing:.1em;margin:0 0 10px}
+  h2{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(26px,4vw,36px);
+    line-height:1.12;letter-spacing:-.01em;margin:0 0 18px}
+  h3{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:19px;
+    margin:30px 0 8px;color:var(--text)}
+  p{margin:0 0 18px;color:#d4d4d8}
+  p.muted{color:var(--muted)}
+  strong{color:var(--text);font-weight:600}
+  code{font-family:'IBM Plex Mono',monospace;font-size:.86em;
+    background:var(--surface-2);border:1px solid var(--hair);border-radius:6px;
+    padding:1px 6px;color:var(--accent)}
+
+  ul,ol{margin:0 0 18px;padding-left:0;list-style:none}
+  li{position:relative;padding-left:26px;margin-bottom:12px;color:#d4d4d8}
+  li::before{content:"";position:absolute;left:4px;top:11px;width:7px;height:7px;
+    border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent-glow)}
+  ol{counter-reset:step}
+  ol li{padding-left:44px}
+  ol li::before{content:counter(step);counter-increment:step;
+    left:0;top:0;width:26px;height:26px;border-radius:8px;background:transparent;
+    border:1px solid var(--accent);box-shadow:none;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--accent)}
+
+  /* callout: what it is NOT */
+  .callout{border:1px solid var(--hair-strong);border-left:3px solid var(--accent);
+    border-radius:12px;background:var(--surface);padding:22px 24px;margin:6px 0 4px}
+  .callout .num{margin-bottom:6px}
+
+  /* two-col grid for architecture facts */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:6px 0 4px}
+  .cell{border:1px solid var(--hair);border-radius:12px;background:var(--surface);padding:18px 20px}
+  .cell h4{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+  .cell p{font-size:14.5px;margin:0;color:var(--muted);line-height:1.55}
+
+  /* roadmap */
+  .phase{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--hair)}
+  .phase:last-child{border-bottom:0}
+  .phase .tag{flex:0 0 auto;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;
+    letter-spacing:.12em;text-transform:uppercase;padding:5px 11px;border-radius:999px;height:fit-content}
+  .tag.live{color:#0b0b10;background:var(--accent)}
+  .tag.next{color:var(--accent);border:1px solid var(--accent)}
+  .tag.later{color:var(--dim);border:1px solid var(--hair-strong)}
+  .phase p{margin:0;font-size:15px}
+  .phase strong{display:block;margin-bottom:2px}
+
+  footer{border-top:1px solid var(--hair);padding:40px 0 60px;text-align:center;color:var(--dim);font-size:13px}
+  footer .fnav{display:flex;gap:22px;justify-content:center;margin-top:14px;flex-wrap:wrap;
+    font-family:'Space Grotesk',sans-serif;letter-spacing:.08em;text-transform:uppercase;font-size:12px}
+  footer .fnav a{color:var(--muted)}
+  footer b{color:var(--accent);font-weight:600}
+
+  @media (max-width:560px){body{font-size:16px}}
+  @media (prefers-reduced-motion:reduce){.dotflow{display:none}}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="brand"><span class="dot"></span>Posada Fund</div>
+  <div class="right">
+    <span>Whitepaper · v1.0</span>
+    <a href="/fund/">← Back to Fund</a>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">Whitepaper · v1.0 · August 2026</p>
+    <h1>Posada&nbsp;Fund</h1>
+    <p class="lede">A permissionless, non-custodial funding board on Cardano. Projects publish their own wallet, backers send <strong>ADA directly, wallet to wallet</strong>, and the platform never holds a single lovelace.</p>
+
+    <figure class="flow">
+      <svg viewBox="0 0 720 190" role="img" aria-label="Diagram: ADA flows directly from backer to project wallet; Posada Fund sits off the money path and receives only a one-time listing fee.">
+        <defs>
+          <marker id="arw" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+            <path d="M0 0 L9 4.5 L0 9 Z" fill="#57D2C4"></path>
+          </marker>
+          <marker id="arwd" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M0 0 L8 4 L0 8 Z" fill="#6b6b76"></path>
+          </marker>
+        </defs>
+        <!-- backer -->
+        <rect x="30" y="60" width="150" height="66" rx="12" fill="#191922" stroke="rgba(255,255,255,.14)"></rect>
+        <text x="105" y="88" text-anchor="middle" fill="#f4f4f5" font-family="Space Grotesk, sans-serif" font-size="15" font-weight="600">Backer</text>
+        <text x="105" y="108" text-anchor="middle" fill="#6b6b76" font-family="IBM Plex Mono, monospace" font-size="11">sends ADA</text>
+        <!-- project -->
+        <rect x="540" y="60" width="150" height="66" rx="12" fill="#191922" stroke="rgba(87,210,196,.55)"></rect>
+        <text x="615" y="88" text-anchor="middle" fill="#f4f4f5" font-family="Space Grotesk, sans-serif" font-size="15" font-weight="600">Project wallet</text>
+        <text x="615" y="108" text-anchor="middle" fill="#57D2C4" font-family="IBM Plex Mono, monospace" font-size="11">receives ADA</text>
+        <!-- direct path -->
+        <line x1="182" y1="93" x2="536" y2="93" stroke="#57D2C4" stroke-width="2.5" marker-end="url(#arw)"></line>
+        <circle class="dotflow" r="4.5" fill="#57D2C4">
+          <animate attributeName="cx" values="188;530" dur="2.4s" repeatCount="indefinite"></animate>
+          <animate attributeName="cy" values="93;93" dur="2.4s" repeatCount="indefinite"></animate>
+          <animate attributeName="opacity" values="0;1;1;0" dur="2.4s" repeatCount="indefinite"></animate>
+        </circle>
+        <text x="360" y="80" text-anchor="middle" fill="#a1a1aa" font-family="IBM Plex Mono, monospace" font-size="11.5">direct — no intermediary</text>
+        <!-- platform off-path -->
+        <rect x="290" y="150" width="140" height="34" rx="9" fill="#14141c" stroke="rgba(255,255,255,.1)"></rect>
+        <text x="360" y="172" text-anchor="middle" fill="#6b6b76" font-family="Space Grotesk, sans-serif" font-size="12" font-weight="500">Posada Fund</text>
+        <path d="M360 150 L360 118" stroke="#6b6b76" stroke-width="1.4" stroke-dasharray="4 4" marker-end="url(#arwd)"></path>
+        <text x="372" y="138" fill="#6b6b76" font-family="IBM Plex Mono, monospace" font-size="10">listing fee · once</text>
+      </svg>
+      <figcaption>The platform is never on the money path. It touches one flat fee at listing — the donations never pass through it.</figcaption>
+    </figure>
+
+    <div class="meta">
+      <span class="pill">Non-custodial</span>
+      <span class="pill">Wallet-as-identity · CIP-30 / CIP-8</span>
+      <span class="pill">HD-derived fees · watch-only</span>
+      <span class="pill">On-chain verifiable</span>
+      <span class="pill">Built on Cardano</span>
+    </div>
+  </header>
+
+  <section>
+    <p class="num">Abstract</p>
+    <h2>A funding board that never holds your money</h2>
+    <p>Posada Fund is a public board where anyone can list a project and receive support in ADA. A creator connects a Cardano wallet, proves they control it, publishes the wallet they want to be paid to, and goes live. Backers send ADA <strong>straight to that wallet</strong>. No account holds the funds, no escrow sits in the middle, and no percentage is skimmed from what supporters give.</p>
+    <p>The platform's only economic touchpoint is a single flat fee paid once, at listing time, to put a project on the board. Everything after that is wallet-to-wallet and fully visible on-chain. This document sets out what Posada Fund is, what it deliberately is <em>not</em>, and the architecture that makes those claims true rather than aspirational.</p>
+  </section>
+
+  <section>
+    <p class="num">01 · Problem</p>
+    <h2>Crowdfunding asks you to trust the middle</h2>
+    <p>Conventional crowdfunding platforms take custody of every contribution, hold it, take a cut, and can freeze, reverse, or gate it. The backer's money passes through a company that can fail, change its rules, or simply decide a campaign no longer fits. "Where did my money actually go?" is a question the platform answers, not the chain.</p>
+    <p>Cardano has treasury and grant mechanisms, but no simple retail-facing door: a place where someone who just wants to back a cause can do so directly, and then <strong>verify for themselves</strong> that the funds arrived. Posada Fund is that door.</p>
+  </section>
+
+  <section>
+    <div class="callout">
+      <p class="num">02 · Boundaries</p>
+      <h2 style="margin-bottom:14px">What Posada Fund is not</h2>
+      <ul>
+        <li><strong>Not a custodian.</strong> The platform never receives, holds, pools, or forwards backer funds. Donations go directly from backer wallet to project wallet.</li>
+        <li><strong>Not an escrow or a broker.</strong> There is no held balance, no release condition, no matching of orders.</li>
+        <li><strong>Not a guarantor.</strong> Posada Fund does not vet, endorse, or promise the outcome of any listed project. Backers give at their own discretion and their own risk.</li>
+        <li><strong>Not a payment processor for donations.</strong> The only payment the platform collects is its own one-time listing fee.</li>
+      </ul>
+      <p class="muted" style="margin:14px 0 0">These are not disclaimers bolted on after the fact — they are properties enforced by the architecture below. There is no code path in which the platform can move a backer's donation.</p>
+    </div>
+  </section>
+
+  <section>
+    <p class="num">03 · How it works</p>
+    <h2>The listing lifecycle</h2>
+    <ol>
+      <li><strong>Connect a wallet.</strong> The creator connects a Cardano wallet through the standard <code>CIP-30</code> browser interface.</li>
+      <li><strong>Prove ownership.</strong> The creator signs a challenge with <code>CIP-8</code>, keyed on the wallet's <strong>stake credential</strong>. This is the login — no email, no password. The stake credential is stable across a wallet's addresses, so the owner can always return.</li>
+      <li><strong>Create the listing.</strong> They write the project, publish the <strong>payout wallet</strong> that backers will send ADA to, and attach a required video introducing the cause.</li>
+      <li><strong>Pay the listing fee.</strong> A single flat fee — a small fixed amount, paid once in ADA — is sent to a fee address the platform derives for that specific listing. Payment is detected on-chain before the listing can publish.</li>
+      <li><strong>Publish.</strong> The listing goes live instantly. There is no review queue and no gatekeeper.</li>
+      <li><strong>Receive support.</strong> Backers send ADA directly to the published payout wallet. A live counter reflects funding as it arrives on-chain.</li>
+      <li><strong>Report monthly.</strong> The creator files a monthly report on how funds are being used. If reporting lapses, the page goes dark until it resumes — accountability is a condition of staying visible, not a suggestion.</li>
+    </ol>
+  </section>
+
+  <section>
+    <p class="num">04 · Identity</p>
+    <h2>Your wallet is your account</h2>
+    <p>Posada Fund has no user table of emails and passwords. Identity is the Cardano wallet itself, established through a <code>CIP-8</code> signature and anchored on the <strong>stake credential</strong> rather than a payment address — a payment address can change and would otherwise lock an owner out on return.</p>
+    <p>Two roles are kept distinct. The <strong>owner wallet</strong> signs in and manages the listing. The <strong>donation wallet</strong> is the published payout address; it is frozen on the first donation, so the address backers trusted cannot be swapped out from under them. The two can be the same wallet, with a shortcut for that common case.</p>
+  </section>
+
+  <section>
+    <p class="num">05 · Architecture</p>
+    <h2>Non-custodial by construction</h2>
+    <p>The non-custodial claim holds because there is nowhere for donations to accumulate and no key with which the platform could move them.</p>
+    <div class="grid">
+      <div class="cell"><h4>No pooled funds</h4><p>Donations are addressed to project wallets the platform does not control. There is no omnibus account and therefore no honeypot to steal or freeze.</p></div>
+      <div class="cell"><h4>Watch-only fee keys</h4><p>Listing fees go to addresses derived per-listing from an extended <em>public</em> key (<code>PLATFORM_FEE_XPUB</code>). The service can see and verify fee payments but cannot spend from a private key it never holds.</p></div>
+      <div class="cell"><h4>On-chain detection</h4><p>Chain data comes from Koios. Fee payment and funding progress are read from the ledger, not from platform-internal bookkeeping.</p></div>
+      <div class="cell"><h4>Server-side fee gate</h4><p>The fee quote is persisted and enforced on the server. A listing cannot publish until its fee is confirmed on-chain — it is not a client-side check that can be skipped.</p></div>
+      <div class="cell"><h4>Live funding counter</h4><p>Actively-viewed listings refresh their on-chain total in near-real-time over a server-driven stream, within fixed provider budgets.</p></div>
+      <div class="cell"><h4>Reproducible stack</h4><p>Next.js, Prisma, and Postgres, with a scheduled worker, running in containers behind Caddy on dedicated infrastructure.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="num">06 · Transparency</p>
+    <h2>Verifiable, not promised</h2>
+    <p>Because donations land at a published on-chain address, any backer can confirm — independently, in any explorer — that their ADA arrived and how much a project has raised. The platform is not the source of truth about the money; the chain is.</p>
+    <p>Two obligations keep a listing honest over time. The <strong>required video</strong> puts a real face and a specific ask behind each cause at the outset. The <strong>monthly report</strong> keeps the creator accountable afterward, and the <strong>dark-on-lapse</strong> rule means a project that stops reporting stops being seen. Visibility is earned continuously, not granted once.</p>
+  </section>
+
+  <section>
+    <p class="num">07 · The cause funnel</p>
+    <h2>A retail door into Cardano</h2>
+    <p>Posada Fund is built to be understood by people who have never touched a blockchain. Someone backs a cause they care about, then naturally asks where the money went — and the honest, verifiable answer is on-chain. That question is the funnel: transparency is the feature that turns a first-time backer into someone who understands why this runs on Cardano at all.</p>
+    <p>To widen that door, a <strong>card on-ramp</strong> is planned so that non-crypto supporters can back a project with familiar payment methods, with the ADA reaching the project wallet on the other side. It is in development, pending the legal and compliance groundwork required to offer fiat payments responsibly. The voice here is deliberately distinct from treasury-proposal language: this is for the supporter, not the committee.</p>
+  </section>
+
+  <section>
+    <p class="num">08 · Economics</p>
+    <h2>One flat fee, no cut of donations</h2>
+    <p>The platform charges a <strong>single flat listing fee</strong>, paid once when a project is listed. It does not take a percentage of anything supporters give — a project that raises a large amount and a project that raises little pay the same fee. Because donations never route through the platform, there is nothing to skim and no per-transaction margin. The model is a board with an entry fee, not a payment rail that meters the flow.</p>
+  </section>
+
+  <section>
+    <p class="num">09 · Ecosystem</p>
+    <h2>Part of Posada</h2>
+    <p>Posada Fund sits alongside the other Posada products — <strong>Lovelace</strong> (privacy-first dating), <strong>Byron</strong> (decentralized social), and <strong>Shelley</strong> (encrypted messaging) — with <strong>$LILY</strong> as the ecosystem's native token. The board's first live listing is Lovelace itself, raising funds for the <code>$LILY</code> smart-contract audit: the platform funding the security of its own ecosystem, in public, on the same terms as anyone else.</p>
+  </section>
+
+  <section>
+    <p class="num">10 · Roadmap</p>
+    <h2>Where it stands</h2>
+    <div class="phase">
+      <span class="tag live">Live</span>
+      <p><strong>The board is running.</strong> Wallet-as-identity, per-listing HD fee derivation, server-enforced fee gate, on-chain funding counter, publish flow, and the first real listing are all deployed at fund.posada.io.</p>
+    </div>
+    <div class="phase">
+      <span class="tag next">Next</span>
+      <p><strong>Card on-ramp.</strong> Fiat-to-ADA backing for non-crypto supporters, pending the legal and compliance groundwork to offer it responsibly.</p>
+    </div>
+    <div class="phase">
+      <span class="tag later">Later</span>
+      <p><strong>Deeper ecosystem ties.</strong> Tighter integration with the wider Posada products and $LILY as those platforms mature.</p>
+    </div>
+  </section>
+
+  <section>
+    <p class="num">11 · Security</p>
+    <h2>The strongest guarantee is having nothing to take</h2>
+    <p>The most important security property is structural: there is no custodial balance to compromise. An attacker who fully controlled the platform still could not move a backer's donation, because those funds only ever exist at wallets the platform has no key for, and the fee keys are watch-only.</p>
+    <p class="muted">This design places responsibility where it belongs. Backers send funds directly and at their own discretion; a creator's published wallet is theirs to secure. Posada Fund makes the flow transparent and the parties accountable — it does not, and by design cannot, act as a safety net for either side.</p>
+  </section>
+
+  <footer>
+    <div>© 2026 <b>Posada.io</b> / Posada Fund — Built on Cardano</div>
+    <div class="fnav">
+      <a href="/fund/">Fund</a>
+      <a href="https://fund.posada.io/fund">Open the board</a>
+      <a href="how-it-works.html">How it works</a>
+      <a href="/">Posada.io</a>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>

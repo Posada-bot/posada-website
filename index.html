@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Posada.io — Building on Cardano</title>
 <link rel="canonical" href="https://posada.io/">
-<meta name="description" content="Posada.io builds privacy-first apps on Cardano. Lovelace is a decentralized dating app with zero data harvesting, real human verification, and ZK privacy proofs. NoteG is an automated Cardano trading bot on Minswap DEX. One identity. One account. Your data stays yours.">
+<meta name="description" content="Posada.io builds privacy-first apps on Cardano. Lovelace is a decentralized dating app with zero data harvesting, real human verification, and ZK privacy proofs. Posada Fund is a permissionless, non-custodial funding board where backers send ADA straight to projects. One identity. One account. Your data stays yours.">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -35,12 +35,16 @@
       }
     },
     {
-      "@type": "SoftwareApplication",
-      "name": "NoteG",
+      "@type": "WebApplication",
+      "name": "Posada Fund",
       "applicationCategory": "FinanceApplication",
-      "operatingSystem": "Android",
-      "url": "https://posada.io/tradingbot.html",
-      "description": "Automated Cardano trading bot operating on Minswap DEX. Real-time signals, portfolio risk management, fully non-custodial."
+      "url": "https://fund.posada.io/fund",
+      "description": "A permissionless, non-custodial funding board for Cardano projects. Projects publish a wallet and backers send ADA directly to them. No escrow, no committee, no platform custody of funds.",
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "USD",
+        "price": "0"
+      }
     }
   ]
 }
@@ -80,6 +84,10 @@
   --shelley:     #34d399;   /* Shelley — teal green */
   --shelley-dim: rgba(52, 211, 153, 0.12);
   --shelley-glow: rgba(52, 211, 153, 0.06);
+
+  --fund:     #57D2C4;   /* Posada Fund — brand teal (tailwind `fund.DEFAULT`) */
+  --fund-dim: rgba(87, 210, 196, 0.12);
+  --fund-glow: rgba(87, 210, 196, 0.06);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -130,7 +138,7 @@ body::before {
   font-weight: 800;
   letter-spacing: 6px;
   text-transform: uppercase;
-  background: linear-gradient(135deg, var(--lily), var(--posada), var(--lovelace), var(--byron), var(--shelley));
+  background: linear-gradient(135deg, var(--lily), var(--lovelace), var(--fund), var(--byron), var(--shelley));
   background-size: 300% 300%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -352,6 +360,14 @@ body::before {
 .product.shelley .product-role { color: var(--shelley); }
 .product.shelley .product-status { background: var(--shelley-dim); color: var(--shelley); }
 
+/* ── Posada Fund ── */
+.product.fund { border-color: var(--fund); }
+.product.fund::before { background: radial-gradient(ellipse at 30% 30%, var(--fund-glow), transparent 60%); }
+.product.fund:hover { border-color: #7FE0D5; box-shadow: 0 0 30px rgba(87,210,196,0.12), 0 8px 32px rgba(0,0,0,0.3); }
+.product.fund .product-name { color: var(--fund); }
+.product.fund .product-role { color: var(--fund); }
+.product.fund .product-status { background: var(--fund-dim); color: var(--fund); }
+
 /* ══════════════════════════════════════════
    ECOSYSTEM STRIP
    ══════════════════════════════════════════ */
@@ -433,13 +449,13 @@ body::before {
     <div class="hero-tagline" data-i18n="home.tagline">Building on Cardano</div>
     <div class="hero-sub" data-i18n="home.desc">
       Five products. One blockchain. A complete decentralized platform
-      for trading, social, payments, and communication.
+      for funding, social, payments, and communication.
     </div>
     <a href="/manifesto.html" class="hero-manifesto" data-i18n="home.read_manifesto">Read our Manifesto</a>
     <div class="hero-dots">
       <div class="hero-dot" style="background: var(--lily)"></div>
-      <div class="hero-dot" style="background: var(--posada)"></div>
       <div class="hero-dot" style="background: var(--lovelace)"></div>
+      <div class="hero-dot" style="background: var(--fund)"></div>
       <div class="hero-dot" style="background: var(--byron)"></div>
       <div class="hero-dot" style="background: var(--shelley)"></div>
     </div>
@@ -457,19 +473,6 @@ body::before {
   <!-- ── Product Grid ── -->
   <div class="products">
 
-    <!-- Posada Bot -->
-    <a href="/tradingbot.html" class="product posada" style="text-decoration:none; color:inherit;">
-      <div class="product-icon">&#x1F916;</div>
-      <div class="product-name">NoteG</div>
-      <div class="product-role" data-i18n="home.posada_role">Autonomous Trading Bot</div>
-      <div class="product-desc" data-i18n="home.posada_desc">
-        Strategy-driven automated trading on Cardano via Minswap DEX.
-        Real-time signals, risk management, and a full dashboard to
-        monitor your portfolio.
-      </div>
-      <span class="product-status" data-i18n="home.posada_status">Live</span>
-    </a>
-
     <!-- Lovelace -->
     <a href="/lovelace/" class="product lovelace" style="text-decoration:none; color:inherit;">
       <div class="product-icon">&#x1F498;</div>
@@ -481,6 +484,19 @@ body::before {
         and $LILY rewards for genuine connections.
       </div>
       <span class="product-status" data-i18n="home.lovelace_status">In Development</span>
+    </a>
+
+    <!-- Posada Fund -->
+    <a href="/fund/" class="product fund" style="text-decoration:none; color:inherit;">
+      <div class="product-icon">&#x1F91D;</div>
+      <div class="product-name">Posada Fund</div>
+      <div class="product-role" data-i18n="home.fund_role">Permissionless Funding Board</div>
+      <div class="product-desc" data-i18n="home.fund_desc">
+        Ask for funding without a committee. Post your project, publish
+        your wallet, and backers send ADA straight to you &mdash; the
+        platform never holds the money.
+      </div>
+      <span class="product-status" data-i18n="home.fund_status">Live</span>
     </a>
 
     <!-- Byron -->
@@ -515,8 +531,6 @@ body::before {
   <div class="ecosystem">
     <div class="ecosystem-title" data-i18n="home.powered_by">Powered by LILY</div>
     <div class="ecosystem-flow">
-      <span class="eco-node" style="background: var(--posada-dim); color: var(--posada);">NoteG</span>
-      <span class="eco-arrow">&larr;</span>
       <span class="eco-node" style="background: var(--lovelace-dim); color: var(--lovelace);">Lovelace</span>
       <span class="eco-arrow">&larr;</span>
       <span class="eco-node" style="background: var(--lily-dim); color: var(--lily);">LILY</span>

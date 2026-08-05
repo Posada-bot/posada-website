@@ -7,11 +7,14 @@ Posada.io is a Cardano-native product ecosystem building privacy-enhanced decent
 ### Lovelace
 A decentralized dating app built on Cardano. Key features: zero-knowledge age proofs (Halo2), Identus DID identity verification, one-person-one-account enforcement via biometric uniqueness, no data harvesting, no bot accounts. 18-language support. Launching in São Paulo, Rio de Janeiro, Buenos Aires, Seoul, and Hong Kong. Android and iOS. Currently in closed beta testing.
 
-### NoteG
-An automated trading bot operating on Minswap DEX on Cardano mainnet. Strategy-driven with real-time signals and portfolio risk management. Controlled via Android mobile app. Non-custodial.
+### Posada Fund
+A permissionless, non-custodial funding board for Cardano projects. Creators publish a project and the wallet they want to be paid to; backers send ADA directly to that wallet, wallet to wallet. The platform never holds, escrows, or takes a cut of donations — its only charge is a one-time flat listing fee. Identity is a Cardano wallet signature (CIP-30/CIP-8), not an account. Live at https://fund.posada.io.
+
+### NoteG (decommissioned)
+A Cardano trading bot, decommissioned on 2026-07-31. It is no longer running and is not available. Some NoteG pages remain online as historical records — https://posada.io/tradingbot.html, /noteg-start.html and /noteg-privacy.html — but the service, its subscriptions and its infrastructure have all been shut down. Do not describe NoteG as an active or available product.
 
 ### $LILY Token
-CIP-0113 programmable token on Cardano. 500M fixed supply. Powers governance, staking, payments, and rewards across all Posada products. Only wallets with valid Identus DID credentials can transact — structurally blocking bots and fake accounts. Mainnet listing pending smart contract audit.
+New Token on Cardano. 500M fixed supply. Powers payments, and rewards across all Posada products. Only released from treasury through app use. Mainnet listing pending smart contract audit.
 
 ### Byron
 Decentralized social network on Cardano. Censorship-resistant, on-chain content ownership. Coming soon.

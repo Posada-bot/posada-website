@@ -218,6 +218,27 @@ body::before {
 }
 .cta-ghost:hover { color: var(--text); border-color: var(--posada); }
 
+/* Decommissioned notice + inert (non-clickable) former CTAs. */
+.decom {
+  max-width: 760px;
+  margin: 0 auto 8px;
+  padding: 16px 20px;
+  border: 1px solid rgba(255,140,50,0.45);
+  border-left: 4px solid var(--posada);
+  border-radius: 10px;
+  background: rgba(255,140,50,0.07);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.decom strong { color: var(--posada); }
+.cta-disabled {
+  color: var(--text-dim);
+  border: 1px dashed rgba(255,255,255,0.18);
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
 /* ── Footer ── */
 .footer {
   text-align: center;
@@ -255,18 +276,25 @@ body::before {
 
   <a href="/tradingbot.html" class="back">&larr; NoteG</a>
 
+  <div class="decom">
+    <strong>NoteG was decommissioned on 31 July 2026.</strong> The bot, its
+    subscriptions and its infrastructure have all been shut down, and the app is
+    no longer published on Google Play. This guide is kept only as a historical
+    record &mdash; the steps below no longer work and cannot be completed.
+  </div>
+
   <!-- ── Hero ── -->
   <div class="hero">
     <div class="hero-brand">NoteG</div>
-    <div class="hero-title">Getting Started</div>
+    <div class="hero-title">Getting Started (archived)</div>
     <div class="hero-sub">
-      NoteG is an autonomous Cardano trading bot you control from your phone.
-      Setup takes about 10 minutes once you have ADA in a wallet. This guide
-      walks you through everything from installing the app to placing your first
-      trade.
+      NoteG was an autonomous Cardano trading bot controlled from your phone.
+      Setup took about 10 minutes once you had ADA in a wallet. This guide
+      documented everything from installing the app to placing your first
+      trade. It is retained for reference only.
     </div>
     <div class="cta-row">
-      <a href="https://subscribe.posada.io" class="cta-btn cta-primary">Subscribe</a>
+      <span class="cta-btn cta-disabled" aria-disabled="true">Discontinued &mdash; subscriptions closed</span>
       <a href="/noteg-privacy.html" class="cta-btn cta-ghost">Privacy Policy</a>
     </div>
   </div>
@@ -294,21 +322,21 @@ body::before {
 
     <div class="step">
       <div class="step-label">Step 1</div>
-      <div class="step-title">Install NoteG from Google Play</div>
+      <div class="step-title">Install NoteG from Google Play <em>(no longer possible &mdash; the app has been unpublished)</em></div>
       <ol>
-        <li>Open the Google Play Store on your phone.</li>
-        <li>Search for "NoteG" and tap <strong>Install</strong>.</li>
-        <li>Once installed, open the app.</li>
-        <li>On first launch the app shows a Welcome screen. Tap
-            <strong>"Subscribe"</strong> to begin. This opens your browser at the
-            NoteG subscription page.</li>
+        <li>You opened the Google Play Store on your phone.</li>
+        <li>You searched for "NoteG" and tapped <strong>Install</strong>.</li>
+        <li>Once installed, you opened the app.</li>
+        <li>On first launch the app showed a Welcome screen. Tapping
+            <strong>"Subscribe"</strong> opened your browser at the NoteG
+            subscription page, which has since been taken offline.</li>
       </ol>
     </div>
 
     <div class="step">
       <div class="step-label">Step 2</div>
-      <div class="step-title">Subscribe and pay</div>
-      <p>In the browser, you'll see a short form. Fill it out:</p>
+      <div class="step-title">Subscribe and pay <em>(no longer possible &mdash; subscriptions are closed)</em></div>
+      <p>In the browser, you saw a short form. It asked for:</p>
       <ul>
         <li>Your email address (the one you can read on this phone).</li>
         <li>Your name.</li>
@@ -437,7 +465,7 @@ body::before {
     </ul>
 
     <div class="cta-row">
-      <a href="https://subscribe.posada.io" class="cta-btn cta-primary">Get Started — Subscribe</a>
+      <span class="cta-btn cta-disabled" aria-disabled="true">Discontinued &mdash; subscriptions closed</span>
     </div>
 
   </div>
@@ -448,7 +476,6 @@ body::before {
     <div class="footer-links">
       <a href="/tradingbot.html">NoteG</a>
       <a href="/noteg-privacy.html">Privacy</a>
-      <a href="https://subscribe.posada.io">Subscribe</a>
       <a href="mailto:support@posada.io">Contact</a>
     </div>
   </div>

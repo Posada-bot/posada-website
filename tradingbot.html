@@ -115,6 +115,27 @@ body::before {
 .cta-ghost { color: var(--text-muted); border: 1px solid rgba(255,255,255,0.14); }
 .cta-ghost:hover { color: var(--text); border-color: var(--posada); box-shadow: 0 0 20px var(--posada-glow); }
 
+/* Decommissioned notice + inert (non-clickable) former CTAs. */
+.decom {
+  max-width: 760px;
+  margin: 0 auto 8px;
+  padding: 16px 20px;
+  border: 1px solid rgba(255,140,50,0.45);
+  border-left: 4px solid var(--posada);
+  border-radius: 10px;
+  background: rgba(255,140,50,0.07);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.decom strong { color: var(--posada); }
+.cta-disabled {
+  color: var(--text-dim);
+  border: 1px dashed rgba(255,255,255,0.18);
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
 /* ── Feature grid ── */
 .features {
   display: grid;
@@ -192,18 +213,25 @@ body::before {
 
   <a href="/" class="back">&larr; Posada.io</a>
 
+  <div class="decom">
+    <strong>NoteG was decommissioned on 31 July 2026.</strong> The bot, its
+    subscriptions and its infrastructure have all been shut down, and the app is
+    no longer distributed. This page is kept only as a historical record &mdash;
+    nothing described here is available to buy, install, or run.
+  </div>
+
   <!-- ── Hero ── -->
   <div class="hero">
     <div class="hero-brand">NoteG</div>
-    <div class="hero-tagline">Autonomous Cardano Trading Bot</div>
+    <div class="hero-tagline">Autonomous Cardano Trading Bot (discontinued)</div>
     <div class="hero-sub">
       Strategy-driven automated trading on Cardano, controlled entirely from your
       phone. Real-time signals, risk management, and a full dashboard to monitor
       your portfolio — with every command cryptographically signed by your device.
     </div>
     <div class="cta-row">
-      <a href="/noteg-start.html" class="cta-btn cta-primary">Get Started</a>
-      <a href="https://subscribe.posada.io" class="cta-btn cta-ghost">Subscribe</a>
+      <span class="cta-btn cta-disabled" aria-disabled="true">Discontinued &mdash; subscriptions closed</span>
+      <a href="/noteg-start.html" class="cta-btn cta-ghost">Read the archived guide</a>
     </div>
   </div>
 
@@ -245,13 +273,14 @@ body::before {
 
   <!-- ── Teaser ── -->
   <div class="teaser">
-    <div class="teaser-title">Up and running in ~10 minutes</div>
+    <div class="teaser-title">How setup used to work</div>
     <div class="teaser-desc">
-      Install the app, subscribe, fund your bot, pair your phone, and start
-      trading. The full walkthrough takes you through every step.
+      Setup involved installing the app, subscribing, funding the bot and pairing
+      your phone. None of those steps are possible any more &mdash; the
+      walkthrough is kept only to document how the service worked.
     </div>
     <div class="cta-row" style="margin-top:0;">
-      <a href="/noteg-start.html" class="cta-btn cta-primary">Read the Guide</a>
+      <a href="/noteg-start.html" class="cta-btn cta-ghost">Read the archived guide</a>
     </div>
   </div>
 
@@ -259,9 +288,8 @@ body::before {
   <div class="footer">
     &copy; 2026 Posada.io &mdash; Built on Cardano
     <div class="footer-links">
-      <a href="/noteg-start.html">Getting Started</a>
+      <a href="/noteg-start.html">Archived guide</a>
       <a href="/noteg-privacy.html">Privacy Policy</a>
-      <a href="https://subscribe.posada.io">Subscribe</a>
       <a href="/manifesto.html">Manifesto</a>
       <a href="mailto:support@posada.io">Contact</a>
     </div>

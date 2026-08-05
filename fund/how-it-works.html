@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Posada Fund works — Ask. Get funded. No committee, no custody.</title>
+<link rel="canonical" href="https://posada.io/fund/how-it-works.html">
+<meta name="description" content="How Posada Fund works, in plain terms: creators publish their wallet and go live, backers send ADA straight to that wallet, and the platform never holds the money.">
+<style>
+:root {
+  --bg: #080b12;
+  --panel: #111820;
+  --accent: #57D2C4;
+  --accent-bright: #7FE0D5;
+  --accent-dim: rgba(87, 210, 196, 0.12);
+  --accent-glow: rgba(87, 210, 196, 0.06);
+  --text: #e8eaed;
+  --text-muted: #8b949e;
+  --text-dim: #555d66;
+  --border: rgba(255, 255, 255, 0.06);
+  --card-bg: rgba(17, 24, 32, 0.80);
+  --radius: 16px;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --transition: 0.22s ease;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; }
+body {
+  min-height: 100vh;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+body::before {
+  content: '';
+  position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 1000px; height: 600px;
+  background: radial-gradient(ellipse, var(--accent-glow), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.site {
+  position: relative; z-index: 1;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+}
+
+/* ── Nav ── */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 48px;
+}
+.nav-back {
+  font-size: 0.8rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text-dim);
+  transition: color var(--transition);
+}
+.nav-back:hover { color: var(--accent); }
+.nav-brand {
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ── Hero ── */
+.hero {
+  text-align: center;
+  padding: 32px 20px 8px;
+}
+.hero-title {
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.hero-tagline {
+  margin-top: 12px;
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── Sections ── */
+.section {
+  margin-top: 44px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+.section:first-of-type { border-top: 0; }
+.section-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  margin-bottom: 14px;
+}
+.section p {
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+.section p strong { color: var(--text); font-weight: 600; }
+.section .lead { color: var(--text); font-size: 1.05rem; }
+
+/* ── Steps ── */
+.steps { list-style: none; counter-reset: step; margin-top: 8px; }
+.steps li {
+  position: relative;
+  padding: 0 0 20px 52px;
+  color: var(--text-muted);
+}
+.steps li:last-child { padding-bottom: 0; }
+.steps li::before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute; left: 0; top: 0;
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1.5px solid var(--accent);
+  border-radius: 10px;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.steps li::after {
+  content: '';
+  position: absolute; left: 16.5px; top: 34px; bottom: 6px;
+  width: 1px; background: var(--border);
+}
+.steps li:last-child::after { display: none; }
+.steps li strong { display: block; color: var(--text); font-weight: 600; margin-bottom: 2px; }
+
+/* ── Callout ── */
+.callout {
+  background: linear-gradient(135deg, var(--accent-dim), var(--card-bg));
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 24px 24px;
+  margin-top: 8px;
+}
+.callout p { color: var(--text); margin-bottom: 0; }
+.callout p + p { margin-top: 12px; color: var(--text-muted); }
+
+/* ── CTA cards ── */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 24px;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 28px 20px;
+  background: linear-gradient(135deg, var(--accent-dim), var(--card-bg));
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: var(--text);
+  transition: all var(--transition);
+}
+.card:hover {
+  border-color: var(--accent-bright);
+  box-shadow: 0 0 24px rgba(87,210,196,0.15), 0 8px 32px rgba(0,0,0,0.3);
+  transform: translateY(-2px);
+}
+.card:active { transform: translateY(0); }
+.card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.card-desc { font-size: 0.75rem; color: var(--text-muted); text-align: center; }
+
+/* ── Footer ── */
+.footer {
+  text-align: center;
+  margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+.footer a { color: var(--text-muted); text-decoration: none; transition: color var(--transition); }
+.footer a:hover { color: var(--text); }
+.footer-links { margin-top: 8px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+
+@media (max-width: 600px) {
+  .grid { grid-template-columns: 1fr; }
+  .hero-title { font-size: 1.9rem; letter-spacing: 2px; }
+}
+</style>
+</head>
+<body>
+
+<div class="site">
+
+  <div class="nav">
+    <a href="/fund/" class="nav-back" data-i18n="fund_how.back">&larr; Posada Fund</a>
+    <span class="nav-brand">Posada Fund</span>
+  </div>
+
+  <div class="hero">
+    <h1 class="hero-title" data-i18n="fund_how.title">How it works</h1>
+    <div class="hero-tagline" data-i18n="fund_how.tagline">
+      A public board where projects ask for support and backers send ADA straight to them. The platform never holds the money.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-eyebrow" data-i18n="fund_how.idea_eyebrow">The idea</div>
+    <h2 data-i18n="fund_how.idea_h">No committee. No custody.</h2>
+    <p class="lead" data-i18n="fund_how.idea_lead">
+      Posada Fund is a board. A creator posts a project and publishes the wallet they want to be paid to. Backers send ADA <strong>directly to that wallet</strong>, on-chain, wallet to wallet.
+    </p>
+    <p data-i18n="fund_how.idea_body">
+      Nobody approves your project, and no company holds the funds in between. The only thing the platform ever collects is a single flat fee to put a project on the board &mdash; it never takes a cut of what backers give, because the donations never pass through it.
+    </p>
+  </div>
+
+  <div class="section">
+    <div class="section-eyebrow" data-i18n="fund_how.creators_eyebrow">If you&rsquo;re raising funds</div>
+    <h2 data-i18n="fund_how.creators_h">Listing a project</h2>
+    <ol class="steps">
+      <li data-i18n="fund_how.creators_1"><strong>Connect your wallet.</strong> Use any Cardano wallet through the standard browser connection. No account, no email, no password.</li>
+      <li data-i18n="fund_how.creators_2"><strong>Prove it&rsquo;s yours.</strong> Sign a short message with your wallet. That signature is your login, tied to your stake key so you can always return.</li>
+      <li data-i18n="fund_how.creators_3"><strong>Write your project.</strong> Describe what you&rsquo;re raising for, publish the wallet backers will pay to, and add a short video introducing the cause.</li>
+      <li data-i18n="fund_how.creators_4"><strong>Pay the one-time listing fee.</strong> A single flat fee, paid once in ADA, puts your project on the board. It&rsquo;s confirmed on-chain before you can publish.</li>
+      <li data-i18n="fund_how.creators_5"><strong>Go live instantly.</strong> There&rsquo;s no review queue. Your listing is public the moment the fee is confirmed.</li>
+      <li data-i18n="fund_how.creators_6"><strong>Receive support directly.</strong> Backers send ADA straight to your wallet. A live counter shows funding as it arrives on-chain.</li>
+      <li data-i18n="fund_how.creators_7"><strong>Report each month.</strong> Post a short monthly update on how funds are used. If reporting stops, your page goes dark until it resumes.</li>
+    </ol>
+  </div>
+
+  <div class="section">
+    <div class="section-eyebrow" data-i18n="fund_how.backers_eyebrow">If you&rsquo;re backing a project</div>
+    <h2 data-i18n="fund_how.backers_h">Supporting a cause</h2>
+    <ol class="steps">
+      <li data-i18n="fund_how.backers_1"><strong>Find a project.</strong> Browse the board and open a listing. Watch the creator&rsquo;s video and read what they&rsquo;re raising for.</li>
+      <li data-i18n="fund_how.backers_2"><strong>Send ADA directly.</strong> Your support goes straight to the creator&rsquo;s published wallet. It never touches Posada Fund.</li>
+      <li data-i18n="fund_how.backers_3"><strong>Verify it yourself.</strong> Because the wallet is on-chain, you can confirm in any explorer that your ADA arrived and how much a project has raised.</li>
+      <li data-i18n="fund_how.backers_4"><strong>Follow the updates.</strong> Monthly reports keep creators accountable after the money is sent, not just before.</li>
+    </ol>
+  </div>
+
+  <div class="section">
+    <div class="section-eyebrow" data-i18n="fund_how.safe_eyebrow">Why it&rsquo;s safe</div>
+    <h2 data-i18n="fund_how.safe_h">The platform can&rsquo;t touch your money</h2>
+    <div class="callout">
+      <p data-i18n="fund_how.safe_1">Donations only ever exist at wallets the platform doesn&rsquo;t control. There is no shared account holding backer funds, so there is nothing for anyone &mdash; including the platform &mdash; to freeze, take, or lose.</p>
+      <p data-i18n="fund_how.safe_2">This also means backers give at their own discretion. Posada Fund makes the money trail public and keeps creators accountable; it does not vet, endorse, or guarantee any project. Check the video, check the chain, and decide for yourself.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-eyebrow" data-i18n="fund_how.fee_eyebrow">The fee</div>
+    <h2 data-i18n="fund_how.fee_h">One flat fee, no cut of donations</h2>
+    <p data-i18n="fund_how.fee_body">
+      Creators pay a single flat fee once, when they list. Whether a project raises a little or a lot, the fee is the same, and not a single lovelace of backer support is skimmed. The model is a board with an entry fee &mdash; not a payment rail that meters the flow.
+    </p>
+  </div>
+
+  <div class="grid">
+    <a href="https://fund.posada.io/fund" class="card">
+      <span class="card-title" data-i18n="fund_how.cta_board">Open the Board</span>
+      <span class="card-desc" data-i18n="fund_how.cta_board_desc">Browse every live project asking for funding</span>
+    </a>
+    <a href="whitepaper.html" class="card">
+      <span class="card-title" data-i18n="fund_how.cta_whitepaper">Whitepaper</span>
+      <span class="card-desc" data-i18n="fund_how.cta_whitepaper_desc">The full technical vision and architecture</span>
+    </a>
+  </div>
+
+  <div class="footer">
+    <span data-i18n="common.copyright">&copy; 2026</span> <a href="/">Posada.io</a> / Posada Fund &mdash; <span data-i18n="common.built_on_cardano">Built on Cardano</span>
+    <div class="footer-links">
+      <a href="/fund/" data-i18n="fund_how.f_fund">Fund</a>
+      <a href="https://fund.posada.io/fund" data-i18n="fund_hub.board">Open the Board</a>
+      <a href="whitepaper.html" data-i18n="common.whitepaper">Whitepaper</a>
+      <a href="mailto:support@posada.io" data-i18n="common.contact">Contact</a>
+    </div>
+  </div>
+
+</div>
+
+<script src="/i18n/i18n.js"></script>
+</body>
+</html>
