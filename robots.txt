@@ -1,0 +1,5 @@
+# https://posada.io/robots.txt
+User-agent: *
+Allow: /
+
+Sitemap: https://posada.io/sitemap.xml
